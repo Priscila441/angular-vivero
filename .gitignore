@@ -7,6 +7,10 @@ out-tsc/
 # Dependencias
 node_modules/
 
+# Angular cache
+.angular/cache
+.angular/cache/
+
 # Archivos de IDE/Editor
 .idea/
 .vscode/
