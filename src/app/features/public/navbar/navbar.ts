@@ -10,6 +10,7 @@ import { Component } from '@angular/core';
 export class Navbar {
   showProductDropdown = false;
   showServiceDropdown = false;
+  showMenu = false; 
 
   toggleProductDropdown() {
     this.showProductDropdown = !this.showProductDropdown;
@@ -24,6 +25,9 @@ export class Navbar {
     this.showServiceDropdown = false;
   }
 
+  toggleMenu() {
+    this.showMenu = !this.showMenu; // 👈 Abre/cierra el menú en móviles
+  }
 }
 
 
