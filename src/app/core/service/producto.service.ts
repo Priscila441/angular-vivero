@@ -29,7 +29,19 @@ export class ProductoService {
         return this.http.put<Producto>(`${this.api_url}/${id}`, producto);
     }
 
+    partialUpdate(id: number, producto: Partial<Producto>): Observable<void> {
+        return this.http.patch<void>(`${this.api_url}/${id}`, producto);
+    }
+
     delete(id: number): Observable<void>{
         return this.http.delete<void>(`${this.api_url}/${id}`);
+    }
+
+    getAllDetalles(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(this.api_url + '/detalles');
+    }
+
+    getDetallesById(id: number): Observable<Producto> {
+        return this.http.get<Producto>(`${this.api_url + '/detalles'}/${id}`);
     }
 }
