@@ -33,7 +33,6 @@ export class SectionProduct {
       },
       error: err => {
         this.loading = false;
-        // Puedes mostrar un mensaje personalizado o usar el error del backend si viene en err.error.message
         this.errorMessage = err?.error?.message || 'Error al cargar las categorías. Intente más tarde.';
       }
     });
