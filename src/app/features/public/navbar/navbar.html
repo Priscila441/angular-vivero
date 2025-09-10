@@ -39,6 +39,20 @@
             <li><a (click)="closeDropdown()" href="#" class="block px-4 py-2">Frutales</a></li>
             <li><a (click)="closeDropdown()" href="#" class="block px-4 py-2">Plantines</a></li>
           </ul>
+
+          <!--
+          
+          <ul *ngIf="showProductDropdown" class="absolute left-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-50">
+  <li *ngFor="let cat of categorias">
+    <a [routerLink]="['/productos', cat.id]" (click)="closeDropdown()" class="block px-4 py-2">
+      {{ cat.nombre }}
+    </a>
+  </li>
+</ul>
+          
+          
+          
+          -->
         </li>
 
         <!-- Dropdown Servicios -->

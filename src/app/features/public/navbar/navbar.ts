@@ -12,6 +12,25 @@ export class Navbar {
   showProductDropdown = false;
   showServiceDropdown = false;
 
+  /*
+  
+  categorias: Categoria_producto[] = [];
+
+  constructor(private categoriaService: CategoriaProductoService) {}
+
+  ngOnInit(): void {
+    this.categoriaService.getAll().subscribe({
+      next: res => this.categorias = res,
+      error: () => this.categorias = []
+    });
+  }
+  
+  
+  
+  
+  
+  */
+
   toggleMenu() {
     this.showMenu = !this.showMenu;
 

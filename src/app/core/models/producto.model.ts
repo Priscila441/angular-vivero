@@ -6,3 +6,5 @@ export interface Producto {
     categoria_id: number;
     temporada_id: number;
 }
+
+
