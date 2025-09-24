@@ -16,13 +16,14 @@
       <img src="mandarinas.jpg" 
            alt="imagen del producto"
            class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
-      <!-- <img [src]="product.imagen_url" alt="{{product.nombre}}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" /> -->
+       <img [src]="product.imagen_url" alt="{{product.nombre}}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" /> 
     </div>
     
     <!-- Contenido de la card -->
     <div class="p-4">
       <h3 class="font-bold text-green-800 text-lg mb-1">{{ product.nombre }}</h3>
       <p class="text-green-700 text-sm">{{ product.descripcion }}</p>
+      <button class="px-4 py-2 rounded-full bg-green-600 text-white text-sm font-medium hover:bg-green-700">Agregar a consulta</button>
     </div>
     
   </div>
