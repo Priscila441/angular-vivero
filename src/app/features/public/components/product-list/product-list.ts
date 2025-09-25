@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProductoService } from '../../../core/service/producto.service';
-import { Producto } from '../../../core/models/producto.model';
+import { ProductoService } from '../../../../core/service/producto.service';
+import { Producto } from '../../../../core/models/producto.model';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 

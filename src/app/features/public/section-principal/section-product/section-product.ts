@@ -61,10 +61,12 @@ export class SectionProduct {
   }
 
   goToCategory(categoryId: number) {
-    this.router.navigate(['/productos', categoryId]);
-  }
-
-  goToProduct(productId: number){
-    this.router.navigate(['/producto', productId]);
+    const productsInCategory = this.productos.filter(p => p.categoria_id === categoryId);
+    if (productsInCategory.length === 1){
+      this.router.navigate(['/producto', productsInCategory[0].id]);
+    }
+    else{
+      this.router.navigate(['/productos', categoryId]);
+    }
   }
 }

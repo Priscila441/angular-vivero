@@ -1,12 +1,19 @@
 import { Routes } from '@angular/router';
-import { ProductList } from './features/public/product-list/product-list';
-import { ProductDetail } from './features/public/product-detail/product-detail';
+import { ProductList } from './features/public/components/product-list/product-list';
+import { ProductDetail } from './features/public/components/product-detail/product-detail';
+import { SectionPrincipal } from './features/public/section-principal/section-principal';
+import { PublicLayout } from './features/public-layout/public-layout';
 
 
 export const routes: Routes = [
-      { path: '', loadComponent: () => import('./features/public/home/home').then(m => m.Home) },
-      { path: 'productos/:categoryId', component: ProductList},
-      { path: 'producto/:id' , component: ProductDetail}
+      { path: '', component: PublicLayout, 
+             children: [
+                  { path: '', component: SectionPrincipal },
+                  { path: 'productos/:categoryId', component: ProductList},
+                  { path: 'producto/:id' , component: ProductDetail}
+            ]
+      }
+      
 
 ];
  
