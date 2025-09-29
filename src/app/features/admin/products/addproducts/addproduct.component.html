@@ -1,5 +1,5 @@
 <!-- Header contextual para proyección -->
-<div admin-header class="sticky top-0 z-10 bg-[#e8f2ec] p-6 pb-0">
+<div admin-header class="sticky top-0 z-10 bg-[#F6FBF8] p-6 pb-0">
   <div class="flex items-center gap-4 justify-start">
     <!-- Botón de vuelta -->
     <a routerLink="/admin/products" class="flex items-center gap-2 text-[#0e1a13] hover:text-[#51946c] transition-colors">
@@ -9,42 +9,58 @@
     <!-- Separador -->
     <div class="w-px h-6 bg-[#d1e6d9]"></div>
     <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-sm">
-      <span class="text-[#51946c]">Panel</span>
-      <span class="material-symbols-outlined text-sm text-[#94b5a3]">chevron_right</span>
-      <span class="text-[#51946c]">Lista de Productos</span>
-      <span class="material-symbols-outlined text-sm text-[#94b5a3]">chevron_right</span>
-      <span class="text-[#0e1a13] font-medium">Agregar Producto</span>
+  <nav class="flex items-center gap-2 text-sm bg-[#F6FBF8] px-2 rounded">
+  <span class="text-[#4A5C52]">Panel</span>
+  <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
+  <span class="text-[#4A5C52]">Lista de Productos</span>
+  <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
+  <span class="text-[#4A5C52] font-medium">Agregar Producto</span>
     </nav>
   </div>
 </div>
 <!-- Contenido Principal -->
-<div class="max-w-2xl mx-auto h-full flex flex-col mt-18 px-4 sm:px-6 md:px-8">
-      <div class="mb-6">
-        <h1 class="text-[#0e1a13] text-lg font-bold leading-tight tracking-[-0.015em]">Agregar Nueva Planta</h1>
-        <p class="text-[#51946c] mt-2 text-sm font-medium leading-normal">Completa los detalles a continuación para agregar una nueva planta al catálogo del vivero.</p>
+<div class="max-w-2xl mx-auto h-full flex flex-col mt-10 px-3 sm:px-4 md:px-6">
+  <div class="mb-3">
+  <h1 class="text-[#1C2B21] text-base font-bold leading-tight tracking-[-0.015em]">Agregar Nueva Planta</h1>
+  <p class="text-[#4A5C52] mt-1 text-sm font-medium leading-normal">Completa los detalles a continuación para agregar una nueva planta al catálogo del vivero.</p>
+  <div class="border-t border-[#51946c] opacity-60 my-2"></div>
       </div>
-      
-      <form class="flex-1 flex flex-col space-y-4">
+
+      <!-- Formulario -->
+  <form class="flex-1 flex flex-col space-y-3">
         <div>
-          <label class="block text-sm font-medium leading-normal text-[#0e1a13] pb-2" for="plant-name">Nombre de la Planta</label>
-          <input class="form-input block w-full rounded-lg border-[#d1e6d9] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] h-10 px-4 text-sm placeholder:text-[#94b5a3]" id="plant-name" placeholder="Ej: Mandarina Criolla" type="text"/>
+          <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="plant-name">Nombre de la Planta</label>
+          <input class="form-input block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] h-9 px-3 text-sm placeholder:text-[#9CA9A2]" id="plant-name" placeholder="Ej: Mandarina Criolla" type="text"/>
         </div>
         
         <div>
-          <label class="block text-sm font-medium leading-normal text-[#0e1a13] pb-2" for="description">Descripción</label>
-          <textarea class="form-textarea block w-full rounded-lg border-[#d1e6d9] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] min-h-24 p-4 text-sm placeholder:text-[#94b5a3]" id="description" placeholder="Proporciona una breve descripción de la planta."></textarea>
+          <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="description">Descripción</label>
+          <textarea class="form-textarea block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] min-h-20 p-3 text-sm placeholder:text-[#9CA9A2]" id="description" placeholder="Proporciona una breve descripción de la planta."></textarea>
         </div>
-        
+
+        <!-- Imágenes -->
         <div>
-          <label class="block text-sm font-medium leading-normal text-[#0e1a13] pb-2" for="image-url">Imágenes</label>
-          <input class="form-input block w-full rounded-lg border-[#d1e6d9] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] h-10 px-4 text-sm placeholder:text-[#94b5a3]" id="image-url" placeholder="mandarina.jpg" type="url"/>
+          <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="multiple_files">Imágenes</label>
+          <div class="flex w-full">
+            <input
+              type="text"
+              id="file-name"
+              readonly
+              placeholder="Sin archivos seleccionados"
+              class="form-input flex-1 rounded-l-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] h-10 px-4 text-sm placeholder:text-[#9CA9A2]"
+            />
+            <label for="multiple_files" class="flex rounded-r-lg bg-[#4B7D63] text-[#FFFFFF] font-medium px-4 h-10 items-center cursor-pointer hover:bg-[#264B39] transition-colors text-sm">
+              Elegir archivo
+              <input id="multiple_files" type="file" multiple accept="image/png,image/jpeg" class="hidden" aria-describedby="images-help" onchange="document.getElementById('file-name').value = Array.from(this.files).map(f => f.name).join(', ') || 'Sin archivos seleccionados'" />
+            </label>
+          </div>
+          <p id="images-help" class="mt-1 text-xs text-[#4A5C52]">Puedes seleccionar una o varias imágenes (JPG, PNG).</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium leading-normal text-[#0e1a13] pb-2" for="category">Categoría</label>
-              <select class="form-select block w-full rounded-lg border-[#d1e6d9] bg-white focus:ring-2 focus:ring-black focus:border-black[#38e07b] h-10 px-4 text-sm text-[#0e1a13]" id="category">
+            <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="category">Categoría</label>
+              <select class="form-select block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-black focus:border-black[#38e07b] h-10 px-4 text-sm text-[#4A5C52]" id="category">
               <option disabled="" selected="">Seleccionar Categoría</option>
               <option>Mandarinas</option>
               <option>Uvas</option>
@@ -54,23 +70,23 @@
           </div>
           
           <div>
-            <label class="block text-sm font-medium leading-normal text-[#0e1a13] pb-2" for="season">Temporada</label>
-              <select class="form-select block w-full rounded-lg border-[#d1e6d9] bg-white focus:ring-2 focus:ring-black focus:border-[#38e07b] h-10 px-4 text-sm text-[#0e1a13]" id="season">
+            <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="season">Temporada</label>
+              <select class="form-select block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-black focus:border-[#38e07b] h-10 px-4 text-sm text-[#4A5C52]" id="season">
               <option disabled="" selected="">Seleccionar Temporada</option>
-              <option>Primavera</option>
-              <option>Verano</option>
-              <option>Otoño</option>
-              <option>Invierno</option>
+              <option>Noviembre - Diciembre</option>
+              <option>Abril - Mayo - Junio</option>
+              <option>Diciembre- Enero</option>
+              <option>Noviembre - Diciembre - Enero</option>
               <option>Todo el año</option>
             </select>
           </div>
         </div>
         
         <div class="flex flex-col sm:flex-row justify-end pt-2 space-y-2 sm:space-y-0 sm:space-x-4">
-          <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-white text-[#0e1a13] text-sm font-bold leading-normal tracking-wide border border-[#d1e6d9] hover:bg-[#e8f2ec] transition-colors" type="button">
+          <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-[#F6FAF8] text-[#1C2B21] text-sm font-bold leading-normal tracking-wide border border-[#D7E2DB] hover:bg-[#E2EDE7] transition-colors" type="button">
             <span class="truncate">Cancelar</span>
           </button>
-          <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-[#e8f2ec] text-[#0e1a13] text-sm font-bold leading-normal tracking-wide border border-black hover:bg-[#7cc298] transition-colors" type="submit">
+          <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-[#4B7D63] text-[#FFFFFF] text-sm font-bold leading-normal tracking-wide border border-[#4B7D63] hover:bg-[#264B39] transition-colors" type="submit">
             <span class="truncate">Agregar Planta</span>
           </button>
         </div>
