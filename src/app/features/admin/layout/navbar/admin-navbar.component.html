@@ -1,12 +1,31 @@
 <!-- Admin Navbar -->
 <nav class="w-full bg-[#E9F3ED] border-l border-[#e8f2ec]">
-  <div class="flex items-center justify-between px-6 py-3 h-16">
-    <div></div>
+  <div class="flex items-center justify-between px-6 py-3 h-16 w-full">
+    <!-- Buscador centrado -->
+    <div class="flex items-center w-full max-w-md">
+      <div class="relative w-full">
+        <input 
+          type="text" 
+          placeholder="Buscar..." 
+          class="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+        />
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+        </svg>
+      </div>
+    </div>
+    <!-- Usuario -->
     <div class="flex items-center gap-1">
-  <span class="material-symbols-outlined text-base text-black">person_2</span>
+      <span class="material-symbols-outlined text-base text-black">person_2</span>
       <div class="text-right">
-  <div class="font-medium text-gray-800 text-xs font-sans">Alejandro Pastran</div>
-  <div class="text-[10px] text-gray-500 font-sans">Administrador</div>
+        <div class="font-medium text-gray-800 text-xs font-sans">Alejandro Pastran</div>
+        <div class="text-[10px] text-gray-500 font-sans">Administrador</div>
       </div>
     </div>
   </div>
