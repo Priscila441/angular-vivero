@@ -37,7 +37,8 @@
             <div class="relative aspect-[4/3] bg-green-50 overflow-hidden">
               <img [src]='product.imagen_url || "mandarinas.jpg"'
                    alt="{{ product.nombre }}" 
-                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                   (click)="goToProduct(product.id)" />
             </div>
             
             <!-- Contenido -->

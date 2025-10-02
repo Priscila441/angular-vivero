@@ -44,4 +44,6 @@ export class ProductoService {
     getDetallesById(id: number): Observable<Producto> {
         return this.http.get<Producto>(`${this.api_url + '/detalles'}/${id}`);
     }
+
+    
 }

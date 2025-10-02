@@ -21,24 +21,18 @@
                alt="{{ product.nombre }}" 
                class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" />
         </div>
-        <!--  implementar la galería/rotación de imágenes -->
       </div>
 
       <!-- Lado derecho: Información -->
       <div class="bg-white p-8 flex flex-col">
         <h1 class="text-4xl font-extrabold text-green-800 mb-4">{{ product.nombre }}</h1>
-        <p class="text-gray-700 text-lg mb-6">{{ product.descripcion }} Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugiat aliquam expedita sapiente commodi. At, sed sequi. Et, magnam quos. Facilis quo temporibus mollitia nihil maxime adipisci cumque iusto, a illo!</p>
+        <p class="text-gray-700 text-lg mb-6">{{ product.descripcion }}</p>
 
         <!-- Sección extendida (agrego ejemplo estático hasta que el back lo implemente) -->
          @if(showMore){
           <div class="bg-green-50 rounded-xl p-6 shadow-inner mb-6">
           <h2 class="text-2xl font-bold text-emerald-700 mb-4">Información detallada</h2>
-          <ul class="list-disc list-inside text-gray-700 space-y-2">
-            <li><strong>Ciclo de vida:</strong> Perenne</li>
-            <li><strong>Propiedades:</strong> Rico en vitaminas y minerales</li>
-            <li><strong>Recetas:</strong> Ideal para jugos y ensaladas</li>
-          </ul>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde deserunt minima suscipit fuga? Veritatis, tempore. Vero eveniet, numquam omnis maxime quis amet molestiae, iste deserunt veritatis libero dolore assumenda deleniti.loreoweoi wenoienoiefn owefnowef nwefjn oweifn woeifnwo einweof inewfo we jfoiw jfoiwe jfwpoe ijf</p>
+          
         </div>
          }
         
