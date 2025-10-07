@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import { Producto } from "../models/producto.model";
 import { environment } from "../../../environments/environment.development";    
 
@@ -44,4 +45,7 @@ export class ProductoService {
     getDetallesById(id: number): Observable<Producto> {
         return this.http.get<Producto>(`${this.api_url + '/detalles'}/${id}`);
     }
+
+
+    
 }

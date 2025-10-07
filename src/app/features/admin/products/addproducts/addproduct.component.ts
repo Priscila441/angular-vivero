@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../../../core/service/producto.service';
 
@@ -11,22 +11,26 @@ import { ProductoService } from '../../../../core/service/producto.service';
   templateUrl: './addproduct.component.html',
   styleUrls: []
 })
+
+// Definiciones de variable y estados del formulario 
 export class AddproductComponent implements OnInit {
   productForm!: FormGroup;
   submitted = false;
   successMessage = '';
   errorMessage = '';
 
+  //Inyecccion de dependencias.
   constructor(private fb: FormBuilder, private productoService: ProductoService) {}
 
+  // Creacion del formulario con validaciones.
   ngOnInit() {
     this.productForm = this.fb.group({
-      nombre: [''],
-      descripcion: [''],
-      imagen_url: [''],
-      categoria_id: [''],
-      temporada_id: [''],
-      informacion_extra: [''] 
+      nombre: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      imagen_url: ['', Validators.required],
+      categoria_id: ['', Validators.required],
+      temporada_id: ['', Validators.required],
+      informacion_extra: ['', [Validators.required, Validators.minLength(10)]]
     });
   }
 
@@ -34,6 +38,8 @@ export class AddproductComponent implements OnInit {
     this.submitted = true;
     this.successMessage = '';
     this.errorMessage = '';
+
+    // Verificacion de validez del formulario.
     if (this.productForm.valid) {
       const producto = {
         ...this.productForm.value,
@@ -41,9 +47,6 @@ export class AddproductComponent implements OnInit {
         temporada_id: Number(this.productForm.value.temporada_id),
         informacion_extra: this.productForm.value.informacion_extra || ''
       };
-      
-      console.log('Enviando producto:', producto);
-      
       this.productoService.create(producto).subscribe({
         next: () => {
           this.successMessage = 'Producto agregado correctamente';
@@ -52,15 +55,13 @@ export class AddproductComponent implements OnInit {
         },
         error: (err) => {
           this.errorMessage = `Error al agregar el producto: ${err.status} - ${err.error?.message || err.error || 'Error desconocido'}`;
-          console.error('Error completo:', err);
-          console.error('Datos enviados:', producto);
         }
       });
     } else {
       this.errorMessage = 'Por favor completa todos los campos requeridos';
     }
   }
-
+ // Metodo para verificar si un campo es invalido y mostrar mensajes de error.
   isFieldInvalid(field: string): boolean {
     const control = this.productForm.get(field);
     return !!(control && control.invalid && this.submitted);

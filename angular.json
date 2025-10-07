@@ -31,6 +31,9 @@
                "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/styles.css"
               
+            ],
+            "scripts": [
+              "node_modules/flowbite/dist/flowbite.min.js"
             ]
           },
           "configurations": {
@@ -101,6 +104,7 @@
             "styles": [
               "src/styles.css"
             ]
+            
           }
         }
       }
