@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { Producto } from "../models/producto.model";
+import { ProductoDetalles } from "../models/producto_detalles.model";
 import { environment } from "../../../environments/environment.development";    
 
 @Injectable({
@@ -11,11 +12,16 @@ import { environment } from "../../../environments/environment.development";
 
 export class ProductoService {
     private readonly api_url = environment.API_URL + '/productos';
+    private readonly api_url_detalles = environment.API_URL + '/productos/detalles';
 
     constructor(private http: HttpClient) {}
 
-    getAll(): Observable<Producto[]>{
+    getAll(): Observable<Producto[]> {
         return this.http.get<Producto[]>(this.api_url);
+    }
+
+    getAllDetalles(): Observable<ProductoDetalles[]> {
+        return this.http.get<ProductoDetalles[]>(this.api_url_detalles);
     }
 
     getById(id : number): Observable<Producto>{
@@ -38,14 +44,8 @@ export class ProductoService {
         return this.http.delete<void>(`${this.api_url}/${id}`);
     }
 
-    getAllDetalles(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(this.api_url + '/detalles');
-    }
-
     getDetallesById(id: number): Observable<Producto> {
         return this.http.get<Producto>(`${this.api_url + '/detalles'}/${id}`);
     }
 
-
-    
 }
