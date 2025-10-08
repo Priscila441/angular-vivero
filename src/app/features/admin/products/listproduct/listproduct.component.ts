@@ -45,4 +45,27 @@ export class Listproduct implements OnInit {
       this.paginaActual--;
     }
   }
+
+  // Métodos para la lógica del paginador
+  get numerosPaginas(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
+  esPaginaActual(numeroPagina: number): boolean {
+    return this.paginaActual === numeroPagina;
+  }
+
+  irAPagina(numeroPagina: number): void {
+    if (numeroPagina >= 1 && numeroPagina <= this.totalPaginas) {
+      this.paginaActual = numeroPagina;
+    }
+  }
+
+  get esPrimeraPagina(): boolean {
+    return this.paginaActual === 1;
+  }
+
+  get esUltimaPagina(): boolean {
+    return this.paginaActual === this.totalPaginas;
+  }
 }

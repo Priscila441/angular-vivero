@@ -94,52 +94,58 @@
 
 <!-- Paginador -->
 <nav class="flex items-center justify-end gap-x-1 mt-6 pr-8" aria-label="Pagination">
-  <button type="button" class="min-h-9.5 min-w-9.5 py-2 px-2.5 inline-flex justify-center items-center text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" aria-label="Previous" [disabled]="paginaActual === 1" (click)="anteriorPagina()">
+  <!-- Botón página anterior -->
+  <button type="button" 
+    class="min-h-9.5 min-w-9.5 py-2 px-2.5 inline-flex justify-center items-center text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" 
+    aria-label="Previous" 
+    [disabled]="esPrimeraPagina" 
+    (click)="anteriorPagina()">
     <span class="material-symbols-outlined text-lg">chevron_left</span>
   </button>
+  
+  <!-- Números de páginas -->
   <div class="flex items-center gap-x-1">
-    <button *ngFor="let page of [].constructor(totalPaginas); let i = index" type="button"
+    <button *ngFor="let numeroPagina of numerosPaginas" 
+      type="button"
       class="min-h-9.5 min-w-9.5 flex justify-center items-center py-2 px-3 text-sm rounded-lg focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none transition-colors duration-200"
-      [ngClass]="paginaActual === i + 1 ? 'bg-[#4B7D63] text-white font-bold shadow' : 'bg-gray-100 text-gray-400'"
-      [attr.aria-current]="paginaActual === i + 1 ? 'page' : null"
-      (click)="paginaActual = i + 1">
-      {{ i + 1 }}
+      [ngClass]="{
+        'bg-[#4B7D63] text-white font-bold shadow': esPaginaActual(numeroPagina),
+        'bg-gray-100 text-gray-400': !esPaginaActual(numeroPagina)
+      }"
+      [attr.aria-current]="esPaginaActual(numeroPagina) ? 'page' : null"
+      (click)="irAPagina(numeroPagina)">
+      {{ numeroPagina }}
     </button>
   </div>
-  <button type="button" class="min-h-9.5 min-w-9.5 py-2 px-2.5 inline-flex justify-center items-center text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" aria-label="Next" [disabled]="paginaActual === totalPaginas" (click)="siguientePagina()">
+  
+  <!-- Botón página siguiente -->
+  <button type="button" 
+    class="min-h-9.5 min-w-9.5 py-2 px-2.5 inline-flex justify-center items-center text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" 
+    aria-label="Next" 
+    [disabled]="esUltimaPagina" 
+    (click)="siguientePagina()">
     <span class="material-symbols-outlined text-lg">chevron_right</span>
   </button>
 </nav>
 
 
 <!-- Modal para descripción -->
-<!-- Se muestra solo cuando descripcionSeleccionada tiene un valor -->
-<div *ngIf="descripcionSeleccionada" class="fixed inset-0 flex items-center justify-center z-50">
-  <!-- Contenedor del modal con fondo blanco, sombra y esquinas redondeadas -->
+<!--<div *ngIf="descripcionSeleccionada" class="fixed inset-0 flex items-center justify-center z-50">
   <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-    <!-- Título del modal -->
     <h2 class="text-lg font-bold mb-2">Descripción</h2>
-    <!-- Contenido del modal: muestra la descripción completa del producto -->
     <p class="text-gray-700">{{ descripcionSeleccionada }}</p>
-    <!-- Botón para cerrar el modal, resetea la variable a null -->
     <button (click)="descripcionSeleccionada = null" class="mt-4 px-4 py-2 bg-[#4B7D63] text-white rounded">Cerrar</button>
   </div>
-  <!-- Fondo oscuro semi-transparente detrás del modal (overlay) -->
   <div class="fixed inset-0 bg-black opacity-30 z-40"></div>
 </div>
-
+-->
 <!-- Modal para información extra -->
-<!-- Se muestra solo cuando infoSeleccionada tiene un valor -->
-<div *ngIf="infoSeleccionada" class="fixed inset-0 flex items-center justify-center z-50">
-  <!-- Contenedor del modal con fondo blanco, sombra y esquinas redondeadas -->
+<!--<div *ngIf="infoSeleccionada" class="fixed inset-0 flex items-center justify-center z-50">
   <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-    <!-- Título del modal -->
     <h2 class="text-lg font-bold mb-2">Información extra</h2>
-    <!-- Contenido del modal: muestra la información extra completa del producto -->
     <p class="text-gray-700">{{ infoSeleccionada }}</p>
-    <!-- Botón para cerrar el modal, resetea la variable a null -->
     <button (click)="infoSeleccionada = null" class="mt-4 px-4 py-2 bg-[#4B7D63] text-white rounded">Cerrar</button>
   </div>
-  <!-- Fondo oscuro semi-transparente detrás del modal (overlay) -->
   <div class="fixed inset-0 bg-black opacity-30 z-40"></div>
 </div>
+-->
