@@ -10,11 +10,11 @@
     <div class="w-px h-6 bg-[#d1e6d9]"></div>
     <!-- Breadcrumb -->
   <nav class="flex items-center gap-2 text-sm bg-[#F6FBF8] px-2 rounded">
-  <span class="text-[#4A5C52]">Panel</span>
+  <a routerLink="/admin" class="text-[#4A5C52] hover:underline">Panel</a>
   <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
-  <span class="text-[#4A5C52]">Lista de Productos</span>
+  <a routerLink="/admin/products" class="text-[#4A5C52] hover:underline">Lista de Productos</a>
   <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
-  <span class="text-[#4A5C52] font-medium">Agregar Producto</span>
+  <span class="text-[#1C2B21] font-bold">Agregar Producto</span>
     </nav>
   </div>
 </div>
@@ -27,15 +27,22 @@
       </div>
 
       <!-- Formulario -->
-  <form class="flex-1 flex flex-col space-y-3">
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="flex-1 flex flex-col space-y-3">
         <div>
           <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="plant-name">Nombre de la Planta</label>
-          <input class="form-input block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] h-9 px-3 text-sm placeholder:text-[#9CA9A2]" id="plant-name" placeholder="Ej: Mandarina Criolla" type="text"/>
+          <input formControlName="nombre" class="form-input block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] h-9 px-3 text-sm placeholder:text-[#9CA9A2]" id="plant-name" placeholder="Ej: Mandarina Criolla" type="text"/>
+          <p *ngIf="isFieldInvalid('nombre')" class="mt-1 text-sm text-red-600">El nombre es requerido</p>
         </div>
         
         <div>
           <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="description">Descripción</label>
-          <textarea class="form-textarea block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] min-h-20 p-3 text-sm placeholder:text-[#9CA9A2]" id="description" placeholder="Proporciona una breve descripción de la planta."></textarea>
+          <textarea formControlName="descripcion" class="form-textarea block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] min-h-20 p-3 text-sm placeholder:text-[#9CA9A2]" id="description" placeholder="Proporciona una breve descripción de la planta."></textarea>
+          <p *ngIf="isFieldInvalid('descripcion')" class="mt-1 text-sm text-red-600">La descripción es requerida</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="informacion_extra">Información Extra</label>
+          <textarea formControlName="informacion_extra" class="form-textarea block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] min-h-16 p-3 text-sm placeholder:text-[#9CA9A2]" id="informacion_extra" placeholder="Información adicional sobre la planta (opcional)"></textarea>
         </div>
 
         <!-- Imágenes -->
@@ -43,9 +50,9 @@
           <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="multiple_files">Imágenes</label>
           <div class="flex w-full">
             <input
+              formControlName="imagen_url"
               type="text"
               id="file-name"
-              readonly
               placeholder="Sin archivos seleccionados"
               class="form-input flex-1 rounded-l-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] h-10 px-4 text-sm placeholder:text-[#9CA9A2]"
             />
@@ -54,31 +61,34 @@
               <input id="multiple_files" type="file" multiple accept="image/png,image/jpeg" class="hidden" aria-describedby="images-help" onchange="document.getElementById('file-name').value = Array.from(this.files).map(f => f.name).join(', ') || 'Sin archivos seleccionados'" />
             </label>
           </div>
+          <p *ngIf="isFieldInvalid('imagen_url')" class="mt-1 text-sm text-red-600">La imagen es requerida</p>
           <p id="images-help" class="mt-1 text-xs text-[#4A5C52]">Puedes seleccionar una o varias imágenes (JPG, PNG).</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="category">Categoría</label>
-              <select class="form-select block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-black focus:border-black[#38e07b] h-10 px-4 text-sm text-[#4A5C52]" id="category">
-              <option disabled="" selected="">Seleccionar Categoría</option>
-              <option>Mandarinas</option>
-              <option>Uvas</option>
-              <option>Tunas</option>
-              <option>Higos</option>
+            <select formControlName="categoria_id" class="form-select block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-black focus:border-black[#38e07b] h-10 px-4 text-sm text-[#4A5C52]" id="category">
+              <option value="">Seleccionar Categoría</option>
+              <option value="1">Mandarinas</option>
+              <option value="2">Uvas</option>
+              <option value="3">Tunas</option>
+              <option value="4">Higos</option>
             </select>
+            <p *ngIf="isFieldInvalid('categoria_id')" class="mt-1 text-sm text-red-600">La categoría es requerida</p>
           </div>
           
           <div>
             <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="season">Temporada</label>
-              <select class="form-select block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-black focus:border-[#38e07b] h-10 px-4 text-sm text-[#4A5C52]" id="season">
-              <option disabled="" selected="">Seleccionar Temporada</option>
-              <option>Noviembre - Diciembre</option>
-              <option>Abril - Mayo - Junio</option>
-              <option>Diciembre- Enero</option>
-              <option>Noviembre - Diciembre - Enero</option>
-              <option>Todo el año</option>
+            <select formControlName="temporada_id" class="form-select block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-black focus:border-[#38e07b] h-10 px-4 text-sm text-[#4A5C52]" id="season">
+              <option value="">Seleccionar Temporada</option>
+              <option value="1">Noviembre - Diciembre</option>
+              <option value="2">Abril - Mayo - Junio</option>
+              <option value="3">Diciembre- Enero</option>
+              <option value="4">Noviembre - Diciembre - Enero</option>
+              <option value="5">Todo el año</option>
             </select>
+            <p *ngIf="isFieldInvalid('temporada_id')" class="mt-1 text-sm text-red-600">La temporada es requerida</p>
           </div>
         </div>
         
