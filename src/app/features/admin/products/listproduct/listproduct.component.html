@@ -54,11 +54,13 @@
   <tr *ngFor="let producto of productosPaginados">
         <td class="px-5 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
           <div class="flex items-center gap-4">
-            <img
-              [alt]="producto.nombre"
-              class="h-10 w-10 rounded-full object-cover"
-              [src]="producto.imagenes && producto.imagenes.length ? producto.imagenes[0].url : 'assets/default.jpg'"
-            />
+            <div class="h-10 w-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-100">
+              <img
+                [alt]="producto.nombre"
+                class="h-full w-full object-cover"
+                [src]="producto.imagenes && producto.imagenes.length ? producto.imagenes[0].url : 'assets/default.jpg'"
+              />
+            </div>
             <span>{{ producto.nombre }}</span>
           </div>
         </td>
