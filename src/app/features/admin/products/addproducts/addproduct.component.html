@@ -19,30 +19,33 @@
   </div>
 </div>
 <!-- Contenido Principal -->
-<div class="max-w-2xl mx-auto h-full flex flex-col mt-10 px-3 sm:px-4 md:px-6">
+<div class="max-w-3xl mx-auto h-full flex flex-col mt-10 px-3 sm:px-4 md:px-6">
   <div class="mb-3">
   <h1 class="text-[#1C2B21] text-base font-bold leading-tight tracking-[-0.015em]">Agregar Nueva Planta</h1>
   <p class="text-[#4A5C52] mt-1 text-sm font-medium leading-normal">Completa los detalles a continuación para agregar una nueva planta al catálogo del vivero.</p>
-  <div class="border-t border-[#51946c] opacity-60 my-2"></div>
+  <div class="border-t border-[#51946c] opacity-60 my-2 w-full"></div>
       </div>
 
       <!-- Formulario -->
+      <div class="w-full">
   <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="flex-1 flex flex-col space-y-3">
         <div>
           <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="plant-name">Nombre de la Planta</label>
-          <input formControlName="nombre" class="form-input block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] h-9 px-3 text-sm placeholder:text-[#9CA9A2]" id="plant-name" placeholder="Ej: Mandarina Criolla" type="text"/>
+          <input formControlName="nombre" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-9 px-3 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200" id="plant-name" placeholder="Ej: Mandarina Criolla" type="text"/>
           <p *ngIf="isFieldInvalid('nombre')" class="mt-1 text-sm text-red-600">El nombre es requerido</p>
         </div>
         
         <div>
           <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="description">Descripción</label>
-          <textarea formControlName="descripcion" class="form-textarea block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] min-h-20 p-3 text-sm placeholder:text-[#9CA9A2]" id="description" placeholder="Proporciona una breve descripción de la planta."></textarea>
+          <textarea formControlName="descripcion" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 min-h-20 p-3 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200 resize-vertical" id="description" placeholder="Proporciona una breve descripción de la planta."></textarea>
           <p *ngIf="isFieldInvalid('descripcion')" class="mt-1 text-sm text-red-600">La descripción es requerida</p>
         </div>
 
         <div>
           <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="informacion_extra">Información Extra</label>
-          <textarea formControlName="informacion_extra" class="form-textarea block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] min-h-16 p-3 text-sm placeholder:text-[#9CA9A2]" id="informacion_extra" placeholder="Información adicional sobre la planta (opcional)"></textarea>
+          <textarea formControlName="informacion_extra" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 min-h-16 p-3 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200 resize-vertical" id="informacion_extra" placeholder="Información adicional sobre la planta."></textarea>
+          <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['minlength']" class="mt-1 text-sm text-red-600">Debe ingresar al menos 10 caracteres</p>
+          <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['required']" class="mt-1 text-sm text-red-600">La información extra es requerida</p>
         </div>
 
         <!-- Imágenes -->
@@ -54,7 +57,7 @@
               type="text"
               id="file-name"
               placeholder="Sin archivos seleccionados"
-              class="form-input flex-1 rounded-l-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-[#38e07b] focus:border-[#38e07b] h-10 px-4 text-sm placeholder:text-[#9CA9A2]"
+              class="flex-1 rounded-l-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200"
             />
             <label for="multiple_files" class="flex rounded-r-lg bg-[#4B7D63] text-[#FFFFFF] font-medium px-4 h-10 items-center cursor-pointer hover:bg-[#264B39] transition-colors text-sm">
               Elegir archivo
@@ -62,13 +65,13 @@
             </label>
           </div>
           <p *ngIf="isFieldInvalid('imagen_url')" class="mt-1 text-sm text-red-600">La imagen es requerida</p>
-          <p id="images-help" class="mt-1 text-xs text-[#4A5C52]">Puedes seleccionar una o varias imágenes (JPG, PNG).</p>
+          <p id="images-help" class="mt-1 text-xs text-[#4A5C52]">Puedes seleccionar una o varias imágenes (JPG, PNG, URL).</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="category">Categoría</label>
-            <select formControlName="categoria_id" class="form-select block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-black focus:border-black[#38e07b] h-10 px-4 text-sm text-[#4A5C52]" id="category">
+            <select formControlName="categoria_id" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm text-[#4A5C52] outline-none transition-all duration-200" id="category">
               <option value="">Seleccionar Categoría</option>
               <option value="1">Mandarinas</option>
               <option value="2">Uvas</option>
@@ -80,7 +83,7 @@
           
           <div>
             <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="season">Temporada</label>
-            <select formControlName="temporada_id" class="form-select block w-full rounded-lg border-[#D7E2DB] bg-white focus:ring-2 focus:ring-black focus:border-[#38e07b] h-10 px-4 text-sm text-[#4A5C52]" id="season">
+            <select formControlName="temporada_id" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm text-[#4A5C52] outline-none transition-all duration-200" id="season">
               <option value="">Seleccionar Temporada</option>
               <option value="1">Noviembre - Diciembre</option>
               <option value="2">Abril - Mayo - Junio</option>
@@ -101,4 +104,5 @@
           </button>
         </div>
       </form>
+      </div>
 </div>
