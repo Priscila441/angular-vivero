@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { Servicio } from '../../../../core/models/servicio.model';
 import { ServicioService } from '../../../../core/service/servicio.service';
+import { Categoria_servicio } from '../../../../core/models/categoria_servicio.model';
+import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
+import { CategoriaServicioService } from '../../../../core/service/categoria_servicio.service';
 
 @Component({
   selector: 'app-section-service',
@@ -14,11 +17,11 @@ import { ServicioService } from '../../../../core/service/servicio.service';
 export class SectionService implements OnInit {
   errorMessage: string = '';
   loading: boolean = true;
-  servicios: Servicio [] = [];
+  servicios: Categoria_servicio [] = [];
 
   constructor(
     private router: Router,
-    private servicioService  : ServicioService
+    private categoriaService  : CategoriaServicioService
   ) {}
 
   ngOnInit(): void {
@@ -27,7 +30,7 @@ export class SectionService implements OnInit {
 
   loadServices(){
     this.loading = true;
-    this.servicioService.getAll().subscribe({
+    this.categoriaService.getAll().subscribe({
       next: res => {
         this.servicios = res;
         this.loading = false;

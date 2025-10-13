@@ -4,6 +4,7 @@ import { Categoria_producto } from '../../../../core/models/categoria_producto.m
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
 import { RouterLink } from '@angular/router';
 import { Categoria_servicio } from '../../../../core/models/categoria_servicio.model';
+import { CategoriaServicioService } from '../../../../core/service/categoria_servicio.service';
 
 @Component({
   selector: 'app-navbar',
@@ -17,10 +18,10 @@ export class Navbar {
   categorias: Categoria_producto[] = [];
   categorias_servicio: Categoria_servicio[] = [];
 
-  constructor(private categoriaService: CategoriaProductoService) {}
+  constructor(private categoria: CategoriaProductoService, private categoriaService: CategoriaServicioService) {}
 
   ngOnInit(): void {
-    this.categoriaService.getAll().subscribe({
+    this.categoria.getAll().subscribe({
       next: res => this.categorias = res,
       error: () => this.categorias = []
     });
