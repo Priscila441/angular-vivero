@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
 
@@ -7,7 +8,7 @@ import { ProductoDetalles } from '../../../../core/models/producto_detalles.mode
 @Component({
   selector: 'app-listproduct',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './listproduct.component.html',
   styleUrls: ['./listproduct.component.css']
 })
