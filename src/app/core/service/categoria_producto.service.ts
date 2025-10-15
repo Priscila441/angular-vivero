@@ -1,7 +1,7 @@
 // src/app/core/services/categoria-producto.service.ts
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { Categoria_producto } from "../models/categoria_producto.models";
 import { environment } from "../../../environments/environment.development";
 
@@ -14,7 +14,9 @@ export class CategoriaProductoService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Categoria_producto[]> {
-    return this.http.get<Categoria_producto[]>(this.api_url);
+    return this.http.get<any>(this.api_url).pipe(
+      map(response => response.data)
+    );
   }
 
   getById(id: number): Observable<Categoria_producto> {

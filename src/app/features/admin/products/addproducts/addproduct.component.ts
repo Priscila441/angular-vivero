@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -13,13 +13,11 @@ import { ProductoService } from '../../../../core/service/producto.service';
 })
 
 // Definiciones de variable y estados del formulario 
-export class AddproductComponent implements OnInit, OnDestroy {
+export class AddproductComponent implements OnInit {
   productForm!: FormGroup;
   submitted = false;
   successMessage = '';
   errorMessage = '';
-  showSuccessModal = false;
-  private closeTimer: any;
 
   //Inyecccion de dependencias.
   constructor(private fb: FormBuilder, private productoService: ProductoService) {}
@@ -51,10 +49,9 @@ export class AddproductComponent implements OnInit, OnDestroy {
       };
       this.productoService.create(producto).subscribe({
         next: () => {
-          this.successMessage = 'Producto agregado con éxito.';
+          this.successMessage = 'Producto agregado correctamente';
           this.productForm.reset();
           this.submitted = false;
-          this.openSuccessModal();
         },
         error: (err) => {
           this.errorMessage = `Error al agregar el producto: ${err.status} - ${err.error?.message || err.error || 'Error desconocido'}`;
@@ -68,28 +65,5 @@ export class AddproductComponent implements OnInit, OnDestroy {
   isFieldInvalid(field: string): boolean {
     const control = this.productForm.get(field);
     return !!(control && control.invalid && this.submitted);
-  }
-
-  // Modal helpers
-  openSuccessModal() {
-    this.showSuccessModal = true;
-    if (this.closeTimer) {
-      clearTimeout(this.closeTimer);
-    }
-  this.closeTimer = setTimeout(() => this.closeSuccessModal(), 3000);
-  }
-
-  closeSuccessModal() {
-    this.showSuccessModal = false;
-    if (this.closeTimer) {
-      clearTimeout(this.closeTimer);
-      this.closeTimer = null;
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.closeTimer) {
-      clearTimeout(this.closeTimer);
-    }
   }
 }
