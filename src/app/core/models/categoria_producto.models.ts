@@ -5,4 +5,5 @@ export interface Categoria_producto {
     id_padre: number;
     imagen_url: string;
     imagen2_url: string;
+    subcategorias?: Categoria_producto[];
 }

@@ -21,7 +21,9 @@ export class ProductoService {
     }
 
     getAllDetalles(): Observable<ProductoDetalles[]> {
-        return this.http.get<ProductoDetalles[]>(this.api_url_detalles);
+        return this.http.get<ProductoDetalles[]>(this.api_url_detalles).pipe(
+            map(response => response || [])
+        );
     }
 
     getById(id : number): Observable<Producto>{
@@ -45,7 +47,9 @@ export class ProductoService {
     }
 
     getDetallesById(id: number): Observable<Producto> {
-        return this.http.get<Producto>(`${this.api_url + '/detalles'}/${id}`);
+        return this.http.get<Producto>(`${this.api_url + '/detalles'}/${id}`).pipe(
+            map(response => response || {})
+        );
     }
 
 }
