@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Categoria_producto } from '../../../../core/models/categoria_producto.models';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
-import { CategoriaServicioService } from '../../../../core/service/categoria_servicio.service';
 import { RouterLink } from '@angular/router';
 import { Categoria_servicio } from '../../../../core/models/categoria_servicio.model';
+import { CategoriaServicioService } from '../../../../core/service/categoria_servicio.service';
 
 @Component({
   selector: 'app-navbar',
@@ -22,12 +22,12 @@ export class Navbar {
 
   ngOnInit(): void {
     this.categoria.getAll().subscribe({
-      next: res => this.categorias = [res],
+      next: res => this.categorias = res,
       error: () => this.categorias = []
     });
 
     this.categoriaService.getAll().subscribe({
-      next: res => this.categorias_servicio = [res],
+      next: res => this.categorias_servicio = res,
       error: () => this.categorias_servicio = []
     });
   }

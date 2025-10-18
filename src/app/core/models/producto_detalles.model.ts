@@ -6,6 +6,7 @@ export interface ImagenProducto {
 }
 
 export interface ProductoDetalles {
+    id: number;
     nombre: string;
     descripcion: string;
     informacion_extra: string;

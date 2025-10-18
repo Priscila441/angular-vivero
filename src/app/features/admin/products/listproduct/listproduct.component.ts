@@ -46,6 +46,19 @@ export class Listproduct implements OnInit {
     }
   }
 
+    borrarProducto(id: number): void {
+      if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
+      this.productoService.delete(id).subscribe({
+        next: () => {
+          this.productos = this.productos.filter(p => p.id !== id);
+          this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
+        },
+        error: () => {
+          alert('Error al eliminar el producto.');
+        }
+      });
+    }
+
   // Métodos para la lógica del paginador
   get numerosPaginas(): number[] {
     return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);

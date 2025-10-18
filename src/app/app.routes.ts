@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { ProductList } from './features/public/components/product-list/product-list';
 import { ProductDetail } from './features/public/components/product-detail/product-detail';
 import { SectionPrincipal } from './features/public/section-principal/section-principal';
-import { PublicLayout } from './features/public-layout/public-layout';
+import { PublicLayout } from './features/public/public-layout/public-layout';
 
 
 export const routes: Routes = [

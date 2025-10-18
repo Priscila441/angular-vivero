@@ -14,10 +14,11 @@ export class CategoriaProductoService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Categoria_producto[]> {
-    return this.http.get<any>(this.api_url).pipe(
-      map(response => response.data)
-    );
-  }
+  return this.http.get<any>(this.api_url).pipe(
+    map(response => response.data)
+  );
+}
+
 
   getById(id: number): Observable<Categoria_producto> {
     return this.http.get<Categoria_producto>(`${this.api_url}/${id}`);

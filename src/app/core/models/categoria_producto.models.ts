@@ -6,4 +6,3 @@ export interface Categoria_producto {
     imagen_url: string;
     imagen2_url: string;
 }
-
