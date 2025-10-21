@@ -12,7 +12,7 @@ import { environment } from "../../../environments/environment.development";
 
 export class ProductoService {
     private readonly api_url = environment.API_URL + '/productos';
-    private readonly api_url_detalles = environment.API_URL + '/productos/detalles';
+    private readonly api_url_completos = environment.API_URL + '/productos/completos';
 
     constructor(private http: HttpClient) {}
 
@@ -21,7 +21,10 @@ export class ProductoService {
     }
 
     getAllDetalles(): Observable<ProductoDetalles[]> {
-        return this.http.get<ProductoDetalles[]>(this.api_url_detalles);
+        return this.http.get<{ success: boolean; data: ProductoDetalles[] }>(this.api_url_completos)
+            .pipe(
+                map(response => response.data)
+            );
     }
 
     getById(id : number): Observable<Producto>{

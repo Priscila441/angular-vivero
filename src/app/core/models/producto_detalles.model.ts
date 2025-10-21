@@ -5,12 +5,25 @@ export interface ImagenProducto {
     orden: number;
 }
 
+export interface Categoria {
+    id: number;
+    nombre: string;
+}
+
+export interface Temporada {
+    id: number;
+    nombre: string;
+}
+
 export interface ProductoDetalles {
     id: number;
     nombre: string;
     descripcion: string;
     informacion_extra: string;
-    nombre_categoria: string;
-    nombre_temporada: string;
+    esta_activo: boolean;
+    categoria_id: number;
+    temporada_id: number;
+    categoria: Categoria;
+    temporada: Temporada;
     imagenes: ImagenProducto[];
 }
