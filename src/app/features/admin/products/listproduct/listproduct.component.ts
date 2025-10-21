@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
 
@@ -7,7 +8,7 @@ import { ProductoDetalles } from '../../../../core/models/producto_detalles.mode
 @Component({
   selector: 'app-listproduct',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './listproduct.component.html',
   styleUrls: ['./listproduct.component.css']
 })
@@ -19,6 +20,7 @@ export class Listproduct implements OnInit {
   totalPaginas: number = 1;
   infoSeleccionada: string | null = null;
   descripcionSeleccionada: string | null = null;
+  filtroBusqueda: string = '';
 
   constructor(private productoService: ProductoService) {}
 
@@ -30,8 +32,15 @@ export class Listproduct implements OnInit {
   }
 
   get productosPaginados(): ProductoDetalles[] {
+    let filtrados = this.productos;
+    if (this.filtroBusqueda.trim() !== '') {
+      const filtro = this.filtroBusqueda.trim().toLowerCase();
+      filtrados = this.productos.filter(p =>
+        p.nombre?.toLowerCase().includes(filtro)
+      );
+    }
     const inicio = (this.paginaActual - 1) * this.tamanioPagina;
-    return this.productos.slice(inicio, inicio + this.tamanioPagina);
+    return filtrados.slice(inicio, inicio + this.tamanioPagina);
   }
 
   siguientePagina(): void {
@@ -48,6 +57,9 @@ export class Listproduct implements OnInit {
 
     borrarProducto(id: number): void {
       if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
+      console.log('ID recibido para borrar:', id);
+      const producto = this.productos.find(p => p.id === id);
+      console.log('Producto a borrar:', producto);
       this.productoService.delete(id).subscribe({
         next: () => {
           this.productos = this.productos.filter(p => p.id !== id);
