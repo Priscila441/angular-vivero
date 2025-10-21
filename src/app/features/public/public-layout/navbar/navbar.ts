@@ -29,7 +29,7 @@ export class Navbar {
     this.categoriaService.getAll().subscribe({
       next: res => this.categorias_servicio = res,
       error: () => this.categorias_servicio = []
-    })
+    });
   }
 
   toggleMenu() {

@@ -18,6 +18,7 @@ export class AddproductComponent implements OnInit {
   submitted = false;
   successMessage = '';
   errorMessage = '';
+  showSuccessModal = false;
 
   //Inyecccion de dependencias.
   constructor(private fb: FormBuilder, private productoService: ProductoService) {}
@@ -35,9 +36,10 @@ export class AddproductComponent implements OnInit {
   }
 
   onSubmit() {
-    this.submitted = true;
-    this.successMessage = '';
-    this.errorMessage = '';
+  this.submitted = true;
+  this.successMessage = '';
+  this.errorMessage = '';
+  this.showSuccessModal = false;
 
     // Verificacion de validez del formulario.
     if (this.productForm.valid) {
@@ -50,8 +52,12 @@ export class AddproductComponent implements OnInit {
       this.productoService.create(producto).subscribe({
         next: () => {
           this.successMessage = 'Producto agregado correctamente';
-          this.productForm.reset();
-          this.submitted = false;
+          this.showSuccessModal = true;
+          setTimeout(() => {
+            this.showSuccessModal = false;
+            this.productForm.reset();
+            this.submitted = false;
+          }, 2000);
         },
         error: (err) => {
           this.errorMessage = `Error al agregar el producto: ${err.status} - ${err.error?.message || err.error || 'Error desconocido'}`;
@@ -65,5 +71,9 @@ export class AddproductComponent implements OnInit {
   isFieldInvalid(field: string): boolean {
     const control = this.productForm.get(field);
     return !!(control && control.invalid && this.submitted);
+  }
+
+  closeSuccessModal(): void {
+    this.showSuccessModal = false;
   }
 }
