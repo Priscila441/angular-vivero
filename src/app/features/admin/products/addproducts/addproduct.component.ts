@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -13,15 +13,20 @@ import { ProductoService } from '../../../../core/service/producto.service';
 })
 
 // Definiciones de variable y estados del formulario 
-export class AddproductComponent implements OnInit {
+export class AddproductComponent implements OnInit, OnDestroy {
   productForm!: FormGroup;
   submitted = false;
   successMessage = '';
   errorMessage = '';
   showSuccessModal = false;
+  private closeTimer: any;
 
   //Inyecccion de dependencias.
-  constructor(private fb: FormBuilder, private productoService: ProductoService) {}
+  constructor(
+    private fb: FormBuilder, 
+    private productoService: ProductoService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   // Creacion del formulario con validaciones.
   ngOnInit() {
@@ -36,10 +41,9 @@ export class AddproductComponent implements OnInit {
   }
 
   onSubmit() {
-  this.submitted = true;
+    this.submitted = true;
   this.successMessage = '';
   this.errorMessage = '';
-  this.showSuccessModal = false;
 
     // Verificacion de validez del formulario.
     if (this.productForm.valid) {
@@ -49,15 +53,11 @@ export class AddproductComponent implements OnInit {
         temporada_id: Number(this.productForm.value.temporada_id),
         informacion_extra: this.productForm.value.informacion_extra || ''
       };
+      
       this.productoService.create(producto).subscribe({
-        next: () => {
-          this.successMessage = 'Producto agregado correctamente';
-          this.showSuccessModal = true;
-          setTimeout(() => {
-            this.showSuccessModal = false;
-            this.productForm.reset();
-            this.submitted = false;
-          }, 2000);
+        next: (response) => {
+          this.successMessage = 'Producto agregado con éxito.';
+          this.openSuccessModal();
         },
         error: (err) => {
           this.errorMessage = `Error al agregar el producto: ${err.status} - ${err.error?.message || err.error || 'Error desconocido'}`;
@@ -67,13 +67,40 @@ export class AddproductComponent implements OnInit {
       this.errorMessage = 'Por favor completa todos los campos requeridos';
     }
   }
+  
  // Metodo para verificar si un campo es invalido y mostrar mensajes de error.
   isFieldInvalid(field: string): boolean {
     const control = this.productForm.get(field);
     return !!(control && control.invalid && this.submitted);
   }
 
-  closeSuccessModal(): void {
+  // Modal helpers
+  openSuccessModal() {
+    this.showSuccessModal = true;
+    // Forzar detección de cambios
+    this.cdr.detectChanges();
+    
+    if (this.closeTimer) {
+      clearTimeout(this.closeTimer);
+    }
+    this.closeTimer = setTimeout(() => this.closeSuccessModal(), 3000);
+  }
+
+  closeSuccessModal() {
     this.showSuccessModal = false;
+    if (this.closeTimer) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
+    }
+    this.productForm.reset();
+    this.submitted = false;
+    // Forzar detección de cambios después de cerrar
+    this.cdr.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    if (this.closeTimer) {
+      clearTimeout(this.closeTimer);
+    }
   }
 }

@@ -109,3 +109,20 @@
   </div>
 </div>
 
+<!-- Modal de éxito -->
+<div *ngIf="showSuccessModal" class="fixed inset-0 z-50">
+  <!-- Overlay con blur -->
+  <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity"></div>
+  <!-- Contenedor del modal -->
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div role="alert" aria-live="polite" class="flex items-start gap-3 w-full max-w-md p-4 text-green-800 rounded-xl bg-green-50 shadow-lg ring-1 ring-green-200 animate-in fade-in zoom-in duration-200">
+      <span class="material-symbols-outlined text-2xl leading-none shrink-0" aria-hidden="true">check_circle</span>
+      <div class="flex-1 text-sm font-medium">
+        {{ successMessage || 'Producto agregado con éxito.' }}
+      </div>
+      <button type="button" (click)="closeSuccessModal()" class="ml-2 inline-flex items-center justify-center rounded-md text-green-900/80 hover:text-green-900 focus:outline-none focus:ring-2 focus:ring-green-400">
+        <span class="material-symbols-outlined text-base">close</span>
+      </button>
+    </div>
+  </div>
+</div>
