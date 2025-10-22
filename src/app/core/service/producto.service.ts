@@ -46,9 +46,9 @@ export class ProductoService {
         return this.http.delete<void>(`${this.api_url}/${id}`);
     }
 
-    getDetallesById(id: number): Observable<Producto> {
-        return this.http.get<Producto>(`${this.api_url + '/detalles'}/${id}`).pipe(
-            map(response => response || {})
+    getDetallesById(id: number): Observable<ProductoDetalles> {
+        return this.http.get<any>(`${this.api_url}/detalles/${id}`).pipe(
+            map(response => response?.data || {})
         );
     }
 

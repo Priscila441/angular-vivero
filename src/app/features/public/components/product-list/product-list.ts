@@ -5,12 +5,10 @@ import { ProductoService } from '../../../../core/service/producto.service';
 import { Producto } from '../../../../core/models/producto.model';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Sidebar } from "./sidebar/sidebar";
 import { Categoria_producto } from '../../../../core/models/categoria_producto.models';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
 import { catchError, forkJoin, map, of, Subscription } from 'rxjs';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
-import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 
 @Component({
