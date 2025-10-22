@@ -21,7 +21,7 @@ export class ProductList implements OnInit{
   private router = inject(Router);
   private service = inject(CategoriaProductoService);
   private productService = inject(ProductoService);
-
+  
   
   loading = true;
   selectedCategory: Categoria_producto | null = null;
@@ -42,6 +42,7 @@ export class ProductList implements OnInit{
 
   // subs
   private subs: Subscription[] = [];
+
 
   ngOnInit(): void {
     // set card width responsive (4 en desktop, 3 en mobile)
