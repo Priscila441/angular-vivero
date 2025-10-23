@@ -48,7 +48,7 @@ export class ProductoService {
 
     getDetallesById(id: number): Observable<ProductoDetalles> {
         return this.http.get<any>(`${this.api_url}/detalles/${id}`).pipe(
-            map(response => response?.data || {})
+            map(response => response || {})
         );
     }
 
