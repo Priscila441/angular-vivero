@@ -130,6 +130,52 @@
   </button>
 </nav>
 
+<!-- Modal de confirmación de borrado -->
+<div *ngIf="ModalBorrar" class="fixed inset-0 z-50">
+  <!-- Overlay con blur -->
+  <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity"></div>
+  
+  <!-- Contenedor del modal -->
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div 
+      role="dialog" 
+      aria-labelledby="modal-title" 
+      aria-modal="true"
+      class="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl animate-in fade-in zoom-in duration-200">
+      
+      <div class="flex flex-col items-center text-center">
+        
+        <div class="mb-4 flex size-12 items-center justify-center rounded-full bg-red-100">
+          <span class="material-symbols-outlined text-2xl text-red-600"> delete </span>
+        </div>
+        
+        <h3 id="modal-title" class="text-lg font-semibold text-gray-900">
+          ¿Quieres borrar {{ productoABorrar?.nombre }}?
+        </h3>
+        <p class="mt-2 text-sm text-gray-500">
+          Esta acción eliminara el producto de la pagina web.
+        </p>
+        
+        <div class="mt-6 flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-center">
+          
+          <button 
+            (click)="cancelarBorrado()"
+            class="h-10 min-w-[84px] items-center justify-center rounded-md border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50">
+            Cancelar
+          </button>
+          
+          <button 
+            (click)="confirmarBorrado()"
+            class="h-10 min-w-[84px] items-center justify-center rounded-md bg-red-600 px-4 text-sm font-semibold text-white shadow-sm hover:bg-red-700">
+            Confirmar
+          </button>
+          
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal para descripción -->
 <!--<div *ngIf="descripcionSeleccionada" class="fixed inset-0 flex items-center justify-center z-50">

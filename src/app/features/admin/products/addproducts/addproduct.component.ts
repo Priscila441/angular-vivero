@@ -21,7 +21,7 @@ export class AddproductComponent implements OnInit, OnDestroy {
   showSuccessModal = false;
   private closeTimer: any;
 
-  //Inyecccion de dependencias.
+  //Inyecccion de dependencias (Agrego el ChangeDetectorRef porque no me detecta el cambio en el modal).
   constructor(
     private fb: FormBuilder, 
     private productoService: ProductoService,
@@ -74,7 +74,6 @@ export class AddproductComponent implements OnInit, OnDestroy {
     return !!(control && control.invalid && this.submitted);
   }
 
-  // Modal helpers
   openSuccessModal() {
     this.showSuccessModal = true;
     // Forzar detección de cambios

@@ -21,6 +21,8 @@ export class Listproduct implements OnInit {
   infoSeleccionada: string | null = null;
   descripcionSeleccionada: string | null = null;
   filtroBusqueda: string = '';
+  ModalBorrar: boolean = false;
+  productoABorrar: ProductoDetalles | null = null;
 
   constructor(private productoService: ProductoService) {}
 
@@ -56,17 +58,32 @@ export class Listproduct implements OnInit {
   }
 
     borrarProducto(id: number): void {
-      if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
-      console.log('ID recibido para borrar:', id);
       const producto = this.productos.find(p => p.id === id);
-      console.log('Producto a borrar:', producto);
-      this.productoService.delete(id).subscribe({
+      if (producto) {
+        this.productoABorrar = producto;
+        this.ModalBorrar = true;
+      }
+    }
+
+    cancelarBorrado(): void {
+      this.ModalBorrar = false;
+      this.productoABorrar = null;
+    }
+
+    confirmarBorrado(): void {
+      if (this.productoABorrar === null) return;
+      
+      this.productoService.delete(this.productoABorrar.id).subscribe({
         next: () => {
-          this.productos = this.productos.filter(p => p.id !== id);
+          this.productos = this.productos.filter(p => p.id !== this.productoABorrar!.id);
           this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
+          this.ModalBorrar = false;
+          this.productoABorrar = null;
         },
         error: () => {
           alert('Error al eliminar el producto.');
+          this.ModalBorrar = false;
+          this.productoABorrar = null;
         }
       });
     }
