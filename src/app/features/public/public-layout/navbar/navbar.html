@@ -39,7 +39,7 @@
             </button>
 
             @if (showProductDropdown) {
-              <ul class="absolute left-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-50">
+              <ul class="absolute left-0 mt-2 w-48 bg-white border  border-gray-200 rounded-md shadow-lg z-50">
                 @for (cat of categorias; track cat.id) {
                   <li>
                     <a [routerLink]="['/productos', cat.id]" (click)="closeDropdown()" class="block px-4 py-2 hover:bg-green-100">
