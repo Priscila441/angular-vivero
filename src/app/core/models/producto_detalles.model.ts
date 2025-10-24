@@ -5,15 +5,6 @@ export interface ImagenProducto {
     orden: number;
 }
 
-export interface Categoria {
-    id: number;
-    nombre: string;
-}
-
-export interface Temporada {
-    id: number;
-    nombre: string;
-}
 
 export interface ProductoDetalles {
     id: number;
@@ -23,7 +14,7 @@ export interface ProductoDetalles {
     esta_activo: boolean;
     categoria_id: number;
     temporada_id: number;
-    categoria: Categoria;
-    temporada: Temporada;
+    nombre_categoria: string;
+    nombre_temporada: string;
     imagenes: ImagenProducto[];
 }

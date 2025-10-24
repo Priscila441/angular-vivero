@@ -70,10 +70,10 @@
         <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500 max-w-[180px] truncate cursor-pointer" (mouseenter)="infoSeleccionada = producto.informacion_extra" (mouseleave)="infoSeleccionada = null">
           {{ producto.informacion_extra | slice:0:40 }}<span *ngIf="producto.informacion_extra.length > 40">...</span>
         </td>
-        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500">{{ producto.categoria.nombre }}</td>
+        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500">{{ producto.nombre_categoria }}</td>
         <td class="px-5 py-3 whitespace-nowrap text-sm">
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
-            {{ producto.temporada.nombre }}
+            {{ producto.nombre_temporada }}
           </span>
         </td>
         <td class="px-5 py-3 whitespace-nowrap text-right text-sm font-medium">
