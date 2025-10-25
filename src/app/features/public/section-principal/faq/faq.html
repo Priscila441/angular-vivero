@@ -1,1 +1,39 @@
-<p>faq works!</p>
+<div class="py-20 bg-gradient-to-br from-green-50 to-green-100">
+  <div class="max-w-6xl mx-auto m-6 px-4 text-center rounded-md bg-white shadow-lg p-6">
+    
+    <!-- Título -->
+    <h2 class="text-3xl md:text-4xl font-bold text-green-800 mb-4">
+      Preguntas Frecuentes
+    </h2>
+    <p class="text-gray-600 mb-12">
+      Resolvemos tus dudas más comunes para acompañarte mejor 🌱
+    </p>
+
+    <!-- Accordion Angular -->
+    <div class="text-left">
+      <div *ngFor="let f of faqs; let i = index" class="mb-4 border rounded-lg shadow">
+        
+        <button 
+          (click)="toggle(i)"
+          class="flex items-center justify-between w-full p-5 font-medium text-green-800 border border-b-0 border-green-200 rounded-t-xl focus:ring-4 focus:ring-green-200 hover:bg-green-100 gap-3 transition-all duration-200"
+        >
+          <span>{{ f.pregunta }}</span>
+          <svg 
+            class="w-3 h-3 shrink-0 transition-transform duration-200" 
+            [class.rotate-180]="openIndex === i"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"
+          >
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
+          </svg>
+        </button>
+
+        <div *ngIf="openIndex === i" class="p-5 border border-t-0 border-green-200 bg-white rounded-b-lg shadow transition-all duration-200">
+          <p class="text-gray-600">
+            {{ f.respuesta }}
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

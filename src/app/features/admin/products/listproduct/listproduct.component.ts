@@ -27,7 +27,7 @@ export class Listproduct implements OnInit {
   constructor(private productoService: ProductoService) {}
 
   ngOnInit(): void {
-    this.productoService.getAllDetalles().subscribe((data: ProductoDetalles[]) => {
+    this.productoService.getAllDetallesCompletos().subscribe((data: ProductoDetalles[]) => {
       this.productos = data;
       this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
     });

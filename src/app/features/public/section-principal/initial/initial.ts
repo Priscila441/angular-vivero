@@ -30,31 +30,32 @@ interface InfoCard {
 })
 export class Initial implements OnInit, OnDestroy {
 cardData: InfoCard[] = [
-    {
-      title: "Plantas de Temporada",
-      description: "Descubre nuestra selección de plantas ideales para esta estación. Perfectas para dar color a tu jardín.",
-      buttonText: "Ver plantas",
-      color: "green"
-    },
-    {
-      title: "Ofertas Especiales",
-      description: "Aprovecha nuestros descuentos en herramientas de jardinería. Hasta 40% de descuento en seleccionados.",
-      buttonText: "Ver ofertas",
-      color: "amber"
-    },
-    {
-      title: "Asesoramiento Expertos",
-      description: "Nuestros especialistas te ayudarán a elegir las mejores plantas para tu espacio y clima.",
-      buttonText: "Solicitar asesoría",
-      color: "blue"
-    },
-    {
-      title: "Envíos a Domicilio",
-      description: "Ahora hacemos envíos a toda la zona. Recibe tus plantas en perfectas condiciones.",
-      buttonText: "Más información",
-      color: "purple"
-    }
-  ];
+  {
+    title: "Maquinaria y Herramientas",
+    description: "Contamos con equipamiento especializado para facilitar el trabajo en tú vivero. ¡Consulta nuestras opciones de alquiler por hora!",
+    buttonText: "Ver más",
+    color: "green"
+  },
+  {
+    title: "Amplia Superficie",
+    description: "Nuestro vivero se extiende sobre 13 hectáreas, ofreciendo el espacio ideal para la producción de plantas y árboles de todo tipo.",
+    buttonText: "Explorar vivero",
+    color: "amber"
+  },
+  {
+    title: "Variedad de Productos",
+    description: "Desde frutas de estación hasta árboles autóctonos y ornamentales, tenemos todo lo que tu jardín o emprendimiento necesita.",
+    buttonText: "Descubrir productos",
+    color: "blue"
+  },
+  {
+    title: "Historia y Tradición",
+    description: "Con décadas de trayectoria, nuestro vivero combina experiencia y nuevas alternativas de producción para ofrecer lo mejor a nuestros clientes.",
+    buttonText: "Conocer historia",
+    color: "purple"
+  }
+];
+
 
   getColorClass(color: string): string {
     switch(color) {

@@ -1,63 +1,102 @@
-<div class="min-h-screen bg-gradient-to-br from-yellow-100 to-orange-100 py-20 px-8">
-  
-  <!-- Loading -->
-  @if (loading) {
-    <div class="flex justify-center items-center h-60">
-      <span class="text-green-700 font-semibold text-xl animate-pulse">
-        Cargando productos...
-      </span>
-    </div>
-  }
+<div class="container mx-auto px-4 py-6 pt-20">
+  <!-- Loading inicio -->
+  @if (loading; as isLoading) {
+    <div class="text-center py-8">Cargando productos...</div>
+  } @else {
 
-  <!-- Error -->
-  @if (!loading && errorMessage) {
-    <div class="flex justify-center items-center h-60">
-      <span class="text-red-600 font-medium text-lg">
-        {{ errorMessage }}
-      </span>
-    </div>
-  }
+    <!-- Categoría principal (la seleccionada por URL) -->
+    @if (selectedCategory; as cat) {
+      <section class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-2xl font-semibold">{{ cat.nombre }}</h2>
+          <div class="flex gap-2 items-center">
+            <button (click)="prev(cat.id)" class="p-2 rounded-full hover:bg-slate-100" aria-label="Anterior">
+              ‹
+            </button>
+            <button (click)="next(cat.id)" class="p-2 rounded-full hover:bg-slate-100" aria-label="Siguiente">
+              ›
+            </button>
+          </div>
+        </div>
 
-  <!-- Productos -->
-  @if (!loading && products.length > 0) {
-    <div class="max-w-6xl mx-auto">
+        <!-- Carrusel de la categoría seleccionada -->
+        <div class="overflow-hidden">
+          <div class="flex transition-transform duration-300"
+               [style.transform]="'translateX(' + -getOffset(cat.id) + 'px)'">
+            @for (prod of displayedProductsByCategory(cat.id); track prod.id) {
+              <a [routerLink]="['/producto', prod.id]" class="block shrink-0 px-2"
+                 [style.width.px]="cardWidth">
+                <div class="w-full">
+                  <div class="relative overflow-hidden aspect-[4/3]">
+                    @if (productImage(prod.id); as img) {
+                      <img [src]="img" [alt]="prod.nombre" class="object-cover w-full h-full transition-all duration-200" />
+                    } @else {
+                      <div class="bg-slate-100 w-full h-full flex items-center justify-center text-sm">
+                        Sin imagen
+                      </div>
+                    }
+                    @if (hoverSecondImageMap[prod.id]) {
+                      <img [src]="hoverSecondImageMap[prod.id]"
+                           class="absolute inset-0 object-cover w-full h-full opacity-0 hover:opacity-100 transition-opacity duration-200" />
+                    }
+                  </div>
+                  <div class="mt-2">
+                    <h3 class="text-base font-medium truncate">{{ prod.nombre }}</h3>
+                    <p class="text-sm text-slate-600 line-clamp-2">{{ prod.descripcion }}</p>
+                  </div>
+                </div>
+              </a>
+            }
+          </div>
+        </div>
+      </section>
+    }
 
-      <!-- Título de la sección -->
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-extrabold text-green-800 mb-3">Nuestros productos</h2>
-        <p class="text-gray-600 text-lg">Elegí entre nuestra selección de productos frescos y de calidad</p>
-      </div>
-
-      <!-- Grid adaptable -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-        @for (product of products; track product.id) {
-          <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden group">
-            
-            <!-- Imagen -->
-            <div class="relative aspect-[4/3] bg-green-50 overflow-hidden">
-              <img [src]='product.imagen_url || "mandarinas.jpg"'
-                   alt="{{ product.nombre }}" 
-                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                   (click)="goToProduct(product.id)" />
-            </div>
-            
-            <!-- Contenido -->
-            <div class="flex flex-col flex-grow p-6">
-              <h3 class="font-bold text-green-800 text-xl mb-2 truncate">
-                {{ product.nombre }}
-              </h3>
-              <p class="text-gray-600 text-sm line-clamp-2 flex-grow">
-                {{ product.descripcion }}
-              </p>
-
-              <button class="mt-6 w-full py-3 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors"
-                      (click)="$event.stopPropagation()">
-                Agregar a consulta
-              </button>
+    <!-- Resto de categorías -->
+    <section>
+      @for (cat of allCategories; track cat.id) {
+        <article class="mb-10">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-semibold">{{ cat.nombre }}</h3>
+            <div class="flex gap-2 items-center">
+              <button (click)="prev(cat.id)" class="p-2 rounded-full hover:bg-slate-100">‹</button>
+              <button (click)="next(cat.id)" class="p-2 rounded-full hover:bg-slate-100">›</button>
             </div>
           </div>
-        }
-      </div>
-    </div>
+
+          <div class="overflow-hidden">
+            <div class="flex transition-transform duration-300"
+                 [style.transform]="'translateX(' + -getOffset(cat.id) + 'px)'">
+              @for (prod of displayedProductsByCategory(cat.id); track prod.id) {
+                <a [routerLink]="['/producto', prod.id]" class="block shrink-0 px-2"
+                   [style.width.px]="cardWidth">
+                  <div class="w-full">
+                    <div class="relative overflow-hidden aspect-[4/3]">
+                      @if (productImage(prod.id); as img) {
+                        <img [src]="img" [alt]="prod.nombre"
+                             class="object-cover w-full h-full transition-all duration-200" />
+                      } @else {
+                        <div class="bg-slate-100 w-full h-full flex items-center justify-center text-sm">
+                          Sin imagen
+                        </div>
+                      }
+                      @if (hoverSecondImageMap[prod.id]) {
+                        <img [src]="hoverSecondImageMap[prod.id]"
+                             class="absolute inset-0 object-cover w-full h-full opacity-0 hover:opacity-100 transition-opacity duration-200" />
+                      }
+                    </div>
+                    <div class="mt-2">
+                      <h4 class="text-base font-medium truncate">{{ prod.nombre }}</h4>
+                      <p class="text-sm text-slate-600 line-clamp-2">{{ prod.descripcion }}</p>
+                    </div>
+                  </div>
+                </a>
+              }
+            </div>
+          </div>
+        </article>
+      }
+    </section>
+
   }
 </div>

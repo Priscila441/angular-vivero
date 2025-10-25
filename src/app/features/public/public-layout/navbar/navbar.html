@@ -1,4 +1,4 @@
-<nav class="fixed z-50 w-full border-gray-200 dark:bg-gray-900 bg-white">
+<nav class="fixed z-50 w-full  border-gray-200  bg-white">
   <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-2">
     <!-- Logo -->
     <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -6,7 +6,7 @@
     </a>
 
     <!-- Botón Hamburguesa -->
-    <button (click)="toggleMenu()" class="md:hidden p-2 rounded-lg text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+    <button (click)="toggleMenu()" class="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 ">
       <!-- Ícono hamburguesa -->
       @if (!showMenu) {
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -26,12 +26,12 @@
         <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
 
           <li class="pt-2 pr-6">
-            <a routerLink="/home" class="dark:text-white hover:text-green-600 transition-colors duration-300">Home</a>
+            <a routerLink="" class=" hover:text-green-600 transition-colors duration-300">Home</a>
           </li>
 
           <!-- Dropdown Productos -->
           <li class="relative">
-            <button (click)="toggleProductDropdown()" class="flex items-center px-3 py-2 font-medium text-gray-900 dark:text-white hover:text-green-600 transition-colors duration-300">
+            <button (click)="toggleProductDropdown()" class="flex items-center px-3 py-2 font-medium text-gray-900  hover:text-green-600 transition-colors duration-300">
               Productos
               <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
@@ -53,7 +53,7 @@
 
           <!-- Dropdown Servicios -->
           <li class="relative">
-            <button (click)="toggleServiceDropdown()" class="flex items-center px-3 py-2 font-medium text-gray-900 dark:text-white hover:text-green-600 transition-colors duration-300">
+            <button (click)="toggleServiceDropdown()" class="flex items-center px-3 py-2 font-medium text-gray-900 hover:text-green-600 transition-colors duration-300">
               Servicios
               <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
@@ -61,7 +61,7 @@
             </button>
 
             @if (showServiceDropdown) {
-              <ul class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg dark:bg-gray-800 z-50">
+              <ul class="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg ">
                 @for (cat of categorias_servicio; track cat.id) {
                   <li>
                     <a [routerLink]="['/categorias', cat.id]" (click)="closeDropdown()" class="block px-4 py-2 hover:bg-green-100">
@@ -74,14 +74,14 @@
           </li>
 
           <li class="pt-2">
-            <a routerLink="/sobre-nosotros" class="text-gray-900 dark:text-white hover:text-green-600 transition-colors duration-300">Sobre Nosotros</a>
+            <a routerLink="/sobre-nosotros" class="text-gray-900 hover:text-green-600 transition-colors duration-300">Sobre Nosotros</a>
           </li>
         </ul>
       </div>
 
       <!-- Contacto e Inicio Desktop -->
       <div class="hidden md:flex items-center space-x-6 rtl:space-x-reverse">
-        <a href="tel:5541251234" class="text-sm text-gray-500 dark:text-white hover:text-green-600">Contacto</a>
+        <a href="tel:5541251234" class="text-sm text-gray-500 hover:text-green-600">Contacto</a>
         <a routerLink="/home" class="px-4 py-2 rounded-full bg-green-600 text-white text-sm font-medium hover:bg-green-700">Inicio</a>
       </div>
     }
@@ -90,7 +90,7 @@
 
   <!-- Menú Móvil -->
   @if (showMenu) {
-    <div class="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+    <div class="md:hidden bg-white border-t border-gray-200">
       <ul class="flex flex-col p-4 space-y-3 text-sm font-medium">
         <li><a routerLink="/home" class="block py-2">Home</a></li>
 

@@ -61,12 +61,28 @@ export class SectionProduct {
   }
 
   goToCategory(categoryId: number) {
-    const productsInCategory = this.productos.filter(p => p.categoria_id === categoryId);
-    if (productsInCategory.length === 1){
-      this.router.navigate(['/producto', productsInCategory[0].id]);
-    }
-    else{
-      this.router.navigate(['/productos', categoryId]);
-    }
+  if (!Array.isArray(this.productos)) {
+    console.error('Error: this.productos no es un array', this.productos);
+    this.router.navigate(['/productos', categoryId]);
+    return;
   }
+
+  const productsInCategory = this.productos.filter(
+    p => p.categoria_id === categoryId
+  );
+
+  if (productsInCategory.length === 0) {
+    console.warn(`No hay productos para la categoría ${categoryId}`);
+    this.router.navigate(['/productos', categoryId]);
+    return;
+  }
+
+  if (productsInCategory.length === 1) {
+    const producto = productsInCategory[0];
+    this.router.navigate(['/producto', producto.id]);
+  } else {
+    this.router.navigate(['/productos', categoryId]);
+  }
+}
+
 }

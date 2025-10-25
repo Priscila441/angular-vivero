@@ -7,15 +7,14 @@ import { PublicLayout } from './features/public/public-layout/public-layout';
 
 export const routes: Routes = [
 
-      { path: '', component: PublicLayout, 
+      { path: '', loadComponent: () => import('./features/public/public-layout/public-layout').then(m => m.PublicLayout), 
              children: [
-                  { path: '', component: SectionPrincipal },
-                  { path: 'productos/:categoryId', component: ProductList},
-                  { path: 'producto/:id' , component: ProductDetail}
+                  { path: '', loadComponent: () => import ('./features/public/section-principal/section-principal').then(m => m.SectionPrincipal) },
+                  { path: 'productos/:categoryId', loadComponent: () => import ('./features/public/components/product-list/product-list').then(m => m.ProductList)},
+                  { path: 'producto/:id' , loadComponent: () => import ('./features/public/components/product-detail/product-detail').then(m => m.ProductDetail)}
             ]
       },
       { 
-        //Rutas provisorias
         path: 'admin', 
         loadComponent: () => import('./features/admin/layout/admin-layout.component').then(m => m.AdminLayoutComponent),
         children: [
