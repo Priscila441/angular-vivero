@@ -97,7 +97,7 @@ export class ProductDetail implements OnInit, OnDestroy {
       }
 
       this.relatedProducts = productos
-        .filter(p => p.id !== currentProduct.id && p.nombre_categoria === currentProduct.nombre_categoria)
+        .filter(p => p.id !== currentProduct.id && p.categoria.nombre === currentProduct.categoria.nombre)
         .slice(0, 10);
 
       if (this.relatedProducts.length < 4) {

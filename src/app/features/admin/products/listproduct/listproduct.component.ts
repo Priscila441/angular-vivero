@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductoService } from '../../../../core/service/producto.service';
@@ -13,7 +13,7 @@ import { ProductoDetalles } from '../../../../core/models/producto_detalles.mode
   styleUrls: ['./listproduct.component.css']
 })
 
-export class Listproduct implements OnInit {
+export class Listproduct implements OnInit, OnDestroy {
   productos: ProductoDetalles[] = [];
   paginaActual: number = 1;
   tamanioPagina: number = 5;
@@ -23,18 +23,21 @@ export class Listproduct implements OnInit {
   filtroBusqueda: string = '';
   ModalBorrar: boolean = false;
   productoABorrar: ProductoDetalles | null = null;
+  mostrarModalExito: boolean = false;
+  mensajeExito: string = '';
+  private temporizadorCierre: any;
 
-  constructor(private productoService: ProductoService) {}
+  constructor(
+    private productoService: ProductoService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-  this.productoService.getAllDetalles().subscribe((resp: any) => {
-    console.log('Respuesta del backend:', resp);
-
-    this.productos = resp.data ?? resp; 
-    this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
-  });
-}
-
+    this.productoService.getAllDetallesCompletos().subscribe((data: ProductoDetalles[]) => {
+      this.productos = data;
+      this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
+    });
+  }
 
   get productosPaginados(): ProductoDetalles[] {
     let filtrados = this.productos;
@@ -82,6 +85,7 @@ export class Listproduct implements OnInit {
           this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
           this.ModalBorrar = false;
           this.productoABorrar = null;
+          this.mostrarModal();
         },
         error: () => {
           alert('Error al eliminar el producto.');
@@ -90,6 +94,32 @@ export class Listproduct implements OnInit {
         }
       });
     }
+
+  mostrarModal() {
+    this.mensajeExito = 'Producto eliminado con éxito.';
+    this.mostrarModalExito = true;
+    this.cdr.detectChanges();
+    
+    if (this.temporizadorCierre) {
+      clearTimeout(this.temporizadorCierre);
+    }
+    this.temporizadorCierre = setTimeout(() => this.cerrarModal(), 3000);
+  }
+
+  cerrarModal() {
+    this.mostrarModalExito = false;
+    if (this.temporizadorCierre) {
+      clearTimeout(this.temporizadorCierre);
+      this.temporizadorCierre = null;
+    }
+    this.cdr.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    if (this.temporizadorCierre) {
+      clearTimeout(this.temporizadorCierre);
+    }
+  }
 
   // Métodos para la lógica del paginador
   get numerosPaginas(): number[] {
