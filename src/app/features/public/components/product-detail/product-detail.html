@@ -51,8 +51,8 @@
 
       <!-- Categoría / Temporada -->
       <div class="mt-6 text-sm text-gray-500">
-        <p><strong>Categoría:</strong> {{ product.categoria.nombre }}</p>
-        <p><strong>Temporada:</strong> {{ product.temporada.nombre }}</p>
+        <p><strong>Categoría:</strong> {{ product.nombre_categoria }}</p>
+        <p><strong>Temporada:</strong> {{ product.nombre_temporada }}</p>
       </div>
 
       <!-- Botón de consulta -->
@@ -90,7 +90,7 @@
         </div>
         <div class="p-4 text-center">
           <h3 class="text-base font-semibold text-gray-800">{{ item.nombre }}</h3>
-          <p class="text-gray-500 text-sm">{{ item.categoria.nombre }}</p>
+          <p class="text-gray-500 text-sm">{{ item.nombre_categoria }}</p>
         </div>
       </div>
     </div>
