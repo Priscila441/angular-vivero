@@ -121,11 +121,16 @@ export class ProductDetail implements OnInit, OnDestroy {
   }
 
   getSecondaryImage(): string | null {
-    if (!this.product?.imagenes || this.product.imagenes.length < 2) return null;
-    const main = this.product.imagenes.find(i => i.es_principal) ?? this.product.imagenes[0];
-    const sec = this.product.imagenes.find(i => i.id !== main?.id);
-    return sec ? sec.url : null;
-  }
+  if (!this.product?.imagenes || this.product.imagenes.length < 2) return null;
+
+  // Primera imagen principal
+  const main = this.product.imagenes.find(i => i.es_principal) ?? this.product.imagenes[0];
+
+  // Segunda imagen: cualquier otra que no sea principal
+  const sec = this.product.imagenes.find(i => !i.es_principal);
+  return sec ? sec.url : null;
+}
+
 
   prepareHoverMapForProduct(p: ProductoDetalles) {
     if (!p?.imagenes) return;
