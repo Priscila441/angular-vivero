@@ -204,7 +204,7 @@ private loadAllCategoriesExcluding(selectedId: number) {
     // si no es array no navegamos
     const prods = this.productosMap.get(categoryId);
     if (!Array.isArray(prods)) {
-      console.error('Error: productos no es array', prods);
+      //console.error('Error: productos no es array', prods);
       this.router.navigate(['/productos', categoryId]);
       return;
     }

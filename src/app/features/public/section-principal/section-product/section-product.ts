@@ -62,7 +62,7 @@ export class SectionProduct {
 
   goToCategory(categoryId: number) {
   if (!Array.isArray(this.productos)) {
-    console.error('Error: this.productos no es un array', this.productos);
+    //console.error('Error: this.productos no es un array', this.productos);
     this.router.navigate(['/productos', categoryId]);
     return;
   }
