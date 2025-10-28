@@ -14,12 +14,14 @@
       </span>
   <input type="text" placeholder="Buscar por nombre de planta" [(ngModel)]="filtroBusqueda" name="filtroBusqueda" class="w-full h-10 pl-10 pr-4 rounded-md bg-white text-[#1C2B21] border-none focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium placeholder:text-[#9CA9A2]" />
     </div>
-    <select class="w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
+    <select 
+      [(ngModel)]="filtroCategoria" 
+      name="filtroCategoria"
+      class="w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
       <option value="">Categoría</option>
-      <option value="1">Mandarinas</option>
-      <option value="2">Uvas</option>
-      <option value="3">Tunas</option>
-      <option value="4">Higos</option>
+      <option *ngFor="let categoria of categorias" [value]="categoria.id">
+        {{ categoria.nombre }}
+      </option>
     </select>
     <select class="w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
       <option value="">Temporada</option>

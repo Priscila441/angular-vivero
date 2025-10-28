@@ -3,6 +3,8 @@ import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../../../core/service/producto.service';
+import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
+import { Categoria_producto } from '../../../../core/models/categoria_producto.models';
 
 @Component({
   selector: 'app-addproduct',
@@ -20,11 +22,16 @@ export class AddproductComponent implements OnInit, OnDestroy {
   errorMessage = '';
   showSuccessModal = false;
   private closeTimer: any;
+  
+  // Array para almacenar las categorías principales
+  categorias: Categoria_producto[] = [];
+  cargandoCategorias = false;
 
   //Inyecccion de dependencias (Agrego el ChangeDetectorRef porque no me detecta el cambio en el modal).
   constructor(
     private fb: FormBuilder, 
     private productoService: ProductoService,
+    private categoriaService: CategoriaProductoService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -37,6 +44,26 @@ export class AddproductComponent implements OnInit, OnDestroy {
       categoria_id: ['', Validators.required],
       temporada_id: ['', Validators.required],
       informacion_extra: ['', [Validators.required, Validators.minLength(10)]]
+    });
+    
+    // Cargar las categorías principales al inicializar el componente
+    this.cargarCategorias();
+  }
+  
+  // Método para cargar las categorías desde el backend
+  cargarCategorias() {
+    this.cargandoCategorias = true;
+    this.categoriaService.getAll().subscribe({
+      next: (categorias) => {
+        // Filtrar solo las categorías principales (tipo === 'principal')
+        this.categorias = categorias.filter(cat => cat.tipo === 'principal');
+        this.cargandoCategorias = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar categorías:', err);
+        this.errorMessage = 'Error al cargar las categorías';
+        this.cargandoCategorias = false;
+      }
     });
   }
 

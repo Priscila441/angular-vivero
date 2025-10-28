@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
+import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
+import { Categoria_producto } from '../../../../core/models/categoria_producto.models';
 
 
 @Component({
@@ -15,113 +17,160 @@ import { ProductoDetalles } from '../../../../core/models/producto_detalles.mode
 
 export class Listproduct implements OnInit, OnDestroy {
   productos: ProductoDetalles[] = [];
-  paginaActual: number = 1;
-  tamanioPagina: number = 5;
-  totalPaginas: number = 1;
+  categorias: Categoria_producto[] = [];
+  paginaActual = 1;
+  tamanioPagina = 5;
+  totalPaginas = 1;
+  filtroBusqueda = '';
+  filtroCategoria = '';
   infoSeleccionada: string | null = null;
   descripcionSeleccionada: string | null = null;
-  filtroBusqueda: string = '';
-  ModalBorrar: boolean = false;
+  ModalBorrar = false;
   productoABorrar: ProductoDetalles | null = null;
-  mostrarModalExito: boolean = false;
-  mensajeExito: string = '';
-  private temporizadorCierre: any;
+  mostrarModalExito = false;
+  mensajeExito = '';
+  private closeTimer: any;
 
   constructor(
     private productoService: ProductoService,
-    private cdr: ChangeDetectorRef
+    private categoriaService: CategoriaProductoService
   ) {}
 
   ngOnInit(): void {
-    this.productoService.getAllDetallesCompletos().subscribe((data: ProductoDetalles[]) => {
-      this.productos = data;
-      this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
+    this.cargarCategorias();
+    this.cargarProductos();
+  }
+
+  private cargarProductos(): void {
+    this.productoService.getAllDetalles().subscribe({
+      next: (resp: any) => {
+        this.productos = resp.data || resp || [];
+        this.calcularTotalPaginas();
+      },
+      error: (err) => console.error('Error al cargar productos:', err)
     });
   }
 
+  private cargarCategorias(): void {
+    this.categoriaService.getAll().subscribe({
+      next: (categorias) => {
+        this.categorias = categorias.filter(cat => cat.tipo === 'principal');
+      },
+      error: (err) => console.error('Error al cargar categorías:', err)
+    });
+  }
+
+  private calcularTotalPaginas(): void {
+    this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
+  }
+
   get productosPaginados(): ProductoDetalles[] {
-    let filtrados = this.productos;
-    if (this.filtroBusqueda.trim() !== '') {
-      const filtro = this.filtroBusqueda.trim().toLowerCase();
-      filtrados = this.productos.filter(p =>
-        p.nombre?.toLowerCase().includes(filtro)
-      );
-    }
+    let filtrados = this.aplicarFiltros();
+    this.actualizarPaginacion(filtrados.length);
+    return this.paginar(filtrados);
+  }
+
+
+  // Filtros 
+  private aplicarFiltros(): ProductoDetalles[] {
+    return this.productos
+      .filter(p => this.filtrarPorBusqueda(p))
+      .filter(p => this.filtrarPorCategoria(p));
+  }
+
+  private filtrarPorBusqueda(producto: ProductoDetalles): boolean {
+    if (!this.filtroBusqueda.trim()) return true;
+    return producto.nombre?.toLowerCase().includes(this.filtroBusqueda.toLowerCase());
+  }
+
+  private filtrarPorCategoria(producto: ProductoDetalles): boolean {
+    if (!this.filtroCategoria) return true;
+    const categoriaSeleccionada = this.categorias.find(cat => cat.id === Number(this.filtroCategoria));
+    return categoriaSeleccionada ? producto.nombre_categoria === categoriaSeleccionada.nombre : true;
+  }
+
+  private actualizarPaginacion(totalFiltrados: number): void {
+    this.totalPaginas = Math.max(1, Math.ceil(totalFiltrados / this.tamanioPagina));
+    if (this.paginaActual > this.totalPaginas) this.paginaActual = 1;
+  }
+
+  private paginar(productos: ProductoDetalles[]): ProductoDetalles[] {
     const inicio = (this.paginaActual - 1) * this.tamanioPagina;
-    return filtrados.slice(inicio, inicio + this.tamanioPagina);
+    return productos.slice(inicio, inicio + this.tamanioPagina);
   }
 
   siguientePagina(): void {
-    if (this.paginaActual < this.totalPaginas) {
-      this.paginaActual++;
-    }
+    if (this.paginaActual < this.totalPaginas) this.paginaActual++;
   }
 
   anteriorPagina(): void {
-    if (this.paginaActual > 1) {
-      this.paginaActual--;
+    if (this.paginaActual > 1) this.paginaActual--;
+  }
+
+  // Modal para eliminar producto
+  borrarProducto(id: number): void {
+    const producto = this.productos.find(p => p.id === id);
+    if (producto) {
+      this.productoABorrar = producto;
+      this.ModalBorrar = true;
     }
   }
 
-    borrarProducto(id: number): void {
-      const producto = this.productos.find(p => p.id === id);
-      if (producto) {
-        this.productoABorrar = producto;
-        this.ModalBorrar = true;
-      }
-    }
+  cancelarBorrado(): void {
+    this.ModalBorrar = false;
+    this.productoABorrar = null;
+  }
 
-    cancelarBorrado(): void {
-      this.ModalBorrar = false;
-      this.productoABorrar = null;
-    }
-
-    confirmarBorrado(): void {
-      if (this.productoABorrar === null) return;
-      
-      this.productoService.delete(this.productoABorrar.id).subscribe({
-        next: () => {
-          this.productos = this.productos.filter(p => p.id !== this.productoABorrar!.id);
-          this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
-          this.ModalBorrar = false;
-          this.productoABorrar = null;
-          this.mostrarModal();
-        },
-        error: () => {
-          alert('Error al eliminar el producto.');
-          this.ModalBorrar = false;
-          this.productoABorrar = null;
-        }
-      });
-    }
-
-  mostrarModal() {
-    this.mensajeExito = 'Producto eliminado con éxito.';
-    this.mostrarModalExito = true;
-    this.cdr.detectChanges();
+  confirmarBorrado(): void {
+    if (!this.productoABorrar) return;
     
-    if (this.temporizadorCierre) {
-      clearTimeout(this.temporizadorCierre);
-    }
-    this.temporizadorCierre = setTimeout(() => this.cerrarModal(), 3000);
+    const nombreProducto = this.productoABorrar.nombre;
+    
+    this.productoService.delete(this.productoABorrar.id).subscribe({
+      next: () => this.onBorradoExitoso(nombreProducto),
+      error: () => this.onBorradoError()
+    });
+  }
+  
+  // Manejo de modales y mensajes
+  private onBorradoExitoso(nombreProducto: string): void {
+    this.productos = this.productos.filter(p => p.id !== this.productoABorrar!.id);
+    this.calcularTotalPaginas();
+    this.cerrarModalBorrar();
+    this.mostrarMensaje(`El producto "${nombreProducto}" ha sido eliminado exitosamente.`);
   }
 
-  cerrarModal() {
+  private onBorradoError(): void {
+    this.cerrarModalBorrar();
+    this.mostrarMensaje('Error al eliminar el producto. Por favor, intenta nuevamente.');
+  }
+
+  private cerrarModalBorrar(): void {
+    this.ModalBorrar = false;
+    this.productoABorrar = null;
+  }
+
+  private mostrarMensaje(mensaje: string): void {
+    this.mensajeExito = mensaje;
+    this.mostrarModalExito = true;
+    this.programarCierreModal();
+  }
+
+  private programarCierreModal(): void {
+    if (this.closeTimer) clearTimeout(this.closeTimer);
+    this.closeTimer = setTimeout(() => this.cerrarModal(), 3000);
+  }
+
+  cerrarModal(): void {
     this.mostrarModalExito = false;
-    if (this.temporizadorCierre) {
-      clearTimeout(this.temporizadorCierre);
-      this.temporizadorCierre = null;
-    }
-    this.cdr.detectChanges();
-  }
-
-  ngOnDestroy(): void {
-    if (this.temporizadorCierre) {
-      clearTimeout(this.temporizadorCierre);
+    this.mensajeExito = '';
+    if (this.closeTimer) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
     }
   }
 
-  // Métodos para la lógica del paginador
+  //Metodos de paginacion
   get numerosPaginas(): number[] {
     return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
   }
@@ -142,5 +191,12 @@ export class Listproduct implements OnInit, OnDestroy {
 
   get esUltimaPagina(): boolean {
     return this.paginaActual === this.totalPaginas;
+  }
+
+  ngOnDestroy(): void {
+    if (this.closeTimer) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
+    }
   }
 }

@@ -21,7 +21,6 @@ export class ProductoService {
         return this.http.get<Producto[]>(this.api_url);
     }
 
-    // Método que usa el endpoint /productos/completos con estructura {success, data}
     getAllDetallesCompletos(): Observable<ProductoDetalles[]> {
         return this.http.get<any>(this.api_url_completos)
             .pipe(

@@ -72,12 +72,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="category">Categoría</label>
-            <select formControlName="categoria_id" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm text-[#4A5C52] outline-none transition-all duration-200" id="category">
-              <option value="">Seleccionar Categoría</option>
-              <option value="1">Mandarinas</option>
-              <option value="2">Uvas</option>
-              <option value="3">Tunas</option>
-              <option value="4">Higos</option>
+            <select 
+              formControlName="categoria_id" 
+              class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
+              id="category"
+              [disabled]="cargandoCategorias">
+              <option value="">{{ cargandoCategorias ? 'Cargando...' : 'Seleccionar Categoría' }}</option>
+              <option *ngFor="let categoria of categorias" [value]="categoria.id">
+                {{ categoria.nombre }}
+              </option>
             </select>
             <p *ngIf="isFieldInvalid('categoria_id')" class="mt-1 text-sm text-red-600">La categoría es requerida</p>
           </div>
