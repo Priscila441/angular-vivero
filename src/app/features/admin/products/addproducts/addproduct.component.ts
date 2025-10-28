@@ -4,7 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
+import { TemporadaService } from '../../../../core/service/temporada.service';
 import { Categoria_producto } from '../../../../core/models/categoria_producto.models';
+import { Temporada } from '../../../../core/models/temporada.model';
 
 @Component({
   selector: 'app-addproduct',
@@ -26,12 +28,17 @@ export class AddproductComponent implements OnInit, OnDestroy {
   // Array para almacenar las categorías principales
   categorias: Categoria_producto[] = [];
   cargandoCategorias = false;
+  
+  // Array para almacenar las temporadas
+  temporadas: Temporada[] = [];
+  cargandoTemporadas = false;
 
   //Inyecccion de dependencias (Agrego el ChangeDetectorRef porque no me detecta el cambio en el modal).
   constructor(
     private fb: FormBuilder, 
     private productoService: ProductoService,
     private categoriaService: CategoriaProductoService,
+    private temporadaService: TemporadaService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -48,6 +55,8 @@ export class AddproductComponent implements OnInit, OnDestroy {
     
     // Cargar las categorías principales al inicializar el componente
     this.cargarCategorias();
+    // Cargar las temporadas al inicializar el componente
+    this.cargarTemporadas();
   }
   
   // Método para cargar las categorías desde el backend
@@ -63,6 +72,25 @@ export class AddproductComponent implements OnInit, OnDestroy {
         console.error('Error al cargar categorías:', err);
         this.errorMessage = 'Error al cargar las categorías';
         this.cargandoCategorias = false;
+      }
+    });
+  }
+  
+  // Método para cargar las temporadas desde el backend
+  cargarTemporadas() {
+    this.cargandoTemporadas = true;
+    this.temporadaService.getAll().subscribe({
+      next: (response: any) => {
+        // Extraer el array de temporadas desde response.data
+        if (response && response.data) {
+          this.temporadas = response.data;
+        }
+        this.cargandoTemporadas = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar temporadas:', err);
+        this.errorMessage = 'Error al cargar las temporadas';
+        this.cargandoTemporadas = false;
       }
     });
   }

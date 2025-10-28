@@ -14,6 +14,8 @@
       </span>
   <input type="text" placeholder="Buscar por nombre de planta" [(ngModel)]="filtroBusqueda" name="filtroBusqueda" class="w-full h-10 pl-10 pr-4 rounded-md bg-white text-[#1C2B21] border-none focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium placeholder:text-[#9CA9A2]" />
     </div>
+
+    <!-- Filtros de categoria y temporada -->
     <select 
       [(ngModel)]="filtroCategoria" 
       name="filtroCategoria"
@@ -23,15 +25,17 @@
         {{ categoria.nombre }}
       </option>
     </select>
-    <select class="w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
+    <select 
+      [(ngModel)]="filtroTemporada" 
+      name="filtroTemporada"
+      class="w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
       <option value="">Temporada</option>
-      <option value="1">Noviembre - Diciembre</option>
-      <option value="2">Abril - Mayo - Junio</option>
-      <option value="3">Diciembre- Enero</option>
-      <option value="4">Noviembre - Diciembre - Enero</option>
-      <option value="5">Todo el año</option>
+      <option *ngFor="let temporada of temporadas" [value]="temporada.id">
+        {{ temporada.nombre }}
+      </option>
     </select>
   </div>
+  <!-- Ruta agregar planta -->
   <a href="/admin/products/add" role="button" class="flex min-w-[120px] h-10 items-center justify-center gap-2 overflow-hidden rounded-md bg-[#4B7D63] text-[#FFFFFF] text-sm font-bold leading-normal shadow-sm hover:bg-[#264B39] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#264B39] px-4 font-sans">
     <span class="material-symbols-outlined text-lg leading-none">add</span>
     <span class="truncate flex items-center">Agregar planta</span>

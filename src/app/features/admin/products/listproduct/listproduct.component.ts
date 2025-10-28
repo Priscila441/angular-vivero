@@ -5,6 +5,8 @@ import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
 import { Categoria_producto } from '../../../../core/models/categoria_producto.models';
+import { TemporadaService } from '../../../../core/service/temporada.service';
+import { Temporada } from '../../../../core/models/temporada.model';
 
 
 @Component({
@@ -18,11 +20,13 @@ import { Categoria_producto } from '../../../../core/models/categoria_producto.m
 export class Listproduct implements OnInit, OnDestroy {
   productos: ProductoDetalles[] = [];
   categorias: Categoria_producto[] = [];
+  temporadas: Temporada[] = [];
   paginaActual = 1;
   tamanioPagina = 5;
   totalPaginas = 1;
   filtroBusqueda = '';
   filtroCategoria = '';
+  filtroTemporada = '';
   infoSeleccionada: string | null = null;
   descripcionSeleccionada: string | null = null;
   ModalBorrar = false;
@@ -33,11 +37,13 @@ export class Listproduct implements OnInit, OnDestroy {
 
   constructor(
     private productoService: ProductoService,
-    private categoriaService: CategoriaProductoService
+    private categoriaService: CategoriaProductoService,
+    private temporadaService: TemporadaService
   ) {}
 
   ngOnInit(): void {
     this.cargarCategorias();
+    this.cargarTemporadas();
     this.cargarProductos();
   }
 
@@ -60,6 +66,17 @@ export class Listproduct implements OnInit, OnDestroy {
     });
   }
 
+  private cargarTemporadas(): void {
+    this.temporadaService.getAll().subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          this.temporadas = response.data;
+        }
+      },
+      error: (err) => console.error('Error al cargar temporadas:', err)
+    });
+  }
+
   private calcularTotalPaginas(): void {
     this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
   }
@@ -75,7 +92,8 @@ export class Listproduct implements OnInit, OnDestroy {
   private aplicarFiltros(): ProductoDetalles[] {
     return this.productos
       .filter(p => this.filtrarPorBusqueda(p))
-      .filter(p => this.filtrarPorCategoria(p));
+      .filter(p => this.filtrarPorCategoria(p))
+      .filter(p => this.filtrarPorTemporada(p));
   }
 
   private filtrarPorBusqueda(producto: ProductoDetalles): boolean {
@@ -89,6 +107,12 @@ export class Listproduct implements OnInit, OnDestroy {
     return categoriaSeleccionada ? producto.nombre_categoria === categoriaSeleccionada.nombre : true;
   }
 
+  private filtrarPorTemporada(producto: ProductoDetalles): boolean {
+    if (!this.filtroTemporada) return true;
+    const temporadaSeleccionada = this.temporadas.find(temp => temp.id === Number(this.filtroTemporada));
+    return temporadaSeleccionada ? producto.nombre_temporada === temporadaSeleccionada.nombre : true;
+  }
+
   private actualizarPaginacion(totalFiltrados: number): void {
     this.totalPaginas = Math.max(1, Math.ceil(totalFiltrados / this.tamanioPagina));
     if (this.paginaActual > this.totalPaginas) this.paginaActual = 1;
@@ -97,14 +121,6 @@ export class Listproduct implements OnInit, OnDestroy {
   private paginar(productos: ProductoDetalles[]): ProductoDetalles[] {
     const inicio = (this.paginaActual - 1) * this.tamanioPagina;
     return productos.slice(inicio, inicio + this.tamanioPagina);
-  }
-
-  siguientePagina(): void {
-    if (this.paginaActual < this.totalPaginas) this.paginaActual++;
-  }
-
-  anteriorPagina(): void {
-    if (this.paginaActual > 1) this.paginaActual--;
   }
 
   // Modal para eliminar producto
@@ -169,7 +185,17 @@ export class Listproduct implements OnInit, OnDestroy {
       this.closeTimer = null;
     }
   }
+  
+  //Metodos de paginacion
+  siguientePagina(): void {
+    if (this.paginaActual < this.totalPaginas) this.paginaActual++;
+  }
 
+  anteriorPagina(): void {
+    if (this.paginaActual > 1) this.paginaActual--;
+  }
+
+  
   //Metodos de paginacion
   get numerosPaginas(): number[] {
     return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);

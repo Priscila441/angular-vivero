@@ -87,13 +87,15 @@
           
           <div>
             <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="season">Temporada</label>
-            <select formControlName="temporada_id" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm text-[#4A5C52] outline-none transition-all duration-200" id="season">
-              <option value="">Seleccionar Temporada</option>
-              <option value="1">Noviembre - Diciembre</option>
-              <option value="2">Abril - Mayo - Junio</option>
-              <option value="3">Diciembre- Enero</option>
-              <option value="4">Noviembre - Diciembre - Enero</option>
-              <option value="5">Todo el año</option>
+            <select 
+              formControlName="temporada_id" 
+              class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
+              id="season"
+              [disabled]="cargandoTemporadas">
+              <option value="">{{ cargandoTemporadas ? 'Cargando...' : 'Seleccionar Temporada' }}</option>
+              <option *ngFor="let temporada of temporadas" [value]="temporada.id">
+                {{ temporada.nombre }}
+              </option>
             </select>
             <p *ngIf="isFieldInvalid('temporada_id')" class="mt-1 text-sm text-red-600">La temporada es requerida</p>
           </div>
