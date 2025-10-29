@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
@@ -11,7 +11,7 @@ import { Temporada } from '../../../../core/models/temporada.model';
 @Component({
   selector: 'app-addproduct',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './addproduct.component.html',
   styleUrls: []
 })
@@ -32,6 +32,9 @@ export class AddproductComponent implements OnInit, OnDestroy {
   // Array para almacenar las temporadas
   temporadas: Temporada[] = [];
   cargandoTemporadas = false;
+  
+  // Tipo de imagen seleccionado (archivo o URL)
+  tipoImagen: 'archivo' | 'url' = 'archivo';
 
   //Inyecccion de dependencias (Agrego el ChangeDetectorRef porque no me detecta el cambio en el modal).
   constructor(
@@ -93,6 +96,17 @@ export class AddproductComponent implements OnInit, OnDestroy {
         this.cargandoTemporadas = false;
       }
     });
+  }
+
+  // Método para manejar el cambio de archivos
+  onFileChange(event: any) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const fileNames = Array.from(files).map((f: any) => f.name).join(', ');
+      this.productForm.patchValue({ imagen_url: fileNames });
+    } else {
+      this.productForm.patchValue({ imagen_url: '' });
+    }
   }
 
   onSubmit() {

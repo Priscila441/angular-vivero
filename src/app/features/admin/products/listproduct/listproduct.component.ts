@@ -3,10 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
+<<<<<<< Updated upstream
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
 import { Categoria_producto } from '../../../../core/models/categoria_producto.models';
 import { TemporadaService } from '../../../../core/service/temporada.service';
 import { Temporada } from '../../../../core/models/temporada.model';
+=======
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment.development';
+>>>>>>> Stashed changes
 
 
 @Component({
@@ -35,11 +40,15 @@ export class Listproduct implements OnInit, OnDestroy {
   mensajeExito = '';
   private closeTimer: any;
 
+<<<<<<< Updated upstream
   constructor(
     private productoService: ProductoService,
     private categoriaService: CategoriaProductoService,
     private temporadaService: TemporadaService
   ) {}
+=======
+  constructor(private productoService: ProductoService, private http: HttpClient) {}
+>>>>>>> Stashed changes
 
   ngOnInit(): void {
     this.cargarCategorias();
@@ -219,10 +228,14 @@ export class Listproduct implements OnInit, OnDestroy {
     return this.paginaActual === this.totalPaginas;
   }
 
+<<<<<<< Updated upstream
   ngOnDestroy(): void {
     if (this.closeTimer) {
       clearTimeout(this.closeTimer);
       this.closeTimer = null;
     }
   }
+=======
+  // Eliminación desactivada temporalmente para restaurar el listado
+>>>>>>> Stashed changes
 }
