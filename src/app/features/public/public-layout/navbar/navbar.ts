@@ -5,6 +5,7 @@ import { CategoriaProductoService } from '../../../../core/service/categoria_pro
 import { RouterLink } from '@angular/router';
 import { Categoria_servicio } from '../../../../core/models/categoria_servicio.model';
 import { CategoriaServicioService } from '../../../../core/service/categoria_servicio.service';
+import { ConsultaService } from '../../../../core/service/consulta.service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,7 +19,7 @@ export class Navbar {
   categorias: Categoria_producto[] = [];
   categorias_servicio: Categoria_servicio[] = [];
 
-  constructor(private categoria: CategoriaProductoService, private categoriaService: CategoriaServicioService) {}
+  constructor(private categoria: CategoriaProductoService, private categoriaService: CategoriaServicioService, public consultaService: ConsultaService) {}
 
   ngOnInit(): void {
     this.categoria.getAll().subscribe({

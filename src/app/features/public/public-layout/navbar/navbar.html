@@ -81,7 +81,7 @@
 
       <!-- Contacto e Inicio Desktop -->
       <div class="hidden md:flex items-center space-x-6 rtl:space-x-reverse">
-        <a href="tel:5541251234" class="text-sm text-gray-500 hover:text-green-600">Contacto</a>
+        <a routerLink="/contacto" class="text-sm text-gray-500 hover:text-green-600 flex items-center gap-1">Contacto<span *ngIf="consultaService.hayConsultas()" class="text-red-500 font-bold ml-1 animate-bounce">!</span></a>
         <a routerLink="/home" class="px-4 py-2 rounded-full bg-green-600 text-white text-sm font-medium hover:bg-green-700">Inicio</a>
       </div>
     }

@@ -56,14 +56,35 @@
       </div>
 
       <!-- Botón de consulta -->
-      <button
-        (click)="onAgregarConsulta()"
-        class="mt-6 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all self-start"
-      >
-        Consultar sobre este producto
-      </button>
+      @if (!consultaAgregada) {
+        <button
+          (click)="onAgregarConsulta()"
+          class="mt-6 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all self-start"
+        >
+          Consultar sobre este producto
+        </button>
+      } @else {
+        <button
+          (click)="verContacto()"
+          class="mt-6 px-6 py-2 bg-green-300 text-white rounded-lg hover:bg-green-400 transition-all self-start"
+        >
+          Ver consulta
+        </button>
+      }
     </div>
   </div>
+
+  
+
+  <!-- Toast (mensaje flotante) -->
+  <div
+    *ngIf="showModal"
+    class="fixed top-4 right-4 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in"
+  >
+    <span class="text-lg">✓</span>
+    <p>«{{ modalProductName }}» de la categoria: «{{ modalCategoriaName }}» se agregó a tu consulta</p>
+  </div>
+
 
   <!-- 🔹 Productos relacionados -->
    
@@ -96,22 +117,4 @@
     </div>
   </div>
 
-  <!-- Modal -->
-  <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center">
-  <div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" (click)="closeModal()"></div>
-  <div class="bg-white rounded-lg shadow-xl max-w-sm w-full p-6 z-10">
-    <div class="flex items-start gap-3">
-      <div class="flex-shrink-0 bg-emerald-100 rounded-full p-2">
-        ✓
-      </div>
-      <div>
-        <h3 class="font-semibold text-slate-800">Producto añadido</h3>
-        <p class="text-sm text-slate-600 mt-1">«{{ modalProductName }}» se agregó a tu consulta.</p>
-      </div>
-    </div>
-    <div class="mt-4 flex justify-end">
-      <button (click)="closeModal()" class="px-4 py-2 rounded-md text-sm bg-slate-100 hover:bg-slate-200">Cerrar</button>
-    </div>
-  </div>
-</div>
 </div>
