@@ -8,6 +8,7 @@ import { Categoria_producto } from '../../../../core/models/categoria_producto.m
 import { TemporadaService } from '../../../../core/service/temporada.service';
 import { Temporada } from '../../../../core/models/temporada.model';
 
+
 @Component({
   selector: 'app-listproduct',
   standalone: true,
@@ -30,10 +31,10 @@ export class Listproduct implements OnInit, OnDestroy {
   descripcionSeleccionada: string | null = null;
   ModalBorrar = false;
   productoABorrar: ProductoDetalles | null = null;
-  mostrarModalExito = false;
-  mensajeExito = '';
+  mostrarModalMensaje = false;
+  mensaje = '';
+  esError = false;
   private closeTimer: any;
-
 
   constructor(
     private productoService: ProductoService,
@@ -48,9 +49,9 @@ export class Listproduct implements OnInit, OnDestroy {
   }
 
   private cargarProductos(): void {
-    this.productoService.getAllDetalles().subscribe({
-      next: (resp: any) => {
-        this.productos = resp.data || resp || [];
+    this.productoService.getAllDetallesCompletos().subscribe({
+      next: (productos) => {
+        this.productos = productos;
         this.calcularTotalPaginas();
       },
       error: (err) => console.error('Error al cargar productos:', err)
@@ -141,8 +142,9 @@ export class Listproduct implements OnInit, OnDestroy {
     if (!this.productoABorrar) return;
     
     const nombreProducto = this.productoABorrar.nombre;
+    const idProducto = this.productoABorrar.id;
     
-    this.productoService.delete(this.productoABorrar.id).subscribe({
+    this.productoService.delete(idProducto).subscribe({
       next: () => this.onBorradoExitoso(nombreProducto),
       error: () => this.onBorradoError()
     });
@@ -153,12 +155,12 @@ export class Listproduct implements OnInit, OnDestroy {
     this.productos = this.productos.filter(p => p.id !== this.productoABorrar!.id);
     this.calcularTotalPaginas();
     this.cerrarModalBorrar();
-    this.mostrarMensaje(`El producto "${nombreProducto}" ha sido eliminado exitosamente.`);
+    this.mostrarMensaje(`El producto "${nombreProducto}" ha sido eliminado exitosamente.`, false);
   }
 
   private onBorradoError(): void {
     this.cerrarModalBorrar();
-    this.mostrarMensaje('Error al eliminar el producto. Por favor, intenta nuevamente.');
+    this.mostrarMensaje('Error al eliminar el producto. Por favor, intenta nuevamente.', true);
   }
 
   private cerrarModalBorrar(): void {
@@ -166,9 +168,10 @@ export class Listproduct implements OnInit, OnDestroy {
     this.productoABorrar = null;
   }
 
-  private mostrarMensaje(mensaje: string): void {
-    this.mensajeExito = mensaje;
-    this.mostrarModalExito = true;
+  private mostrarMensaje(mensaje: string, esError: boolean = false): void {
+    this.mensaje = mensaje;
+    this.esError = esError;
+    this.mostrarModalMensaje = true;
     this.programarCierreModal();
   }
 
@@ -178,8 +181,9 @@ export class Listproduct implements OnInit, OnDestroy {
   }
 
   cerrarModal(): void {
-    this.mostrarModalExito = false;
-    this.mensajeExito = '';
+    this.mostrarModalMensaje = false;
+    this.mensaje = '';
+    this.esError = false;
     if (this.closeTimer) {
       clearTimeout(this.closeTimer);
       this.closeTimer = null;
@@ -219,12 +223,10 @@ export class Listproduct implements OnInit, OnDestroy {
     return this.paginaActual === this.totalPaginas;
   }
 
-
   ngOnDestroy(): void {
     if (this.closeTimer) {
       clearTimeout(this.closeTimer);
       this.closeTimer = null;
     }
   }
-
 }

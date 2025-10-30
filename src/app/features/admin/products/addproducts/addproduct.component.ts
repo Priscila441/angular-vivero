@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
@@ -11,7 +12,7 @@ import { Temporada } from '../../../../core/models/temporada.model';
 @Component({
   selector: 'app-addproduct',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, CommonModule, FormsModule],
+  imports: [RouterModule, ReactiveFormsModule, FormsModule, CommonModule],
   templateUrl: './addproduct.component.html',
   styleUrls: []
 })
@@ -25,16 +26,14 @@ export class AddproductComponent implements OnInit, OnDestroy {
   showSuccessModal = false;
   private closeTimer: any;
   
+  // Modo de entrada de imagen: 'file' o 'url'
+  imageInputMode: 'file' | 'url' = 'file';
+  
   // Array para almacenar las categorías principales
   categorias: Categoria_producto[] = [];
-  cargandoCategorias = false;
   
   // Array para almacenar las temporadas
   temporadas: Temporada[] = [];
-  cargandoTemporadas = false;
-  
-  // Tipo de imagen seleccionado (archivo o URL)
-  tipoImagen: 'archivo' | 'url' = 'archivo';
 
   //Inyecccion de dependencias (Agrego el ChangeDetectorRef porque no me detecta el cambio en el modal).
   constructor(
@@ -64,36 +63,30 @@ export class AddproductComponent implements OnInit, OnDestroy {
   
   // Método para cargar las categorías desde el backend
   cargarCategorias() {
-    this.cargandoCategorias = true;
     this.categoriaService.getAll().subscribe({
       next: (categorias) => {
         // Filtrar solo las categorías principales (tipo === 'principal')
         this.categorias = categorias.filter(cat => cat.tipo === 'principal');
-        this.cargandoCategorias = false;
       },
       error: (err) => {
         console.error('Error al cargar categorías:', err);
         this.errorMessage = 'Error al cargar las categorías';
-        this.cargandoCategorias = false;
       }
     });
   }
   
   // Método para cargar las temporadas desde el backend
   cargarTemporadas() {
-    this.cargandoTemporadas = true;
     this.temporadaService.getAll().subscribe({
       next: (response: any) => {
         // Extraer el array de temporadas desde response.data
         if (response && response.data) {
           this.temporadas = response.data;
         }
-        this.cargandoTemporadas = false;
       },
       error: (err) => {
         console.error('Error al cargar temporadas:', err);
         this.errorMessage = 'Error al cargar las temporadas';
-        this.cargandoTemporadas = false;
       }
     });
   }
@@ -103,9 +96,9 @@ export class AddproductComponent implements OnInit, OnDestroy {
     const files = event.target.files;
     if (files && files.length > 0) {
       const fileNames = Array.from(files).map((f: any) => f.name).join(', ');
-      this.productForm.patchValue({ imagen_url: fileNames });
+      this.productForm.get('imagen_url')?.setValue(fileNames);
     } else {
-      this.productForm.patchValue({ imagen_url: '' });
+      this.productForm.get('imagen_url')?.setValue('');
     }
   }
 

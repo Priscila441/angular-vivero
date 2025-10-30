@@ -1,5 +1,5 @@
 <!-- Header contextual para proyección -->
-<div admin-header class="sticky top-0 z-10 bg-[#F6FBF8] p-6 pb-0">
+<div admin-header class="sticky top-0 z-10 bg-[#F6FBF8] p-6 pb-3">
   <div class="flex items-center gap-4 justify-start">
     <!-- Botón de vuelta -->
     <a routerLink="/admin/products" class="flex items-center gap-2 text-[#0e1a13] hover:text-[#51946c] transition-colors">
@@ -17,102 +17,159 @@
   <span class="text-[#1C2B21] font-bold">Agregar Producto</span>
     </nav>
   </div>
-
+</div>
 
 <!-- Contenido Principal -->
-<div class="max-w-3xl mx-auto h-full flex flex-col mt-10 px-3 sm:px-4 md:px-6">
-  <div class="mb-3">
-  <h1 class="text-[#1C2B21] text-base font-bold leading-tight tracking-[-0.015em]">Agregar Nueva Planta</h1>
-  <p class="text-[#4A5C52] mt-1 text-sm font-medium leading-normal">Completa los detalles a continuación para agregar una nueva planta al catálogo del vivero.</p>
+<div class="max-w-7xl mx-auto h-[calc(100vh-140px)] flex flex-col px-6 sm:px-8 md:px-12 lg:px-16">
+  <div class="mb-2 mt-4 flex-shrink-0">
+  <h1 class="text-[#1C2B21] text-2xl font-bold leading-tight tracking-[-0.015em]">Agregar producto.</h1>
+  <p class="text-[#4A5C52] mt-1 text-sm font-medium leading-normal">Completa los detalles a continuación para agregar un nuevo producto al catálogo del vivero.</p>
   <div class="border-t border-[#51946c] opacity-60 my-2 w-full"></div>
       </div>
 
       <!-- Formulario -->
-      <div class="w-full">
-  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="flex-1 flex flex-col space-y-3">
-        <div>
-          <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="plant-name">Nombre de la Planta</label>
-          <input formControlName="nombre" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-9 px-3 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200" id="plant-name" placeholder="Ej: Mandarina Criolla" type="text"/>
-          <p *ngIf="isFieldInvalid('nombre')" class="mt-1 text-sm text-red-600">El nombre es requerido</p>
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="description">Descripción</label>
-          <textarea formControlName="descripcion" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 min-h-20 p-3 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200 resize-vertical" id="description" placeholder="Proporciona una breve descripción de la planta."></textarea>
-          <p *ngIf="isFieldInvalid('descripcion')" class="mt-1 text-sm text-red-600">La descripción es requerida</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1" for="informacion_extra">Información Extra</label>
-          <textarea formControlName="informacion_extra" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 min-h-16 p-3 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200 resize-vertical" id="informacion_extra" placeholder="Información adicional sobre la planta."></textarea>
-          <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['minlength']" class="mt-1 text-sm text-red-600">Debe ingresar al menos 10 caracteres</p>
-          <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['required']" class="mt-1 text-sm text-red-600">La información extra es requerida</p>
-        </div>
-
-        <!-- Imágenes -->
-        <div>
-          <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="multiple_files">Imágenes</label>
-          <div class="flex w-full">
-            <input
-              formControlName="imagen_url"
-              type="text"
-              id="file-name"
-              placeholder="Sin archivos seleccionados"
-              class="flex-1 rounded-l-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200"
-            />
-            <label for="multiple_files" class="flex rounded-r-lg bg-[#4B7D63] text-[#FFFFFF] font-medium px-4 h-10 items-center cursor-pointer hover:bg-[#264B39] transition-colors text-sm">
-              Elegir archivo
-              <input id="multiple_files" type="file" multiple accept="image/png,image/jpeg" class="hidden" aria-describedby="images-help" onchange="document.getElementById('file-name').value = Array.from(this.files).map(f => f.name).join(', ') || 'Sin archivos seleccionados'" />
-            </label>
-          </div>
-          <p *ngIf="isFieldInvalid('imagen_url')" class="mt-1 text-sm text-red-600">La imagen es requerida</p>
-          <p id="images-help" class="mt-1 text-xs text-[#4A5C52]">Puedes seleccionar una o varias imágenes (JPG, PNG, URL).</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="category">Categoría</label>
-            <select 
-              formControlName="categoria_id" 
-              class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
-              id="category"
-              [disabled]="cargandoCategorias">
-              <option value="">{{ cargandoCategorias ? 'Cargando...' : 'Seleccionar Categoría' }}</option>
-              <option *ngFor="let categoria of categorias" [value]="categoria.id">
-                {{ categoria.nombre }}
-              </option>
-            </select>
-            <p *ngIf="isFieldInvalid('categoria_id')" class="mt-1 text-sm text-red-600">La categoría es requerida</p>
-          </div>
+      <div class="w-full flex-1 flex flex-col overflow-hidden">
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="flex-1 flex flex-col h-full">
+        <!-- Grid principal de dos columnas -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 flex-1 overflow-hidden">
           
-          <div>
-            <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-2" for="season">Temporada</label>
-            <select 
-              formControlName="temporada_id" 
-              class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-4 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
-              id="season"
-              [disabled]="cargandoTemporadas">
-              <option value="">{{ cargandoTemporadas ? 'Cargando...' : 'Seleccionar Temporada' }}</option>
-              <option *ngFor="let temporada of temporadas" [value]="temporada.id">
-                {{ temporada.nombre }}
-              </option>
-            </select>
-            <p *ngIf="isFieldInvalid('temporada_id')" class="mt-1 text-sm text-red-600">La temporada es requerida</p>
+          <!-- Columna Izquierda: Nombre, Descripción e Información Extra -->
+          <div class="flex flex-col space-y-2.5 h-full">
+            <!-- Nombre de la Planta -->
+            <div class="flex-shrink-0">
+              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-0.5" for="plant-name">Nombre de la Planta</label>
+              <input formControlName="nombre" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-3 py-2 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200" id="plant-name" placeholder="Ej: Mandarina Criolla" type="text"/>
+              <p *ngIf="isFieldInvalid('nombre')" class="mt-0.5 text-xs text-red-600">El nombre es requerido</p>
+            </div>
+            
+            <!-- Descripción -->
+            <div class="flex-1 min-h-0 flex flex-col">
+              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1 flex-shrink-0" for="description">Descripción</label>
+              <textarea formControlName="descripcion" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 flex-1 p-2 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200 resize-none" id="description" placeholder="Proporciona una breve descripción de la planta."></textarea>
+              <p *ngIf="isFieldInvalid('descripcion')" class="mt-1 text-sm text-red-600 flex-shrink-0">La descripción es requerida</p>
+            </div>
+
+            <!-- Información Extra -->
+            <div class="flex-1 min-h-0 flex flex-col">
+              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1 flex-shrink-0" for="informacion_extra">Información Extra</label>
+              <textarea formControlName="informacion_extra" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 flex-1 p-2 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200 resize-none" id="informacion_extra" placeholder="Información adicional sobre la planta."></textarea>
+              <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['minlength']" class="mt-1 text-sm text-red-600 flex-shrink-0">Debe ingresar al menos 10 caracteres</p>
+              <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['required']" class="mt-1 text-sm text-red-600 flex-shrink-0">La información extra es requerida</p>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Categoría, Subcategorías, Temporada e Imágenes -->
+          <div class="flex flex-col space-y-2.5 h-full">
+            <!-- Categoría -->
+            <div class="flex-shrink-0">
+              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-0.5" for="category">Categoría</label>
+              <select 
+                formControlName="categoria_id" 
+                class="w-1/2 rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-3 py-2 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
+                id="category">
+                <option value="">Seleccionar Categoría</option>
+                <option *ngFor="let categoria of categorias" [value]="categoria.id">
+                  {{ categoria.nombre }}
+                </option>
+              </select>
+              <p *ngIf="isFieldInvalid('categoria_id')" class="mt-0.5 text-xs text-red-600">La categoría es requerida</p>
+            </div>
+            
+            <!-- Temporada -->
+            <div class="flex-shrink-0">
+              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-0.5" for="season">Temporada</label>
+              <select 
+                formControlName="temporada_id" 
+                class="w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-3 py-2 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
+                id="season">
+                <option value="">Seleccionar Temporada</option>
+                <option *ngFor="let temporada of temporadas" [value]="temporada.id">
+                  {{ temporada.nombre }}
+                </option>
+              </select>
+              <p *ngIf="isFieldInvalid('temporada_id')" class="mt-0.5 text-xs text-red-600">La temporada es requerida</p>
+            </div>
+
+            <!-- Imágenes -->
+            <div class="flex-1 min-h-0 flex flex-col">
+              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1 flex-shrink-0">Imágenes</label>
+              
+              <!-- Opciones de tipo de entrada -->
+              <div class="flex gap-4 mb-2 flex-shrink-0">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="imageInputType" 
+                    value="file"
+                    [(ngModel)]="imageInputMode"
+                    [ngModelOptions]="{standalone: true}"
+                    class="w-4 h-4 text-[#4B7D63] border-[#D7E2DB] focus:ring-[#4B7D63]" />
+                  <span class="text-sm text-[#4A5C52] font-medium">Subir archivo</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="radio" 
+                    name="imageInputType" 
+                    value="url"
+                    [(ngModel)]="imageInputMode"
+                    [ngModelOptions]="{standalone: true}"
+                    class="w-4 h-4 text-[#4B7D63] border-[#D7E2DB] focus:ring-[#4B7D63]" />
+                  <span class="text-sm text-[#4A5C52] font-medium">URL</span>
+                </label>
+              </div>
+
+              <!-- Modo: Subir archivo -->
+              <div *ngIf="imageInputMode === 'file'" class="border-2 border-dashed border-[#D7E2DB] rounded-lg bg-[#FAFCFB] hover:border-[#51946c] transition-colors flex-1 min-h-[140px]">
+                <div class="h-full flex flex-col items-center justify-center p-2.5 text-center">
+                  <span class="material-symbols-outlined text-2xl text-[#9CA9A2] mb-1">cloud_upload</span>
+                  <p class="text-sm text-[#4A5C52] font-medium mb-0.5">Elegir archivo</p>
+                  <p class="text-xs text-[#9CA9A2] mb-1">o arrastra y suelta aquí</p>
+                  <label for="multiple_files" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4B7D63] text-white text-sm font-medium cursor-pointer hover:bg-[#264B39] transition-colors">
+                    <span class="material-symbols-outlined text-base">add_photo_alternate</span>
+                    <span>Seleccionar imágenes</span>
+                    <input 
+                      id="multiple_files" 
+                      type="file" 
+                      multiple 
+                      accept="image/png,image/jpeg" 
+                      class="hidden" 
+                      aria-describedby="images-help" 
+                      (change)="onFileChange($event)" />
+                  </label>
+                  <p id="images-help" class="mt-1 text-xs text-[#4A5C52]">PNG, JPG (max. 5MB)</p>
+                  <p *ngIf="productForm.get('imagen_url')?.value" class="mt-2 text-xs text-[#4B7D63] font-medium truncate max-w-full px-2">
+                    {{ productForm.get('imagen_url')?.value }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Modo: Ingresar URL -->
+              <div *ngIf="imageInputMode === 'url'" class="flex-shrink-0">
+                <input 
+                  formControlName="imagen_url" 
+                  type="text" 
+                  class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-3 py-2 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200" 
+                  placeholder="https://ejemplo.com/imagen.jpg" />
+                <p class="mt-1 text-xs text-[#9CA9A2]">Ingresa la URL completa de la imagen</p>
+              </div>
+
+              <p *ngIf="isFieldInvalid('imagen_url')" class="mt-1 text-sm text-red-600 flex-shrink-0">La imagen es requerida</p>
+            </div>
           </div>
         </div>
         
-        <div class="flex flex-col sm:flex-row justify-end pt-2 space-y-2 sm:space-y-0 sm:space-x-4">
-          <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-[#F6FAF8] text-[#1C2B21] text-sm font-bold leading-normal tracking-wide border border-[#D7E2DB] hover:bg-[#E2EDE7] transition-colors" type="button">
+        <!-- Botones de acción -->
+        <div class="flex flex-col sm:flex-row justify-end gap-3 mt-6 pt-4 border-t border-[#D7E2DB] flex-shrink-0">
+          <button class="flex items-center justify-center rounded-lg h-10 px-6 bg-[#F6FAF8] text-[#1C2B21] text-sm font-bold leading-normal tracking-wide border border-[#D7E2DB] hover:bg-[#E2EDE7] transition-colors" type="button">
             <span class="truncate">Cancelar</span>
           </button>
-          <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-[#4B7D63] text-[#FFFFFF] text-sm font-bold leading-normal tracking-wide border border-[#4B7D63] hover:bg-[#264B39] transition-colors" type="submit">
+          <button class="flex items-center justify-center rounded-lg h-10 px-6 bg-[#4B7D63] text-[#FFFFFF] text-sm font-bold leading-normal tracking-wide border border-[#4B7D63] hover:bg-[#264B39] transition-colors" type="submit">
             <span class="truncate">Agregar Planta</span>
           </button>
         </div>
       </form>
       </div>
   </div>
-</div>
 
 <!-- Modal de éxito -->
 <div *ngIf="showSuccessModal" class="fixed inset-0 z-50">
@@ -120,7 +177,7 @@
   <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity"></div>
   <!-- Contenedor del modal -->
   <div class="absolute inset-0 flex items-center justify-center p-4">
-    <div role="alert" aria-live="polite" class="flex items-start gap-3 w-full max-w-md p-4 text-green-800 rounded-xl bg-green-50 shadow-lg ring-1 ring-green-200 animate-in fade-in zoom-in duration-200">
+    <div role="alert" aria-live="polite" class="flex items-start gap-3 w-full max-w-md p-4 text-green-800 rounded-xl bg-green-50 shadow-lg ring-1 ring-green-200 transition-all duration-200 ease-out transform scale-100 opacity-100">
       <span class="material-symbols-outlined text-2xl leading-none shrink-0" aria-hidden="true">check_circle</span>
       <div class="flex-1 text-sm font-medium">
         {{ successMessage || 'Producto agregado con éxito.' }}

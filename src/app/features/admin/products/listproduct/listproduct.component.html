@@ -15,7 +15,7 @@
   <input type="text" placeholder="Buscar por nombre de planta" [(ngModel)]="filtroBusqueda" name="filtroBusqueda" class="w-full h-10 pl-10 pr-4 rounded-md bg-white text-[#1C2B21] border-none focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium placeholder:text-[#9CA9A2]" />
     </div>
 
-    <!-- Filtros de categoria y temporada -->
+    <!-- Filtro de categoria -->
     <select 
       [(ngModel)]="filtroCategoria" 
       name="filtroCategoria"
@@ -25,6 +25,8 @@
         {{ categoria.nombre }}
       </option>
     </select>
+
+    <!-- Filtro de temporada -->
     <select 
       [(ngModel)]="filtroTemporada" 
       name="filtroTemporada"
@@ -35,6 +37,7 @@
       </option>
     </select>
   </div>
+  
   <!-- Ruta agregar planta -->
   <a href="/admin/products/add" role="button" class="flex min-w-[120px] h-10 items-center justify-center gap-2 overflow-hidden rounded-md bg-[#4B7D63] text-[#FFFFFF] text-sm font-bold leading-normal shadow-sm hover:bg-[#264B39] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#264B39] px-4 font-sans">
     <span class="material-symbols-outlined text-lg leading-none">add</span>
@@ -76,10 +79,10 @@
         <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500 max-w-[180px] truncate cursor-pointer" (mouseenter)="infoSeleccionada = producto.informacion_extra" (mouseleave)="infoSeleccionada = null">
           {{ producto.informacion_extra | slice:0:40 }}<span *ngIf="producto.informacion_extra.length > 40">...</span>
         </td>
-        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500">{{ producto.nombre_categoria }}</td>
+        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500">{{ $any(producto).categoria?.nombre }}</td>
         <td class="px-5 py-3 whitespace-nowrap text-sm">
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
-            {{ producto.nombre_temporada }}
+            {{ $any(producto).temporada?.nombre }}
           </span>
         </td>
         <td class="px-5 py-3 whitespace-nowrap text-right text-sm font-medium">
@@ -183,18 +186,40 @@
   </div>
 </div>
 
-<!-- Modal de borrado con éxito -->
-<div *ngIf="mostrarModalExito" class="fixed inset-0 z-50">
+<!-- Modal de mensaje (éxito o error) -->
+<div *ngIf="mostrarModalMensaje" class="fixed inset-0 z-50">
   <!-- Overlay con blur -->
   <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity"></div>
   <!-- Contenedor del modal -->
   <div class="absolute inset-0 flex items-center justify-center p-4">
-    <div role="alert" aria-live="polite" class="flex items-start gap-3 w-full max-w-md p-4 text-green-800 rounded-xl bg-green-50 shadow-lg ring-1 ring-green-200 animate-in fade-in zoom-in duration-200">
-      <span class="material-symbols-outlined text-2xl leading-none shrink-0" aria-hidden="true">check_circle</span>
+    <div 
+      role="alert" 
+      aria-live="polite" 
+      class="flex items-start gap-3 w-full max-w-md p-4 rounded-xl shadow-lg ring-1 animate-in fade-in zoom-in duration-200"
+      [ngClass]="{
+        'text-green-800 bg-green-50 ring-green-200': !esError,
+        'text-red-800 bg-red-50 ring-red-200': esError
+      }">
+      <span 
+        class="material-symbols-outlined text-2xl leading-none shrink-0" 
+        [ngClass]="{
+          'text-green-600': !esError,
+          'text-red-600': esError
+        }"
+        aria-hidden="true">
+        {{ esError ? 'error' : 'check_circle' }}
+      </span>
       <div class="flex-1 text-sm font-medium">
-        {{ mensajeExito }}
+        {{ mensaje }}
       </div>
-      <button type="button" (click)="cerrarModal()" class="ml-2 inline-flex items-center justify-center rounded-md text-green-900/80 hover:text-green-900 focus:outline-none focus:ring-2 focus:ring-green-400">
+      <button 
+        type="button" 
+        (click)="cerrarModal()" 
+        class="ml-2 inline-flex items-center justify-center rounded-md focus:outline-none focus:ring-2"
+        [ngClass]="{
+          'text-green-900/80 hover:text-green-900 focus:ring-green-400': !esError,
+          'text-red-900/80 hover:text-red-900 focus:ring-red-400': esError
+        }">
         <span class="material-symbols-outlined text-base">close</span>
       </button>
     </div>
