@@ -1,16 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
 import { Subscription, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ConsultaService } from '../../../../core/service/consulta.service';
 
 @Component({
   selector: 'app-product-detail',
   templateUrl: './product-detail.html',
   standalone: true,
   imports: [CommonModule],
+  styles: [``]
 })
 export class ProductDetail implements OnInit, OnDestroy {
   product!: ProductoDetalles;
@@ -20,6 +22,8 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   showModal = false;
   modalProductName = '';
+  consultaAgregada = false;
+  modalCategoriaName = '';
 
   relatedProducts: ProductoDetalles[] = [];
   hoverSecondImageMap: Record<number, string> = {};
@@ -28,7 +32,9 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   constructor(
     private productoService: ProductoService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute, 
+    private router: Router,
+    private consultaService: ConsultaService
   ) {}
 
   ngOnInit(): void {
@@ -154,7 +160,21 @@ export class ProductDetail implements OnInit, OnDestroy {
   // 🔹 Modal
   onAgregarConsulta() {
     this.modalProductName = this.product?.nombre || '';
+    this.modalCategoriaName = this.product?.nombre_categoria || '';
+    this.consultaService.agregarProducto(this.modalProductName);
+
+    // Mostrar toast
     this.showModal = true;
+    this.consultaAgregada = true;
+
+    // Ocultar automáticamente después de 3 segundos
+    setTimeout(() => {
+      this.showModal = false;
+    }, 3000);
+  }
+
+  verContacto() {
+    this.router.navigate(['/contacto']);
   }
 
   closeModal() {

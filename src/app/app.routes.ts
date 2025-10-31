@@ -1,18 +1,15 @@
 import { Routes } from '@angular/router';
-import { ProductList } from './features/public/components/product-list/product-list';
-import { ProductDetail } from './features/public/components/product-detail/product-detail';
-import { SectionPrincipal } from './features/public/section-principal/section-principal';
-import { PublicLayout } from './features/public/public-layout/public-layout';
-
 
 export const routes: Routes = [
 
-      { path: '', loadComponent: () => import('./features/public/public-layout/public-layout').then(m => m.PublicLayout), 
-             children: [
-                  { path: '', loadComponent: () => import ('./features/public/section-principal/section-principal').then(m => m.SectionPrincipal) },
-                  { path: 'productos/:categoryId', loadComponent: () => import ('./features/public/components/product-list/product-list').then(m => m.ProductList)},
-                  { path: 'producto/:id' , loadComponent: () => import ('./features/public/components/product-detail/product-detail').then(m => m.ProductDetail)}
-            ]
+      { path: '', 
+        loadComponent: () => import('./features/public/public-layout/public-layout').then(m => m.PublicLayout), 
+        children: [
+          { path: '', loadComponent: () => import ('./features/public/section-principal/section-principal').then(m => m.SectionPrincipal) },
+          { path: 'productos/:categoryId', loadComponent: () => import ('./features/public/components/product-list/product-list').then(m => m.ProductList)},
+          { path: 'producto/:id' , loadComponent: () => import ('./features/public/components/product-detail/product-detail').then(m => m.ProductDetail)},
+          { path: 'contacto' , loadComponent: () => import('./features/public/public-layout/contact/contact').then(m => m.Contact) }
+    ]
       },
       { 
         path: 'admin', 
