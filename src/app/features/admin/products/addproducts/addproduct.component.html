@@ -134,11 +134,11 @@
                       accept="image/png,image/jpeg" 
                       class="hidden" 
                       aria-describedby="images-help" 
-                      (change)="onFileChange($event)" />
+                      (change)="onFilesSelected($event)" />
                   </label>
                   <p id="images-help" class="mt-1 text-xs text-[#4A5C52]">PNG, JPG (max. 5MB)</p>
-                  <p *ngIf="productForm.get('imagen_url')?.value" class="mt-2 text-xs text-[#4B7D63] font-medium truncate max-w-full px-2">
-                    {{ productForm.get('imagen_url')?.value }}
+                  <p *ngIf="selectedFiles.length > 0" class="mt-2 text-xs text-[#4B7D63] font-medium">
+                    {{ selectedFiles.length }} archivo(s) seleccionado(s)
                   </p>
                 </div>
               </div>

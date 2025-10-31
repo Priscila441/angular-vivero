@@ -3,9 +3,9 @@ import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ProductoService } from '../../../../core/service/producto.service';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
 import { TemporadaService } from '../../../../core/service/temporada.service';
+import { ProductoService } from '../../../../core/service/producto.service';
 import { Categoria_producto } from '../../../../core/models/categoria_producto.models';
 import { Temporada } from '../../../../core/models/temporada.model';
 
@@ -17,17 +17,16 @@ import { Temporada } from '../../../../core/models/temporada.model';
   styleUrls: []
 })
 
-// Definiciones de variable y estados del formulario 
+// Definiciones de variable y estados del modal 
 export class AddproductComponent implements OnInit, OnDestroy {
   productForm!: FormGroup;
   submitted = false;
-  successMessage = '';
-  errorMessage = '';
   showSuccessModal = false;
   private closeTimer: any;
-  
-  // Modo de entrada de imagen: 'file' o 'url'
+  errorMessage = '';
+  successMessage = '';
   imageInputMode: 'file' | 'url' = 'file';
+  selectedFiles: File[] = [];
   
   // Array para almacenar las categorías principales
   categorias: Categoria_producto[] = [];
@@ -35,12 +34,12 @@ export class AddproductComponent implements OnInit, OnDestroy {
   // Array para almacenar las temporadas
   temporadas: Temporada[] = [];
 
-  //Inyecccion de dependencias (Agrego el ChangeDetectorRef porque no me detecta el cambio en el modal).
+  //Inyección de dependencias (Agrego el ChangeDetectorRef porque no me detecta el cambio en el modal).
   constructor(
-    private fb: FormBuilder, 
-    private productoService: ProductoService,
+    private fb: FormBuilder,
     private categoriaService: CategoriaProductoService,
     private temporadaService: TemporadaService,
+    private productoService: ProductoService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -91,46 +90,7 @@ export class AddproductComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Método para manejar el cambio de archivos
-  onFileChange(event: any) {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const fileNames = Array.from(files).map((f: any) => f.name).join(', ');
-      this.productForm.get('imagen_url')?.setValue(fileNames);
-    } else {
-      this.productForm.get('imagen_url')?.setValue('');
-    }
-  }
-
-  onSubmit() {
-    this.submitted = true;
-  this.successMessage = '';
-  this.errorMessage = '';
-
-    // Verificacion de validez del formulario.
-    if (this.productForm.valid) {
-      const producto = {
-        ...this.productForm.value,
-        categoria_id: Number(this.productForm.value.categoria_id),
-        temporada_id: Number(this.productForm.value.temporada_id),
-        informacion_extra: this.productForm.value.informacion_extra || ''
-      };
-      
-      this.productoService.create(producto).subscribe({
-        next: (response) => {
-          this.successMessage = 'Producto agregado con éxito.';
-          this.openSuccessModal();
-        },
-        error: (err) => {
-          this.errorMessage = `Error al agregar el producto: ${err.status} - ${err.error?.message || err.error || 'Error desconocido'}`;
-        }
-      });
-    } else {
-      this.errorMessage = 'Por favor completa todos los campos requeridos';
-    }
-  }
-  
- // Metodo para verificar si un campo es invalido y mostrar mensajes de error.
+  // Metodo para verificar si un campo es invalido y mostrar mensajes de error.
   isFieldInvalid(field: string): boolean {
     const control = this.productForm.get(field);
     return !!(control && control.invalid && this.submitted);
@@ -163,5 +123,137 @@ export class AddproductComponent implements OnInit, OnDestroy {
     if (this.closeTimer) {
       clearTimeout(this.closeTimer);
     }
+  }
+
+  // Método para capturar archivos seleccionados
+  onFilesSelected(event: any) {
+    const files = Array.from(event.target.files) as File[];
+    if (files.length > 5) {
+      this.errorMessage = 'Solo puedes seleccionar un máximo de 5 imágenes';
+      return;
+    }
+    this.selectedFiles = files;
+    console.log('Imágenes seleccionadas:', this.selectedFiles);
+  }
+
+  // Método para convertir URL a File
+  async convertUrlToFile(url: string, filename: string): Promise<File> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Error al descargar la imagen: ${response.statusText}`);
+      }
+      const blob = await response.blob();
+      return new File([blob], filename, { type: blob.type });
+    } catch (error) {
+      console.error('Error al convertir URL a archivo:', error);
+      throw error;
+    }
+  }
+
+  // Método para enviar el formulario
+  async onSubmit() {
+    this.submitted = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    // Validaciones básicas del formulario
+    if (this.productForm.get('nombre')?.invalid || 
+        this.productForm.get('descripcion')?.invalid ||
+        this.productForm.get('informacion_extra')?.invalid ||
+        this.productForm.get('categoria_id')?.invalid ||
+        this.productForm.get('temporada_id')?.invalid) {
+      this.errorMessage = 'Por favor completa todos los campos requeridos';
+      return;
+    }
+
+    // Validar que haya imágenes (archivos o URL)
+    if (this.imageInputMode === 'file' && this.selectedFiles.length === 0) {
+      this.errorMessage = 'Por favor selecciona al menos una imagen';
+      return;
+    }
+
+    if (this.imageInputMode === 'url' && !this.productForm.get('imagen_url')?.value) {
+      this.errorMessage = 'Por favor ingresa una URL de imagen';
+      return;
+    }
+
+    // Preparar el objeto producto (sin imagen_url)
+    const producto: any = {
+      nombre: this.productForm.get('nombre')?.value?.trim(),
+      descripcion: this.productForm.get('descripcion')?.value?.trim(),
+      informacion_extra: this.productForm.get('informacion_extra')?.value?.trim(),
+      categoria_id: Number(this.productForm.get('categoria_id')?.value),
+      temporada_id: Number(this.productForm.get('temporada_id')?.value)
+    };
+
+    console.log('Enviando producto:', producto);
+    console.log('Tipos:', {
+      categoria_id: typeof producto.categoria_id,
+      temporada_id: typeof producto.temporada_id
+    });
+
+    // Paso 1: Crear el producto
+    this.productoService.create(producto).subscribe({
+      next: async (response: any) => {
+        const productoId = response.data?.id || response.id;
+        console.log('Producto creado con ID:', productoId);
+
+        try {
+          // Paso 2: Preparar archivos para subir
+          const formData = new FormData();
+
+          if (this.imageInputMode === 'file') {
+            // Modo archivos: agregar todos los archivos seleccionados
+            this.selectedFiles.forEach((file) => {
+              formData.append('files', file);
+            });
+          } else {
+            // Modo URL: descargar la imagen y convertirla a File
+            const imageUrl = this.productForm.get('imagen_url')?.value;
+            console.log('Descargando imagen desde URL:', imageUrl);
+            
+            const filename = imageUrl.split('/').pop() || 'imagen.jpg';
+            const file = await this.convertUrlToFile(imageUrl, filename);
+            formData.append('files', file);
+          }
+
+          // Paso 3: Subir las imágenes
+          this.productoService.uploadImagenes(productoId, formData).subscribe({
+            next: () => {
+              this.successMessage = 'Producto e imágenes agregados con éxito.';
+              this.openSuccessModal();
+              this.selectedFiles = [];
+            },
+            error: (err) => {
+              console.error('Error al subir imágenes:', err);
+              this.successMessage = 'El producto se creó correctamente.';
+              this.errorMessage = `Advertencia: Hubo un error al subir las imágenes: ${err.status} - ${err.error?.message || 'Error desconocido'}`;
+              this.openSuccessModal();
+            }
+          });
+        } catch (error) {
+          console.error('Error al procesar la imagen:', error);
+          this.errorMessage = 'Error al procesar la imagen. Verifica que la URL sea válida y accesible.';
+        }
+      },
+      error: (err) => {
+        console.error('Error al crear producto:', err);
+        console.error('Detalle completo del error:', JSON.stringify(err.error, null, 2));
+        console.error('Status:', err.status);
+        console.error('StatusText:', err.statusText);
+        
+        // Mostrar errores de validación específicos si existen
+        if (err.error?.errors && Array.isArray(err.error.errors)) {
+          console.error('Errores de validación:', err.error.errors);
+          const validationErrors = err.error.errors.map((e: any) => e.message || e).join(', ');
+          this.errorMessage = `Error de validación: ${validationErrors}`;
+        } else if (err.status === 409) {
+          this.errorMessage = `El producto ya existe: ${err.error?.message || 'Ya existe un producto con ese nombre'}`;
+        } else {
+          this.errorMessage = `Error al agregar el producto: ${err.status} - ${err.error?.message || err.error?.error || err.message || 'Error desconocido'}`;
+        }
+      }
+    });
   }
 }
