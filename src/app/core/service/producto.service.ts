@@ -14,7 +14,6 @@ export class ProductoService {
     private readonly api_url = environment.API_URL_PRODUCTOS + '/productos';
     private readonly api_url_completos = environment.API_URL + '/productos/completos';
     private readonly api_url_detalles = environment.API_URL + '/productos/detalles';
-    private readonly api_url_imagenes = environment.API_URL_IMAGENES + '/productos';
 
     constructor(private http: HttpClient) {}
 
@@ -52,7 +51,7 @@ export class ProductoService {
     }
 
     delete(id: number): Observable<void>{
-        return this.http.delete<void>(`${this.api_url}/${id}`);
+        return this.http.delete<void>(`${environment.API_URL}/productos/${id}`);
     }
 
     getDetallesById(id: number): Observable<ProductoDetalles> {
@@ -62,6 +61,6 @@ export class ProductoService {
     }
 
     uploadImagenes(productoId: number, formData: FormData): Observable<any> {
-        return this.http.post<any>(`${this.api_url_imagenes}/${productoId}/imagenes/multiples`, formData);
+        return this.http.post<any>(`${environment.API_URL}/productos/${productoId}/imagenes/multiples`, formData);
     }
 }
