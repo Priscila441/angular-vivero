@@ -37,47 +37,74 @@
           <div class="flex flex-col space-y-2.5 h-full">
             <!-- Nombre de la Planta -->
             <div class="flex-shrink-0">
-              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-0.5" for="plant-name">Nombre de la Planta</label>
+              <div class="flex items-center gap-2 pb-0.5">
+                <label class="text-sm font-medium leading-normal text-[#4A5C52]" for="plant-name">Nombre de la Planta</label>
+                <p *ngIf="isFieldInvalid('nombre')" class="text-xs text-red-600">*El nombre es requerido</p>
+              </div>
               <input formControlName="nombre" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-3 py-2 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200" id="plant-name" placeholder="Ej: Mandarina Criolla" type="text"/>
-              <p *ngIf="isFieldInvalid('nombre')" class="mt-0.5 text-xs text-red-600">El nombre es requerido</p>
             </div>
             
             <!-- Descripción -->
             <div class="flex-1 min-h-0 flex flex-col">
-              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1 flex-shrink-0" for="description">Descripción</label>
+              <div class="flex items-center gap-2 pb-1 flex-shrink-0">
+                <label class="text-sm font-medium leading-normal text-[#4A5C52]" for="description">Descripción</label>
+                <p *ngIf="isFieldInvalid('descripcion')" class="text-xs text-red-600">*La descripción es requerida</p>
+              </div>
               <textarea formControlName="descripcion" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 flex-1 p-2 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200 resize-none" id="description" placeholder="Proporciona una breve descripción de la planta."></textarea>
-              <p *ngIf="isFieldInvalid('descripcion')" class="mt-1 text-sm text-red-600 flex-shrink-0">La descripción es requerida</p>
             </div>
 
             <!-- Información Extra -->
             <div class="flex-1 min-h-0 flex flex-col">
-              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1 flex-shrink-0" for="informacion_extra">Información Extra</label>
+              <div class="flex items-center gap-2 pb-1 flex-shrink-0">
+                <label class="text-sm font-medium leading-normal text-[#4A5C52]" for="informacion_extra">Información Extra</label>
+                <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['minlength']" class="text-xs text-red-600">*Mínimo 10 caracteres</p>
+                <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['required']" class="text-xs text-red-600">*Requerido</p>
+              </div>
               <textarea formControlName="informacion_extra" class="block w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 flex-1 p-2 text-sm placeholder:text-[#9CA9A2] outline-none transition-all duration-200 resize-none" id="informacion_extra" placeholder="Información adicional sobre la planta."></textarea>
-              <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['minlength']" class="mt-1 text-sm text-red-600 flex-shrink-0">Debe ingresar al menos 10 caracteres</p>
-              <p *ngIf="isFieldInvalid('informacion_extra') && productForm.get('informacion_extra')?.errors?.['required']" class="mt-1 text-sm text-red-600 flex-shrink-0">La información extra es requerida</p>
             </div>
           </div>
 
           <!-- Columna Derecha: Categoría, Subcategorías, Temporada e Imágenes -->
           <div class="flex flex-col space-y-2.5 h-full">
-            <!-- Categoría -->
+            <!-- Categoría y Subcategoría en la misma fila -->
             <div class="flex-shrink-0">
-              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-0.5" for="category">Categoría</label>
-              <select 
-                formControlName="categoria_id" 
-                class="w-1/2 rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-3 py-2 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
-                id="category">
-                <option value="">Seleccionar Categoría</option>
-                <option *ngFor="let categoria of categorias" [value]="categoria.id">
-                  {{ categoria.nombre }}
-                </option>
-              </select>
-              <p *ngIf="isFieldInvalid('categoria_id')" class="mt-0.5 text-xs text-red-600">La categoría es requerida</p>
+              <div class="flex items-center gap-2 pb-0.5">
+                <label class="text-sm font-medium leading-normal text-[#4A5C52]">Categoría</label>
+                <p *ngIf="isFieldInvalid('categoria_id')" class="text-xs text-red-600">*La categoría es requerida</p>
+              </div>
+              <div class="flex gap-3">
+                <!-- Select de Categoría -->
+                <select 
+                  formControlName="categoria_id"
+                  (change)="onCategoriaChange()"
+                  class="flex-1 rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-3 py-2 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
+                  id="category">
+                  <option value="">Seleccionar Categoría</option>
+                  <option *ngFor="let categoria of categorias" [value]="categoria.id">
+                    {{ categoria.nombre }}
+                  </option>
+                </select>
+                
+                <!-- Select de Subcategoría (visible solo si mostrarSubcategorias es true) -->
+                <select 
+                  *ngIf="mostrarSubcategorias"
+                  formControlName="subcategoria_id"
+                  class="flex-1 rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-3 py-2 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
+                  id="subcategory">
+                  <option value="">Seleccionar Subcategoría</option>
+                  <option *ngFor="let subcategoria of subcategorias" [value]="subcategoria.id">
+                    {{ subcategoria.nombre }}
+                  </option>
+                </select>
+              </div>
             </div>
             
             <!-- Temporada -->
             <div class="flex-shrink-0">
-              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-0.5" for="season">Temporada</label>
+              <div class="flex items-center gap-2 pb-0.5">
+                <label class="text-sm font-medium leading-normal text-[#4A5C52]" for="season">Temporada</label>
+                <p *ngIf="isFieldInvalid('temporada_id')" class="text-xs text-red-600">*La temporada es requerida</p>
+              </div>
               <select 
                 formControlName="temporada_id" 
                 class="w-full rounded-lg border border-[#D7E2DB] bg-white focus:border-black focus:ring-0 h-10 px-3 py-2 text-sm text-[#4A5C52] outline-none transition-all duration-200" 
@@ -87,12 +114,14 @@
                   {{ temporada.nombre }}
                 </option>
               </select>
-              <p *ngIf="isFieldInvalid('temporada_id')" class="mt-0.5 text-xs text-red-600">La temporada es requerida</p>
             </div>
 
             <!-- Imágenes -->
             <div class="flex-1 min-h-0 flex flex-col">
-              <label class="block text-sm font-medium leading-normal text-[#4A5C52] pb-1 flex-shrink-0">Imágenes</label>
+              <div class="flex items-center gap-2 pb-1 flex-shrink-0">
+                <label class="text-sm font-medium leading-normal text-[#4A5C52]">Imágenes</label>
+                <p *ngIf="isFieldInvalid('imagen_url')" class="text-xs text-red-600">*La imagen es requerida</p>
+              </div>
               
               <!-- Opciones de tipo de entrada -->
               <div class="flex gap-4 mb-2 flex-shrink-0">
@@ -136,7 +165,7 @@
                       aria-describedby="images-help" 
                       (change)="onFilesSelected($event)" />
                   </label>
-                  <p id="images-help" class="mt-1 text-xs text-[#4A5C52]">PNG, JPG (max. 5MB)</p>
+                  <p id="images-help" class="mt-1 text-xs text-[#4A5C52]">PNG, JPG (max. 5 Imagenes)</p>
                   <p *ngIf="selectedFiles.length > 0" class="mt-2 text-xs text-[#4B7D63] font-medium">
                     {{ selectedFiles.length }} archivo(s) seleccionado(s)
                   </p>
@@ -152,8 +181,6 @@
                   placeholder="https://ejemplo.com/imagen.jpg" />
                 <p class="mt-1 text-xs text-[#9CA9A2]">Ingresa la URL completa de la imagen</p>
               </div>
-
-              <p *ngIf="isFieldInvalid('imagen_url')" class="mt-1 text-sm text-red-600 flex-shrink-0">La imagen es requerida</p>
             </div>
           </div>
         </div>

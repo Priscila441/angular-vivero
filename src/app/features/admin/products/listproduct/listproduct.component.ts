@@ -20,13 +20,16 @@ import { Temporada } from '../../../../core/models/temporada.model';
 export class Listproduct implements OnInit, OnDestroy {
   productos: ProductoDetalles[] = [];
   categorias: Categoria_producto[] = [];
+  subcategorias: Categoria_producto[] = [];
   temporadas: Temporada[] = [];
   paginaActual = 1;
   tamanioPagina = 5;
   totalPaginas = 1;
   filtroBusqueda = '';
   filtroCategoria = '';
+  filtroSubcategoria = '';
   filtroTemporada = '';
+  mostrarSubcategorias = false;
   infoSeleccionada: string | null = null;
   descripcionSeleccionada: string | null = null;
   ModalBorrar = false;
@@ -78,6 +81,41 @@ export class Listproduct implements OnInit, OnDestroy {
     });
   }
 
+  onCategoriaChange(): void {
+    const categoriaId = Number(this.filtroCategoria);
+    
+    // Limpiar subcategoría seleccionada y array de subcategorías
+    this.filtroSubcategoria = '';
+    this.subcategorias = [];
+    this.mostrarSubcategorias = false;
+    
+    // Si no hay categoría seleccionada, salir
+    if (!categoriaId) return;
+    
+    // Verificar si la categoría tiene subcategorías (IDs 2 o 3)
+    if (categoriaId === 2 || categoriaId === 3) {
+      this.cargarSubcategorias(categoriaId);
+    }
+  }
+
+  private cargarSubcategorias(idCategoriaPadre: number): void {
+    this.categoriaService.getSubcategoriasPorCategoria(idCategoriaPadre).subscribe({
+      next: (subcategorias: Categoria_producto[]) => {
+        // Filtrar solo las subcategorías que pertenecen a la categoría padre seleccionada
+        this.subcategorias = subcategorias.filter(sub => sub.id_padre === idCategoriaPadre);
+        
+        // Solo mostrar el dropdown si hay subcategorías
+        this.mostrarSubcategorias = this.subcategorias.length > 0;
+        
+        console.log(`Subcategorías cargadas para categoría ${idCategoriaPadre}:`, this.subcategorias);
+      },
+      error: (err: any) => {
+        console.error('Error al cargar subcategorías:', err);
+        this.mostrarSubcategorias = false;
+      }
+    });
+  }
+
   private calcularTotalPaginas(): void {
     this.totalPaginas = Math.max(1, Math.ceil(this.productos.length / this.tamanioPagina));
   }
@@ -94,6 +132,7 @@ export class Listproduct implements OnInit, OnDestroy {
     return this.productos
       .filter(p => this.filtrarPorBusqueda(p))
       .filter(p => this.filtrarPorCategoria(p))
+      .filter(p => this.filtrarPorSubcategoria(p))
       .filter(p => this.filtrarPorTemporada(p));
   }
 
@@ -104,8 +143,29 @@ export class Listproduct implements OnInit, OnDestroy {
 
   private filtrarPorCategoria(producto: ProductoDetalles): boolean {
     if (!this.filtroCategoria) return true;
-    const categoriaSeleccionada = this.categorias.find(cat => cat.id === Number(this.filtroCategoria));
-    return categoriaSeleccionada ? producto.nombre_categoria === categoriaSeleccionada.nombre : true;
+    
+    // Si hay una subcategoría seleccionada, no filtrar por categoría padre aquí
+    // (el filtro de subcategoría se encargará)
+    if (this.filtroSubcategoria) return true;
+    
+    const categoriaId = Number(this.filtroCategoria);
+    
+    // Si es categoría 2 o 3 (con subcategorías), mostrar productos de la categoría padre
+    // y de todas sus subcategorías
+    if (categoriaId === 2 || categoriaId === 3) {
+      // Verificar si el producto pertenece a la categoría padre o a alguna subcategoría
+      return producto.categoria_id === categoriaId || 
+             this.subcategorias.some(sub => sub.id === producto.categoria_id);
+    }
+    
+    // Para otras categorías, filtrar normalmente
+    return producto.categoria_id === categoriaId;
+  }
+
+  private filtrarPorSubcategoria(producto: ProductoDetalles): boolean {
+    if (!this.filtroSubcategoria) return true;
+    // Filtrar por el ID de la subcategoría seleccionada
+    return producto.categoria_id === Number(this.filtroSubcategoria);
   }
 
   private filtrarPorTemporada(producto: ProductoDetalles): boolean {

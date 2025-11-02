@@ -31,6 +31,12 @@ export class AddproductComponent implements OnInit, OnDestroy {
   // Array para almacenar las categorías principales
   categorias: Categoria_producto[] = [];
   
+  // Array para almacenar las subcategorías
+  subcategorias: Categoria_producto[] = [];
+  
+  // Controlar visibilidad del dropdown de subcategorías
+  mostrarSubcategorias = false;
+  
   // Array para almacenar las temporadas
   temporadas: Temporada[] = [];
 
@@ -50,6 +56,7 @@ export class AddproductComponent implements OnInit, OnDestroy {
       descripcion: ['', Validators.required],
       imagen_url: ['', Validators.required],
       categoria_id: ['', Validators.required],
+      subcategoria_id: [''],
       temporada_id: ['', Validators.required],
       informacion_extra: ['', [Validators.required, Validators.minLength(10)]]
     });
@@ -90,6 +97,43 @@ export class AddproductComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Método para manejar el cambio de categoría
+  onCategoriaChange() {
+    const categoriaId = Number(this.productForm.get('categoria_id')?.value);
+    
+    // Limpiar subcategoría seleccionada y array de subcategorías
+    this.productForm.get('subcategoria_id')?.setValue('');
+    this.subcategorias = [];
+    this.mostrarSubcategorias = false;
+    
+    // Si no hay categoría seleccionada, salir
+    if (!categoriaId) return;
+    
+    // Verificar si la categoría tiene subcategorías (IDs 2 o 3)
+    if (categoriaId === 2 || categoriaId === 3) {
+      this.cargarSubcategorias(categoriaId);
+    }
+  }
+
+  // Método para cargar subcategorías
+  private cargarSubcategorias(idCategoriaPadre: number) {
+    this.categoriaService.getSubcategoriasPorCategoria(idCategoriaPadre).subscribe({
+      next: (subcategorias: Categoria_producto[]) => {
+        // Filtrar solo las subcategorías que pertenecen a la categoría padre seleccionada
+        this.subcategorias = subcategorias.filter(sub => sub.id_padre === idCategoriaPadre);
+        
+        // Solo mostrar el dropdown si hay subcategorías
+        this.mostrarSubcategorias = this.subcategorias.length > 0;
+        
+        console.log(`Subcategorías cargadas para categoría ${idCategoriaPadre}:`, this.subcategorias);
+      },
+      error: (err: any) => {
+        console.error('Error al cargar subcategorías:', err);
+        this.mostrarSubcategorias = false;
+      }
+    });
+  }
+
   // Metodo para verificar si un campo es invalido y mostrar mensajes de error.
   isFieldInvalid(field: string): boolean {
     const control = this.productForm.get(field);
@@ -113,8 +157,33 @@ export class AddproductComponent implements OnInit, OnDestroy {
       clearTimeout(this.closeTimer);
       this.closeTimer = null;
     }
-    this.productForm.reset();
+    
+    // Resetear el formulario con valores por defecto
+    this.productForm.patchValue({
+      nombre: '',
+      descripcion: '',
+      imagen_url: '',
+      categoria_id: '',
+      subcategoria_id: '',
+      temporada_id: '',
+      informacion_extra: ''
+    });
+    
+    // Marcar todos los campos como pristine y untouched
+    Object.keys(this.productForm.controls).forEach(key => {
+      this.productForm.get(key)?.markAsPristine();
+      this.productForm.get(key)?.markAsUntouched();
+    });
+    
     this.submitted = false;
+    
+    // Limpiar el estado de subcategorías
+    this.subcategorias = [];
+    this.mostrarSubcategorias = false;
+    
+    // Limpiar archivos seleccionados
+    this.selectedFiles = [];
+    
     // Forzar detección de cambios después de cerrar
     this.cdr.detectChanges();
   }
@@ -179,11 +248,17 @@ export class AddproductComponent implements OnInit, OnDestroy {
     }
 
     // Preparar el objeto producto (sin imagen_url)
+    // Si hay subcategoría seleccionada, usar esa; si no, usar la categoría principal
+    const subcategoriaId = this.productForm.get('subcategoria_id')?.value;
+    const categoriaId = subcategoriaId 
+      ? Number(subcategoriaId) 
+      : Number(this.productForm.get('categoria_id')?.value);
+
     const producto: any = {
       nombre: this.productForm.get('nombre')?.value?.trim(),
       descripcion: this.productForm.get('descripcion')?.value?.trim(),
       informacion_extra: this.productForm.get('informacion_extra')?.value?.trim(),
-      categoria_id: Number(this.productForm.get('categoria_id')?.value),
+      categoria_id: categoriaId,
       temporada_id: Number(this.productForm.get('temporada_id')?.value)
     };
 
@@ -221,7 +296,7 @@ export class AddproductComponent implements OnInit, OnDestroy {
           // Paso 3: Subir las imágenes
           this.productoService.uploadImagenes(productoId, formData).subscribe({
             next: () => {
-              this.successMessage = 'Producto e imágenes agregados con éxito.';
+              this.successMessage = 'Producto agregado con éxito.';
               this.openSuccessModal();
               this.selectedFiles = [];
             },

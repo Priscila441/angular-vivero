@@ -107,5 +107,12 @@ export class CategoriaProductoService {
   );
 }
 
+  getSubcategoriasPorCategoria(idCategoriaPadre: number): Observable<Categoria_producto[]> {
+    return this.http.get<any>(`${this.api_url}/subcategorias`, {
+      params: { id_padre: idCategoriaPadre.toString() }
+    }).pipe(
+      map(response => response?.data || [])
+    );
+  }
 
 }

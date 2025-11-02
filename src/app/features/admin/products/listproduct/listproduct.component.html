@@ -19,10 +19,23 @@
     <select 
       [(ngModel)]="filtroCategoria" 
       name="filtroCategoria"
+      (change)="onCategoriaChange()"
       class="w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
       <option value="">Categoría</option>
       <option *ngFor="let categoria of categorias" [value]="categoria.id">
         {{ categoria.nombre }}
+      </option>
+    </select>
+
+    <!-- Filtro de subcategoría (solo visible si hay subcategorías) -->
+    <select 
+      *ngIf="mostrarSubcategorias"
+      [(ngModel)]="filtroSubcategoria" 
+      name="filtroSubcategoria"
+      class="w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
+      <option value="">Subcategoría</option>
+      <option *ngFor="let subcategoria of subcategorias" [value]="subcategoria.id">
+        {{ subcategoria.nombre }}
       </option>
     </select>
 
