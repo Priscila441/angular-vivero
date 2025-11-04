@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ConsultaService } from '../../../../core/service/consulta.service';
 import { FormsModule } from '@angular/forms';
 
@@ -11,25 +10,44 @@ import { FormsModule } from '@angular/forms';
 export class Contact implements OnInit {
   mensaje = '';
   nombre = '';
-  email = '';
+  mostrarModal = false;
 
   constructor(private consultaService: ConsultaService) {}
 
   ngOnInit() {
     const productos = this.consultaService.obtenerConsultas();
     if (productos.length > 0) {
-      this.mensaje = `Hola, me gustaría consultar sobre los siguientes productos:\n- ${productos.join('\n- ')}`;
+      this.mensaje = `Hola Alejandro, me gustaría consultar sobre los siguientes productos:\n- ${productos.join('\n- ')}`;
     }
   }
 
-  onEnviarFormulario() {
-  // logica de envío de form
+  onEnviarFormulario(event: Event) {
+    event.preventDefault();
+    this.mostrarModal = true;
+  }
 
-  this.consultaService.limpiarConsultas();
-  this.nombre = '';
-  this.email = '';
-  this.mensaje = '';
-  alert('Tu consulta fue enviada correctamente.');
-}
+  cancelarEnvio() {
+    this.mostrarModal = false;
+  }
 
+  confirmarEnvioWhatsApp() {
+    const telefono = '5493515457821'; // número de WhatsApp de Alejandro
+
+    // Nombre del usuario
+    const texto =
+      this.nombre.trim() !== ''
+        ? `${this.mensaje}\n\nSoy ${this.nombre}.`
+        : this.mensaje;
+
+    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(texto)}`;
+
+    // Limpiar formulario y consultas
+    this.consultaService.limpiarConsultas();
+    this.nombre = '';
+    this.mensaje = '';
+    this.mostrarModal = false;
+
+    // Redirigir al chat de WhatsApp
+    window.open(url, '_blank');
+  }
 }
