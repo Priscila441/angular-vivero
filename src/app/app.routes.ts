@@ -18,6 +18,7 @@ export const routes: Routes = [
           { path: '', redirectTo: 'products', pathMatch: 'full' },
           { path: 'products', loadComponent: () => import('./features/admin/products/listproduct/listproduct.component').then(m => m.Listproduct) },
           { path: 'products/add', loadComponent: () => import('./features/admin/products/addproducts/addproduct.component').then(m => m.AddproductComponent) },
+          { path: 'products/edit/:id', loadComponent: () => import('./features/admin/products/editproduct/editproduct.component').then(m => m.EditproductComponent) },
           { path: 'products/list', loadComponent: () => import('./features/admin/products/listproduct/listproduct.component').then(m => m.Listproduct) }
         ]
       }

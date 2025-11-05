@@ -14,16 +14,27 @@
       <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
       <a routerLink="/admin/products" class="text-[#4A5C52] hover:underline">Lista de Productos</a>
       <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
-      <span class="text-[#1C2B21] font-bold">Agregar Producto</span>
+      <span class="text-[#1C2B21] font-bold">Editar Producto</span>
     </nav>
   </div>
 </div>
 
-<!-- Componente de formulario compartido -->
-<app-product-form 
-  #productFormRef
-  mode="create"
+<!-- Loading state -->
+<div *ngIf="isLoading" class="flex items-center justify-center h-[calc(100vh-140px)]">
+  <div class="text-center">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[#4B7D63] border-t-transparent"></div>
+    <p class="mt-4 text-[#4A5C52] text-sm font-medium">Cargando producto...</p>
+  </div>
+</div>
+
+<!-- Formulario compartido (solo se muestra cuando los datos están cargados) -->
+<app-product-form
+  *ngIf="!isLoading && productData"
+  mode="edit"
+  [productId]="productId"
+  [initialData]="productData"
   [externalSubmit]="true"
+  #productFormRef
   (formSubmit)="onFormSubmit($event)"
-  (formCancel)="onFormCancel()">
+  (formCancel)="onCancel()">
 </app-product-form>

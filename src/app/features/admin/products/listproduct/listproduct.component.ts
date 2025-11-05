@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
@@ -12,7 +13,7 @@ import { Temporada } from '../../../../core/models/temporada.model';
 @Component({
   selector: 'app-listproduct',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './listproduct.component.html',
   styleUrls: ['./listproduct.component.css']
 })
