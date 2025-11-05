@@ -28,4 +28,13 @@ export class ServicioService {
     delete(id: number): Observable<void>{
         return this.http.delete<void>(`${this.api_url}/${id}`);
     }
+
+    getDetallesById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.api_url}/detalles/${id}`);
+    }
+
+    getAllDetalles(): Observable<any> {
+    return this.http.get<any>(`${this.api_url}/detalles`);
+    }
+
 }

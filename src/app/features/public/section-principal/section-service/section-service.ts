@@ -2,10 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { OnInit } from '@angular/core';
-import { Servicio } from '../../../../core/models/servicio.model';
-import { ServicioService } from '../../../../core/service/servicio.service';
 import { Categoria_servicio } from '../../../../core/models/categoria_servicio.model';
-import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
 import { CategoriaServicioService } from '../../../../core/service/categoria_servicio.service';
 
 @Component({
