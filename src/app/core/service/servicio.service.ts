@@ -37,4 +37,7 @@ export class ServicioService {
     return this.http.get<any>(`${this.api_url}/detalles`);
     }
 
+    uploadImagenes(servicioId: number, formData: FormData): Observable<any> {
+        return this.http.post<any>(`${environment.API_URL}/servicios/${servicioId}/imagenes/multiples`, formData);
+    }
 }

@@ -6,13 +6,14 @@ import { Categoria_servicio } from '../../../../core/models/categoria_servicio.m
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment.development';
 import { CategoriaServicioService } from '../../../../core/service/categoria_servicio.service';
+import { ServicioService } from '../../../../core/service/servicio.service';
 
 @Component({
   selector: 'app-listservices',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './listservices.component.html',
-  styleUrls: ['./listservices.component.css']
+  styleUrls: []
 })
 export class ListservicesComponent implements OnInit, OnDestroy {
   // Datos base (sin lógica aún). Luego se reemplaza por datos reales desde el service
@@ -43,7 +44,8 @@ export class ListservicesComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
-    private categoriaServicio: CategoriaServicioService
+    private categoriaServicio: CategoriaServicioService,
+    private servicioService: ServicioService
   ) {}
 
   ngOnInit(): void {
@@ -148,13 +150,44 @@ export class ListservicesComponent implements OnInit, OnDestroy {
   }
   cancelarBorrado() { this.ModalBorrar = false; this.servicioABorrar = null; }
   confirmarBorrado() {
-    // Diseño: cerrar modal y mostrar mensaje
-    this.ModalBorrar = false;
-    this.mensaje = 'Servicio borrado (demo)';
-    this.esError = false;
-    this.mostrarModalMensaje = true;
-    if (this.closeTimer) clearTimeout(this.closeTimer);
-    this.closeTimer = setTimeout(() => this.cerrarModal(), 2500);
+    const id = this.servicioABorrar?.id;
+    const nombre = this.servicioABorrar?.nombre;
+    if (!id) {
+      this.esError = true;
+      this.mensaje = 'No se pudo identificar el servicio a borrar.';
+      this.mostrarModalMensaje = true;
+      if (this.closeTimer) clearTimeout(this.closeTimer);
+      this.closeTimer = setTimeout(() => this.cerrarModal(), 2500);
+      return;
+    }
+
+    // Llamar al endpoint DELETE y actualizar la UI
+    this.servicioService.delete(id).subscribe({
+      next: () => {
+        // Quitar de la lista actual
+        this.servicios = this.servicios.filter(s => s.id !== id);
+        this.calcularTotalPaginas();
+        if (this.paginaActual > this.totalPaginas) this.paginaActual = this.totalPaginas;
+
+        // Cerrar modal de confirmación y mostrar éxito
+        this.ModalBorrar = false;
+        this.servicioABorrar = null;
+        this.esError = false;
+        this.mensaje = nombre ? `El servicio ${nombre} ha sido eliminado` : '¡Servicio borrado con éxito!';
+        this.mostrarModalMensaje = true;
+        if (this.closeTimer) clearTimeout(this.closeTimer);
+        this.closeTimer = setTimeout(() => this.cerrarModal(), 2500);
+      },
+      error: (err) => {
+        console.error('Error al borrar servicio:', err);
+        this.ModalBorrar = false;
+        this.esError = true;
+        this.mensaje = 'No se pudo borrar el servicio. Intenta nuevamente.';
+        this.mostrarModalMensaje = true;
+        if (this.closeTimer) clearTimeout(this.closeTimer);
+        this.closeTimer = setTimeout(() => this.cerrarModal(), 3000);
+      }
+    });
   }
   cerrarModal() { this.mostrarModalMensaje = false; this.mensaje = ''; }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ServiceFormComponent } from '../shared/service-form.component';
@@ -12,33 +12,67 @@ import { ServicioService } from '../../../../core/service/servicio.service';
   styleUrls: []
 })
 export class AddserviceComponent {
+  @ViewChild('serviceFormRef') serviceForm?: ServiceFormComponent;
 
   constructor(
     private router: Router,
     private servicioService: ServicioService
   ) {}
 
-  onFormSubmit(event: {
-    servicio: {
-      nombre: string;
-      descripcion: string;
-      informacion_extra: string;
-      categoria_id: number;
-    };
+  async onFormSubmit(event: {
+    servicio: any;
+    selectedFiles: File[];
+    imageInputMode: 'file' | 'url';
+    imagen_url?: string;
   }) {
-    const { servicio } = event;
+    const { servicio, selectedFiles, imageInputMode, imagen_url } = event;
 
-    // POST al backend: http://localhost:4001/api/servicios
-    // El backend solo requiere: nombre, descripcion, informacion_extra, categoria_id
-    this.servicioService.create(servicio as any).subscribe({
-      next: (response: any) => {
-        console.log('Servicio creado exitosamente:', response);
-        // Navegar a la lista de servicios después de 3.5 segundos
-        setTimeout(() => {
-          this.router.navigate(['/admin/services']);
-        }, 3500);
+    this.servicioService.create(servicio).subscribe({
+      next: async (response: any) => {
+        const servicioId = response?.data?.id || response?.id;
+        if (!servicioId) {
+          console.error('No se recibió ID de servicio tras crear');
+          this.onServiceCreated({});
+          return;
+        }
+
+        try {
+          const formData = await this.buildImagesFormData(imageInputMode, selectedFiles, imagen_url);
+          if (formData) {
+            this.servicioService.uploadImagenes(servicioId, formData).subscribe({
+              next: () => {
+                if (this.serviceForm) {
+                  this.serviceForm.successMessage = 'Servicio agregado con éxito.';
+                  this.serviceForm.openSuccessModal();
+                }
+                this.onServiceCreated({ id: servicioId });
+              },
+              error: (err) => {
+                console.error('Error al subir imágenes del servicio:', err);
+                if (this.serviceForm) {
+                  this.serviceForm.successMessage = 'Servicio agregado (advertencia en imágenes).';
+                  this.serviceForm.openSuccessModal();
+                }
+                this.onServiceCreated({ id: servicioId });
+              }
+            });
+          } else {
+            if (this.serviceForm) {
+              this.serviceForm.successMessage = 'Servicio agregado con éxito.';
+              this.serviceForm.openSuccessModal();
+            }
+            this.onServiceCreated({ id: servicioId });
+          }
+        } catch (e) {
+          console.error('Error procesando imagen desde URL para servicio:', e);
+          if (this.serviceForm) {
+            this.serviceForm.successMessage = 'Servicio agregado (error procesando imagen).';
+            this.serviceForm.openSuccessModal();
+          }
+          this.onServiceCreated({ id: servicioId });
+        }
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error('Error al crear servicio:', err);
       }
     });
@@ -47,5 +81,36 @@ export class AddserviceComponent {
   onFormCancel() {
     // Volver a la lista de servicios
     this.router.navigate(['/admin/services']);
+  }
+
+  private onServiceCreated(_data: any) {
+    setTimeout(() => {
+      this.router.navigate(['/admin/services']);
+    }, 3500);
+  }
+
+  // Construye FormData con 'files' desde archivos o URL; retorna null si no hay nada que enviar
+  private async buildImagesFormData(
+    mode: 'file' | 'url',
+    files: File[],
+    imagenUrl?: string
+  ): Promise<FormData | null> {
+    const formData = new FormData();
+    if (mode === 'file' && files?.length) {
+      files.forEach(f => formData.append('files', f));
+    } else if (mode === 'url' && imagenUrl) {
+      const filename = imagenUrl.split('/').pop() || 'imagen.jpg';
+      const file = await this.convertUrlToFile(imagenUrl, filename);
+      formData.append('files', file);
+    }
+    const hasFiles = (formData as any).has ? (formData as any).has('files') : false;
+    return hasFiles ? formData : null;
+  }
+
+  private async convertUrlToFile(url: string, filename: string): Promise<File> {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Error al descargar la imagen: ${response.statusText}`);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type });
   }
 }
