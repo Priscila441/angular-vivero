@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, map, tap } from "rxjs";
 import { Servicio } from "../models/servicio.model";
 import { environment } from "../../../environments/environment.development";
 
@@ -30,7 +30,9 @@ export class ServicioService {
     }
 
     getDetallesById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.api_url}/detalles/${id}`);
+    return this.http.get<any>(`${this.api_url}/detalles/${id}`).pipe(
+        tap(res => console.log('📦 Respuesta backend:', res)),
+        map(response => response || {}));
     }
 
     getAllDetalles(): Observable<any> {

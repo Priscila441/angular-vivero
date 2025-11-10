@@ -9,7 +9,8 @@ export const routes: Routes = [
           { path: 'productos/:categoryId', loadComponent: () => import ('./features/public/components/product-list/product-list').then(m => m.ProductList)},
           { path: 'producto/:id' , loadComponent: () => import ('./features/public/components/product-detail/product-detail').then(m => m.ProductDetail)},
           { path: 'contacto' , loadComponent: () => import('./features/public/components/contact/contact').then(m => m.Contact) },
-          { path: 'sobre-nosotros' , loadComponent: () => import('./features/public/components/about-us/about-us').then(m => m.AboutUs) }
+          { path: 'sobre-nosotros' , loadComponent: () => import('./features/public/components/about-us/about-us').then(m => m.AboutUs) },
+          { path: 'servicio/:serviceId' , loadComponent: () => import('./features/public/components/service-detail/service-detail').then(m => m.ServiceDetail) }
     ]
       },
       { 
