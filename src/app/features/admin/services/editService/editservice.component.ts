@@ -200,13 +200,13 @@ export class EditserviceComponent implements OnInit {
     const c2 = `${environment.API_URL}/servicios/imagenes/${imageId}`;
     const c3 = `${environment.API_URL}/imagenes/${imageId}`;
 
-  /* const del$ = (url: string) => this.http.delete<void>(url);
+  const del$ = (url: string) => this.http.delete<void>(url);
     return del$(c1).pipe(
       catchError(() => del$(c2).pipe(
         catchError(() => del$(c3).pipe(
           catchError(() => of(void 0))
         ))
       ))
-    ); */
+    ); 
   }
 }

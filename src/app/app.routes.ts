@@ -17,10 +17,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/layout/admin-layout.component').then(m => m.AdminLayoutComponent),
         children: [
           { path: '', redirectTo: 'products', pathMatch: 'full' },
+          // Productos
           { path: 'products', loadComponent: () => import('./features/admin/products/listproducts/listproduct.component').then(m => m.Listproduct) },
-          { path: 'products/add', loadComponent: () => import('./features/admin/products/addproducts/addproduct.component').then(m => m.AddproductComponent) },
+          { path: 'products/add', loadComponent: () => import('./features/admin/products/addproduct/addproduct.component').then(m => m.AddproductComponent) },
           { path: 'products/edit/:id', loadComponent: () => import('./features/admin/products/editproduct/editproduct.component').then(m => m.EditproductComponent) },
-          { path: 'products/list', loadComponent: () => import('./features/admin/products/listproducts/listproduct.component').then(m => m.Listproduct) },
+          // Ruta duplicada eliminada: 'products/list'
+          // Servicios
           { path: 'services', loadComponent: () => import('./features/admin/services/listservices/listservices.component').then(m => m.ListservicesComponent) },
           { path: 'services/add', loadComponent: () => import('./features/admin/services/addservice/addservice.component').then(m => m.AddserviceComponent) },
           { path: 'services/edit/:id', loadComponent: () => import('./features/admin/services/editservice/editservice.component').then(m => m.EditserviceComponent) }

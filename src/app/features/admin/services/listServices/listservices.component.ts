@@ -34,7 +34,7 @@ export class ListservicesComponent implements OnInit, OnDestroy {
   filtroBusqueda = '';
   filtroCategoria = '';
 
-  // Modales y mensajes (stub por ahora)
+  // Modales y mensajes 
   ModalBorrar = false;
   servicioABorrar: any | null = null;
   mostrarModalMensaje = false;
@@ -97,7 +97,7 @@ export class ListservicesComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Getter para paginado (aplica filtros básicos en memoria)
+  // Gett para paginado (
   get serviciosPaginados() {
     const filtrados = this.aplicarFiltros();
     this.actualizarPaginacion(filtrados.length);
@@ -143,7 +143,7 @@ export class ListservicesComponent implements OnInit, OnDestroy {
   siguientePagina() { if (!this.esUltimaPagina) this.paginaActual++; }
 
 
-  // Acciones (stubs por ahora)
+  // Acciones
   borrarServicio(id: number) {
     this.servicioABorrar = this.servicios.find(s => s.id === id) || null;
     this.ModalBorrar = true;
