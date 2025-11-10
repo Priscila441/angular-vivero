@@ -12,12 +12,28 @@ export class Contact implements OnInit {
   nombre = '';
   mostrarModal = false;
 
-  constructor(private consultaService: ConsultaService) {}
+  constructor(public consultaService: ConsultaService) {}
 
   ngOnInit() {
     const productos = this.consultaService.obtenerConsultas();
-    if (productos.length > 0) {
-      this.mensaje = `Hola Alejandro, me gustaría consultar sobre los siguientes productos:\n- ${productos.join('\n- ')}`;
+    const servicios = this.consultaService.obtenerConsultasServicios();
+
+    if (productos.length > 0 || servicios.length > 0) {
+      let partesMensaje: string[] = [];
+
+      if (productos.length > 0) {
+        partesMensaje.push(
+          `Hola Alejandro, me gustaría consultar sobre los siguientes productos:\n- ${productos.join('\n- ')}`
+        );
+      }
+
+      if (servicios.length > 0) {
+        partesMensaje.push(
+          `Además, me gustaría consultar sobre los siguientes servicios:\n- ${servicios.join('\n- ')}`
+        );
+      }
+
+      this.mensaje = partesMensaje.join('\n\n');
     }
   }
 
@@ -33,7 +49,6 @@ export class Contact implements OnInit {
   confirmarEnvioWhatsApp() {
     const telefono = '5493515457821'; // número de WhatsApp de Alejandro
 
-    // Nombre del usuario
     const texto =
       this.nombre.trim() !== ''
         ? `${this.mensaje}\n\nSoy ${this.nombre}.`
@@ -47,7 +62,12 @@ export class Contact implements OnInit {
     this.mensaje = '';
     this.mostrarModal = false;
 
-    // Redirigir al chat de WhatsApp
     window.open(url, '_blank');
   }
+
+  borrarConsultas() {
+  this.consultaService.limpiarConsultas();
+  this.mensaje = '';
+  }
+
 }

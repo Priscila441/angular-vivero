@@ -66,6 +66,10 @@
           <input type="text" placeholder="Nombre" class="w-full border rounded-lg p-3" name="nombre" [(ngModel)]="nombre" required />
           <textarea [(ngModel)]="mensaje" name="mensaje" rows="5" class="w-full border rounded-lg p-3" placeholder="Mensaje"></textarea>
           <button type="submit" class="w-full py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">Enviar</button>
+          @if (consultaService.hayConsultas()) {
+  <button type="button" (click)="borrarConsultas()" class="w-full py-3 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition">Borrar consulta</button>
+}
+
         </form>
 
         <!-- Modal con mensaje de whatsapp -->

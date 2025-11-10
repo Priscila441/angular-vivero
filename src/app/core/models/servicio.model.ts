@@ -7,7 +7,6 @@ export interface Servicio {
     esta_activo: boolean;
     imagenes: imagenServicio[];
     categoria_id: number;
-    nombre_categoria: string;
 }
 
 export interface imagenServicio {
