@@ -13,7 +13,7 @@ import { environment } from '../../../../../environments/environment.development
   selector: 'app-editservice',
   standalone: true,
   imports: [CommonModule, RouterModule, ServiceFormComponent],
-  templateUrl: './editservice.component.html',
+  templateUrl: './edit-service.component.html',
   styleUrls: []
 })
 export class EditserviceComponent implements OnInit {

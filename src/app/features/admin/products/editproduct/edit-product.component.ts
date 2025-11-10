@@ -13,7 +13,7 @@ import { environment } from '../../../../../environments/environment.development
   selector: 'app-editproduct',
   standalone: true,
   imports: [CommonModule, RouterModule, ProductFormComponent],
-  templateUrl: './editproduct.component.html',
+  templateUrl: './edit-product.component.html',
   styleUrls: []
 })
 export class EditproductComponent implements OnInit {

@@ -8,7 +8,7 @@ import { ServicioService } from '../../../../core/service/servicio.service';
   selector: 'app-addservice',
   standalone: true,
   imports: [RouterModule, CommonModule, ServiceFormComponent],
-  templateUrl: './addservice.component.html',
+  templateUrl: './add-service.component.html',
   styleUrls: []
 })
 export class AddserviceComponent {

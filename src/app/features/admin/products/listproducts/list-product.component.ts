@@ -14,10 +14,8 @@ import { Temporada } from '../../../../core/models/temporada.model';
   selector: 'app-listproduct',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-    // Corrección de nombres de archivo: el folder contiene 'listproduct.component.*'
-    // Se ajusta para evitar errores de build por rutas de plantilla/estilos inexistentes.
-    templateUrl: './listproduct.component.html',
-    styleUrls: ['./listproduct.component.css']
+  templateUrl: './list-product.component.html',
+  styleUrls: ['./list-product.component.css']
 })
 
 export class Listproduct implements OnInit, OnDestroy {

@@ -12,7 +12,7 @@ import { ServicioService } from '../../../../core/service/servicio.service';
   selector: 'app-listservices',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './listservices.component.html',
+  templateUrl: './list-service.component.html',
   styleUrls: []
 })
 export class ListservicesComponent implements OnInit, OnDestroy {
