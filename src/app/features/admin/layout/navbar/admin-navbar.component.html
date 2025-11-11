@@ -21,11 +21,57 @@
       </div>
     </div>
     <!-- Usuario -->
-    <div class="flex items-center gap-1">
-      <span class="material-symbols-outlined text-base text-black">person_2</span>
-      <div class="text-right">
-        <div class="font-medium text-gray-800 text-xs font-sans">Juan Gonzalez</div>
-        <div class="text-[10px] text-gray-500 font-sans">Administrador</div>
+    <div class="relative" #menuContainer>
+      <button
+        type="button"
+        class="flex items-center gap-2 hover:bg-white/60 rounded-lg px-2 py-1 focus:outline-none"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="isOpen"
+        (click)="toggleDropdown($event)"
+        (keydown.escape)="closeDropdown()"
+      >
+        <span class="material-symbols-outlined text-base text-black">person_2</span>
+        <div class="text-right">
+          <div class="font-medium text-gray-800 text-xs font-sans">Juan Gonzalez</div>
+          <div class="text-[10px] text-gray-500 font-sans">Administrador</div>
+        </div>
+      </button>
+
+      <!-- Dropdown -->
+      <div
+        *ngIf="isOpen"
+        class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-md ring-1 ring-black/5 z-50 p-1.5"
+        role="menu"
+      >
+        <button
+          type="button"
+          class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-gray-800 hover:bg-gray-50 focus:outline-none text-sm"
+          (click)="onProfile()"
+          role="menuitem"
+        >
+          <span class="material-symbols-outlined text-[18px]">person</span>
+          <span>Perfil</span>
+        </button>
+
+        <button
+          type="button"
+          class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-gray-800 hover:bg-gray-50 focus:outline-none text-sm"
+          (click)="onEditProfile()"
+          role="menuitem"
+        >
+          <span class="material-symbols-outlined text-[18px]">edit_square</span>
+          <span>Editar perfil</span>
+        </button>
+
+        <button
+          type="button"
+          class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-red-600 hover:bg-red-50 focus:outline-none text-sm"
+          (click)="onLogout()"
+          role="menuitem"
+        >
+          <span class="material-symbols-outlined text-[18px] text-red-600">logout</span>
+          <span>Cerrar sesión</span>
+        </button>
       </div>
     </div>
   </div>

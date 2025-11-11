@@ -1,0 +1,57 @@
+<!-- Encabezado principal -->
+<div class="mb-6 mt-12 px-16">
+  <h1 class="text-[#1C2B21] text-2xl font-bold leading-tight tracking-[-0.015em]">Imágenes</h1>
+  <p class="text-[#4A5C52] mt-3 text-base font-medium leading-normal">
+    Administración y vista general de las imágenes asociadas a productos y servicios.
+  </p>
+</div>
+
+<!-- Tabs con barra inferior -->
+<div class="px-16 mb-6">
+  <div class="w-full max-w-2xl">
+    <nav class="flex gap-8 border-b border-[#D7E2DB]">
+      <!-- Tab Productos -->
+      <button
+        (click)="selectTab('productos')"
+        class="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all relative"
+        [ngClass]="selectedTab === 'productos' ? 'text-[#1C2B21]' : 'text-[#4A5C52] hover:text-[#1C2B21]'"
+      >
+        <span class="material-symbols-outlined text-xl">psychiatry</span>
+        <span>Productos</span>
+        <span
+          *ngIf="selectedTab === 'productos'"
+          class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4B7D63] rounded-t-full"
+        ></span>
+      </button>
+
+      <!-- Tab Servicios -->
+      <button
+        (click)="selectTab('servicios')"
+        class="flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all relative"
+        [ngClass]="selectedTab === 'servicios' ? 'text-[#1C2B21]' : 'text-[#4A5C52] hover:text-[#1C2B21]'"
+      >
+        <span class="material-symbols-outlined text-xl">agriculture</span>
+        <span>Servicios</span>
+        <span
+          *ngIf="selectedTab === 'servicios'"
+          class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4B7D63] rounded-t-full"
+        ></span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- Contenido principal -->
+<div class="px-16">
+  <div class="rounded-lg border border-[#D7E2DB] bg-white p-6 shadow-sm">
+    <ng-container *ngIf="selectedTab === 'productos'; else contentServicios">
+      <h2 class="text-[#1C2B21] text-lg font-semibold mb-3">Imágenes de productos</h2>
+      <p class="text-sm text-[#4A5C52]">Aquí podrás gestionar las imágenes de los productos.</p>
+    </ng-container>
+    <ng-template #contentServicios>
+      <h2 class="text-[#1C2B21] text-lg font-semibold mb-3">Imágenes de servicios</h2>
+      <p class="text-sm text-[#4A5C52]">Aquí podrás gestionar las imágenes de los servicios.</p>
+    </ng-template>
+  </div>
+</div>
+

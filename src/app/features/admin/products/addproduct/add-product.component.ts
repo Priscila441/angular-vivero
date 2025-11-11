@@ -8,7 +8,7 @@ import { ProductoService } from '../../../../core/service/producto.service';
   selector: 'app-addproduct',
   standalone: true,
   imports: [RouterModule, CommonModule, ProductFormComponent],
-  templateUrl: './add-product.component.html', // Ajustado a kebab-case definitivo
+  templateUrl: './add-product.component.html', 
   styleUrls: []
 })
 export class AddproductComponent {

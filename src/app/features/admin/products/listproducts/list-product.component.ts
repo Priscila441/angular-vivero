@@ -11,18 +11,29 @@ import { Temporada } from '../../../../core/models/temporada.model';
 
 
 @Component({
-  selector: 'app-listproduct',
+  selector: 'app-list-product',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './list-product.component.html',
-  styleUrls: ['./list-product.component.css']
+  styleUrls: []
 })
 
-export class Listproduct implements OnInit, OnDestroy {
+export class ListProductComponent implements OnInit, OnDestroy {
   productos: ProductoDetalles[] = [];
   categorias: Categoria_producto[] = [];
   subcategorias: Categoria_producto[] = [];
   temporadas: Temporada[] = [];
+
+  // Mapeo de color por id de temporada
+  private readonly coloresTemporadas: Record<number, string> = {
+    1: 'bg-orange-100 text-orange-800',   // p. ej., Noviembre - Diciembre
+    2: 'bg-yellow-100 text-yellow-800',   // p. ej., Abril - Mayo - Junio
+    3: 'bg-blue-100 text-blue-800',       // p. ej., Diciembre - Enero
+    4: 'bg-green-100 text-green-800',     // p. ej., Noviembre - Diciembre - Enero
+    5: 'bg-rose-100 text-rose-800'        // p. ej., Todo el año
+  };
+
+  
   paginaActual = 1;
   tamanioPagina = 5;
   totalPaginas = 1;
@@ -31,8 +42,7 @@ export class Listproduct implements OnInit, OnDestroy {
   filtroSubcategoria = '';
   filtroTemporada = '';
   mostrarSubcategorias = false;
-  infoSeleccionada: string | null = null;
-  descripcionSeleccionada: string | null = null;
+  // Se eliminaron variables de hover (descripcionSeleccionada, infoSeleccionada) por no usarse.
   ModalBorrar = false;
   productoABorrar: ProductoDetalles | null = null;
   mostrarModalMensaje = false;
@@ -57,6 +67,7 @@ export class Listproduct implements OnInit, OnDestroy {
       next: (productos) => {
         this.productos = productos;
         this.calcularTotalPaginas();
+  this.normalizeProductos();
       },
       error: (err) => console.error('Error al cargar productos:', err)
     });
@@ -73,10 +84,11 @@ export class Listproduct implements OnInit, OnDestroy {
 
   private cargarTemporadas(): void {
     this.temporadaService.getAll().subscribe({
-      next: (response: any) => {
-        if (response && response.data) {
-          this.temporadas = response.data;
-        }
+      next: (resp: any) => {
+        // Soporta tanto un array directo como un objeto { data: [] }
+        const lista = Array.isArray(resp) ? resp : (resp?.data || []);
+        this.temporadas = lista;
+        if (this.temporadas.length) this.normalizeProductos();
       },
       error: (err) => console.error('Error al cargar temporadas:', err)
     });
@@ -102,16 +114,10 @@ export class Listproduct implements OnInit, OnDestroy {
   private cargarSubcategorias(idCategoriaPadre: number): void {
     this.categoriaService.getSubcategoriasPorCategoria(idCategoriaPadre).subscribe({
       next: (subcategorias: Categoria_producto[]) => {
-        // Filtrar solo las subcategorías que pertenecen a la categoría padre seleccionada
         this.subcategorias = subcategorias.filter(sub => sub.id_padre === idCategoriaPadre);
-        
-        // Solo mostrar el dropdown si hay subcategorías
         this.mostrarSubcategorias = this.subcategorias.length > 0;
-        
-        console.log(`Subcategorías cargadas para categoría ${idCategoriaPadre}:`, this.subcategorias);
       },
-      error: (err: any) => {
-        console.error('Error al cargar subcategorías:', err);
+      error: () => {
         this.mostrarSubcategorias = false;
       }
     });
@@ -171,7 +177,10 @@ export class Listproduct implements OnInit, OnDestroy {
 
   private filtrarPorTemporada(producto: ProductoDetalles): boolean {
     if (!this.filtroTemporada) return true;
-    const temporadaSeleccionada = this.temporadas.find(temp => temp.id === Number(this.filtroTemporada));
+    const idSeleccionado = Number(this.filtroTemporada);
+    // Intentar comparar primero por id (más robusto) y luego por nombre si ya está seteado
+    if (producto.temporada_id === idSeleccionado) return true;
+    const temporadaSeleccionada = this.temporadas.find(t => t.id === idSeleccionado);
     return temporadaSeleccionada ? producto.nombre_temporada === temporadaSeleccionada.nombre : true;
   }
 
@@ -183,6 +192,34 @@ export class Listproduct implements OnInit, OnDestroy {
   private paginar(productos: ProductoDetalles[]): ProductoDetalles[] {
     const inicio = (this.paginaActual - 1) * this.tamanioPagina;
     return productos.slice(inicio, inicio + this.tamanioPagina);
+  }
+
+  // Normaliza productos para completar nombre_categoria y nombre_temporada si vienen undefined
+  private normalizeProductos(): void {
+    if (!this.productos || this.productos.length === 0) return;
+    for (const p of this.productos) {
+      // Categoria
+      if (!p.nombre_categoria) {
+        const raw: any = p as any;
+        p.nombre_categoria = raw.categoria?.nombre || raw.categoria_nombre || raw.nombreCategoria || '';
+      }
+      // Temporada
+      if (!p.nombre_temporada) {
+        const raw: any = p as any;
+        p.nombre_temporada = raw.temporada?.nombre || raw.temporada_nombre || raw.nombreTemporada || '';
+      }
+      // Si aún no hay nombre_temporada pero existe temporada_id y ya cargamos temporadas, buscarlo
+      if (!p.nombre_temporada && p.temporada_id && this.temporadas?.length) {
+        const temp = this.temporadas.find(t => t.id === p.temporada_id);
+        if (temp) p.nombre_temporada = temp.nombre;
+      }
+    }
+  }
+
+  // Eliminado getBadgeClass y coloresTemporadas: ya no se utilizan en la vista.
+  // Clase para badge de temporada según id
+  getBadgeClass(p: ProductoDetalles): string {
+    return this.coloresTemporadas[p.temporada_id] || 'bg-gray-100 text-gray-700';
   }
 
   // Modal para eliminar producto
