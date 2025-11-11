@@ -23,7 +23,7 @@ export const routes: Routes = [
           { path: 'services', loadComponent: () => import('./features/admin/services/listservices/list-service.component').then(m => m.ListservicesComponent) },
           { path: 'services/add', loadComponent: () => import('./features/admin/services/addservice/add-service.component').then(m => m.AddserviceComponent) },
           { path: 'services/edit/:id', loadComponent: () => import('./features/admin/services/editservice/edit-service.component').then(m => m.EditserviceComponent) },
-          { path: 'images', loadComponent: () => import('./features/admin/images/images.component').then(m => m.ImagesComponent) }
+          { path: 'images', loadComponent: () => import('./features/admin/images/shared-images/images.component').then(m => m.ImagesComponent) }
         ]
       }
 

@@ -1,0 +1,77 @@
+<!-- Contenedor compacto que no excede el router-outlet -->
+<div class="h-full flex flex-col overflow-hidden">
+  <!-- Encabezado principal con breadcrumb estilo add-product -->
+  <div class="px-8 pt-3 pb-1 flex-shrink-0">
+    <div class="flex items-center gap-4 justify-start mb-2">
+      <!-- Botón de vuelta -->
+      <a routerLink="/admin" class="flex items-center gap-2 text-[#0e1a13] hover:text-[#51946c] transition-colors">
+        <span class="material-symbols-outlined text-xl">arrow_back</span>
+        <span class="text-sm font-medium">Volver</span>
+      </a>
+      <!-- Separador -->
+      <div class="w-px h-6 bg-[#d1e6d9]"></div>
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-sm bg-[#F6FBF8] px-2 rounded">
+        <a routerLink="/admin" class="text-[#4A5C52] hover:underline">Panel</a>
+        <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
+        <span class="text-[#1C2B21] font-bold">Imágenes</span>
+      </nav>
+    </div>
+    
+    <h1 class="text-[#1C2B21] text-xl font-bold leading-tight">Imágenes</h1>
+    
+    <p class="text-[#4A5C52] mt-2 text-sm">
+      Administración y vista general de las imágenes asociadas a productos y servicios.
+    </p>
+    <div class="border-t border-[#51946c] opacity-60 my-1.5 w-full"></div>
+  </div>
+
+  <!-- Tabs con barra inferior (más grandes) -->
+  <div class="px-8 pb-1 flex-shrink-0">
+    <div class="w-full max-w-2xl">
+      <nav class="flex border-b border-[#D7E2DB]">
+        <!-- Tab Productos -->
+        <button
+          (click)="selectTab('productos')"
+          class="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-all relative"
+          [ngClass]="selectedTab === 'productos' ? 'text-[#4B7D63]' : 'text-[#4A5C52] hover:text-[#4B7D63]'"
+        >
+          <span class="material-symbols-outlined text-lg">psychiatry</span>
+          <span>Productos</span>
+          <span
+            *ngIf="selectedTab === 'productos'"
+            class="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#4B7D63]"
+          ></span>
+        </button>
+
+        <!-- Tab Servicios -->
+        <button
+          (click)="selectTab('servicios')"
+          class="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-all relative"
+          [ngClass]="selectedTab === 'servicios' ? 'text-[#4B7D63]' : 'text-[#4A5C52] hover:text-[#4B7D63]'"
+        >
+          <span class="material-symbols-outlined text-lg">agriculture</span>
+          <span>Servicios</span>
+          <span
+            *ngIf="selectedTab === 'servicios'"
+            class="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#4B7D63]"
+          ></span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Contenido principal (ocupa el espacio restante sin exceder) -->
+  <div class="px-8 flex-1 overflow-y-auto overflow-x-hidden">
+    <div class="p-0 bg-transparent border-0 shadow-none h-full">
+      <ng-container *ngIf="selectedTab === 'productos'; else contentServicios">
+        <app-products-images></app-products-images>
+      </ng-container>
+      <ng-template #contentServicios>
+        <h2 class="text-[#1C2B21] text-lg font-semibold mb-3">Imágenes de servicios (diseño pendiente)</h2>
+        <p class="text-sm text-[#4A5C52]">Definir carrusel similar cuando integremos datos de servicios.</p>
+      </ng-template>
+    </div>
+  </div>
+</div>
+

@@ -13,7 +13,7 @@ export class TemporadaService {
 
     constructor(private http: HttpClient) {}
 
-    getAll(): Observable<Temporada[]> {
+    getAll(): Observable<Temporada[]>{
         return this.http.get<Temporada[]>(this.api_url);
     }
 

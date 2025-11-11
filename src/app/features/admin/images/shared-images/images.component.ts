@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductsImagesComponent } from './products-images/products-images.component';
+import { ProductsImagesComponent } from '../products-images/products-images.component';
 
 @Component({
   selector: 'app-images',
