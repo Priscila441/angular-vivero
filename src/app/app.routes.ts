@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/service/auth/auth.guard';
 
 export const routes: Routes = [
 
@@ -13,8 +14,12 @@ export const routes: Routes = [
           { path: 'servicio/:serviceId' , loadComponent: () => import('./features/public/components/service-detail/service-detail').then(m => m.ServiceDetail) }
     ]
       },
+      {
+        path: 'login' , loadComponent: () => import('./features/login/login').then(m => m.Login)
+      },
       { 
         path: 'admin', 
+        canActivate: [authGuard],
         loadComponent: () => import('./features/admin/layout/admin-layout.component').then(m => m.AdminLayoutComponent),
         children: [
           { path: '', redirectTo: 'products', pathMatch: 'full' },

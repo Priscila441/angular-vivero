@@ -6,6 +6,9 @@ import { RouterLink } from '@angular/router';
 import { Categoria_servicio } from '../../../../core/models/categoria_servicio.model';
 import { CategoriaServicioService } from '../../../../core/service/categoria_servicio.service';
 import { ConsultaService } from '../../../../core/service/consulta.service';
+import { AuthService } from '../../../../core/service/auth/auth.service';
+import { Router } from '@angular/router';
+import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
@@ -18,8 +21,9 @@ export class Navbar {
   showServiceDropdown = false;
   categorias: Categoria_producto[] = [];
   categorias_servicio: Categoria_servicio[] = [];
+  showUserDropdown = false;
 
-  constructor(private categoria: CategoriaProductoService, private categoriaService: CategoriaServicioService, public consultaService: ConsultaService) {}
+  constructor(private categoria: CategoriaProductoService, private categoriaService: CategoriaServicioService, public consultaService: ConsultaService, public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.categoria.getAll().subscribe({
@@ -53,6 +57,31 @@ export class Navbar {
   closeDropdown() {
     this.showProductDropdown = false;
     this.showServiceDropdown = false;
+  }
+
+  toggleUserDropdown() {
+    this.showUserDropdown = !this.showUserDropdown;
+  }
+
+  irAlPanelAdmin() {
+    this.router.navigate(['/admin']);
+    this.showUserDropdown = false;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/']);
+    this.showUserDropdown = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+
+    // Si el click no fue dentro del dropdown ni del botón
+    if (!target.closest('.dropdown') && !target.closest('.dropdown-button')) {
+      this.showUserDropdown = false;
+    }
   }
 }
 
