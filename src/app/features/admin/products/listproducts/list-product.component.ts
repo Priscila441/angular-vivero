@@ -42,7 +42,6 @@ export class ListProductComponent implements OnInit, OnDestroy {
   filtroSubcategoria = '';
   filtroTemporada = '';
   mostrarSubcategorias = false;
-  // Se eliminaron variables de hover (descripcionSeleccionada, infoSeleccionada) por no usarse.
   ModalBorrar = false;
   productoABorrar: ProductoDetalles | null = null;
   mostrarModalMensaje = false;
