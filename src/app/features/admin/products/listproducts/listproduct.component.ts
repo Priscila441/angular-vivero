@@ -14,8 +14,8 @@ import { Temporada } from '../../../../core/models/temporada.model';
   selector: 'app-listproduct',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './listproduct.component.html',
-  styleUrls: ['./listproduct.component.css']
+  templateUrl: './list-product.component.html',
+  styleUrls: []
 })
 
 export class Listproduct implements OnInit, OnDestroy {
@@ -23,6 +23,15 @@ export class Listproduct implements OnInit, OnDestroy {
   categorias: Categoria_producto[] = [];
   subcategorias: Categoria_producto[] = [];
   temporadas: Temporada[] = [];
+
+  private readonly coloresTemporadas: Record<string, string> = {
+    'Verano': 'bg-orange-100 text-orange-800',
+    'Otoño': 'bg-yellow-100 text-yellow-800',
+    'Invierno': 'bg-blue-100 text-blue-800',
+    'Primavera': 'bg-green-100 text-green-800',
+    'Todo el año': 'bg-purple-100 text-purple-800'
+  };
+
   paginaActual = 1;
   tamanioPagina = 5;
   totalPaginas = 1;
@@ -183,6 +192,11 @@ export class Listproduct implements OnInit, OnDestroy {
   private paginar(productos: ProductoDetalles[]): ProductoDetalles[] {
     const inicio = (this.paginaActual - 1) * this.tamanioPagina;
     return productos.slice(inicio, inicio + this.tamanioPagina);
+  }
+
+  
+  getBadgeClass(producto: ProductoDetalles): string {
+    return this.coloresTemporadas[producto.nombre_temporada] || 'bg-gray-100 text-gray-700';
   }
 
   // Modal para eliminar producto

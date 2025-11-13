@@ -16,7 +16,7 @@ import { AdminNavbarComponent } from './navbar/admin-navbar.component';
       <div class="flex flex-col flex-1 h-full">
         <!-- Navbar fijo solo en el área principal -->
         <app-admin-navbar></app-admin-navbar>
-  <main class="flex-1 overflow-y-auto bg-[#F6FBF8]">
+  <main class="flex-1 overflow-y-auto overflow-x-hidden bg-[#F6FBF8]">
           <ng-content select="[admin-header]"></ng-content>
           <!-- Contenido de las páginas -->
           <div class="p-6 pt-0">

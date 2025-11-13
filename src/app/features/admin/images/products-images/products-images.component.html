@@ -1,0 +1,82 @@
+<!-- Loading State -->
+<div *ngIf="isLoading" class="flex items-center justify-center py-8">
+  <div class="text-center">
+    <div class="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-[#4B7D63] border-r-transparent"></div>
+    <p class="mt-3 text-xs text-[#4A5C52]">Cargando productos...</p>
+  </div>
+</div>
+
+<!-- Empty State -->
+<div *ngIf="!isLoading && productos.length === 0" class="text-center py-8">
+  <span class="material-symbols-outlined text-5xl text-[#D7E2DB]">inventory_2</span>
+  <p class="mt-3 text-sm text-[#4A5C52]">No hay productos disponibles</p>
+</div>
+
+<!-- Carousel -->
+<div *ngIf="!isLoading && productos.length > 0" class="h-full flex flex-col pb-2">
+  <!-- Espaciador para separación con tabs -->
+  <div class="mb-6"></div>
+  
+  <!-- Carrusel -->
+  <div class="relative overflow-hidden rounded-lg w-full" #viewportRef [style.maxWidth.px]="viewportWidth">
+    <div class="flex transition-transform duration-300 ease-in-out" [style.gap.px]="gap">
+      <div *ngFor="let producto of visibleProductos" 
+           class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col group overflow-hidden"
+           [style.width.px]="cardWidth">
+        <!-- Imagen del producto -->
+        <div class="relative h-52 m-2 overflow-hidden rounded-md">
+          <img 
+            [src]="getImagenPrincipal(producto)" 
+            [alt]="producto.nombre" 
+            class="h-full w-full object-cover group-hover:scale-105 transition duration-500" 
+            (error)="$any($event.target).src='assets/placeholder-image.jpg'" />
+          <div *ngIf="producto.nombre_categoria" 
+               class="absolute top-1 left-1 rounded-full bg-[#4B7D63] py-0.5 px-2 text-[10px] font-semibold text-white tracking-wide shadow">
+            {{ producto.nombre_categoria }}
+          </div>
+        </div>
+        
+        <!-- Contenido del producto -->
+        <div class="px-3 pb-3 flex-1 flex flex-col">
+          <h3 class="text-[#1C2B21] text-sm font-semibold mb-1 line-clamp-1">{{ producto.nombre }}</h3>
+          <p class="text-[#4A5C52] text-xs leading-relaxed line-clamp-2 mb-1.5">{{ producto.descripcion }}</p>
+          <button class="mt-auto inline-flex items-center gap-1 text-xs font-medium text-[#4B7D63] hover:text-[#264B39] transition">
+            <span class="material-symbols-outlined text-xs">visibility</span>
+            Ver detalles
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navegación -->
+  <div class="flex items-center justify-center gap-4 mt-4">
+    <button 
+      (click)="prevSlide()" 
+      [disabled]="currentIndex === 0"
+      class="h-8 w-8 flex items-center justify-center rounded-md border border-[#4B7D63] bg-[#4B7D63] hover:bg-[#3d6552] transition disabled:opacity-40 disabled:cursor-not-allowed" 
+      aria-label="Anterior">
+      <span class="material-symbols-outlined text-white text-sm">chevron_left</span>
+    </button>
+
+    <div class="flex gap-2">
+      <button 
+        *ngFor="let slide of slides; let i = index"
+        (click)="goToSlide(i)"
+        [class.bg-[#4B7D63]]="currentSlide === i"
+        [class.bg-[#D7E2DB]]="currentSlide !== i"
+        class="w-2 h-2 rounded-full transition-all duration-300 hover:scale-125"
+        [attr.aria-label]="'Ir a slide ' + (i + 1)"
+        [attr.aria-current]="currentSlide === i">
+      </button>
+    </div>
+
+    <button 
+      (click)="nextSlide()" 
+      [disabled]="currentIndex === maxIndex"
+      class="h-8 w-8 flex items-center justify-center rounded-md border border-[#4B7D63] bg-[#4B7D63] hover:bg-[#3d6552] transition disabled:opacity-40 disabled:cursor-not-allowed" 
+      aria-label="Siguiente">
+      <span class="material-symbols-outlined text-white text-sm">chevron_right</span>
+    </button>
+  </div>
+</div>
