@@ -84,6 +84,7 @@ export class ProductsImagesComponent implements OnInit, AfterViewInit, OnDestroy
       .subscribe({
         next: (data) => {
           this.productos = data.filter(p => p.esta_activo);
+          this.normalizeProductos();
           this.isLoading = false;
           this.currentIndex = Math.min(this.currentIndex, this.maxIndex);
         },
@@ -92,6 +93,16 @@ export class ProductsImagesComponent implements OnInit, AfterViewInit, OnDestroy
           this.isLoading = false;
         }
       });
+  }
+
+  private normalizeProductos(): void {
+    if (!this.productos || this.productos.length === 0) return;
+    for (const p of this.productos) {
+      if (!p.nombre_categoria) {
+        const raw: any = p as any;
+        p.nombre_categoria = raw.categoria?.nombre || raw.categoria_nombre || raw.nombreCategoria || '';
+      }
+    }
   }
 
   getImagenPrincipal(producto: ProductoDetalles): string {

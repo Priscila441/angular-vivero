@@ -31,7 +31,7 @@
             class="h-full w-full object-cover group-hover:scale-105 transition duration-500" 
             (error)="$any($event.target).src='assets/placeholder-image.jpg'" />
           <div *ngIf="producto.nombre_categoria" 
-               class="absolute top-1 left-1 rounded-full bg-[#4B7D63] py-0.5 px-2 text-[10px] font-semibold text-white tracking-wide shadow">
+               class="absolute top-1 left-1 z-10 rounded-full bg-[#4B7D63] py-0.5 px-2 text-[10px] font-semibold text-white tracking-wide shadow">
             {{ producto.nombre_categoria }}
           </div>
         </div>

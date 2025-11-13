@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,9 +9,16 @@ import { CommonModule } from '@angular/common';
   styleUrls: []
 })
 export class AdminNavbarComponent  {
+  @Input() isMobile: boolean = false;
+  @Output() toggleSidebar = new EventEmitter<void>();
+  
   isOpen = false;
 
   @ViewChild('menuContainer', { static: true }) private menuContainer!: ElementRef<HTMLElement>;
+
+  onToggleSidebar(): void {
+    this.toggleSidebar.emit();
+  }
 
   toggleDropdown(event: MouseEvent): void {
     event.stopPropagation();

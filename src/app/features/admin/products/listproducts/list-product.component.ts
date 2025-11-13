@@ -48,6 +48,7 @@ export class ListProductComponent implements OnInit, OnDestroy {
   mensaje = '';
   esError = false;
   private closeTimer: any;
+  productosExpandidos: Set<number> = new Set();
 
   constructor(
     private productoService: ProductoService,
@@ -128,7 +129,18 @@ export class ListProductComponent implements OnInit, OnDestroy {
 
   get productosPaginados(): ProductoDetalles[] {
     let filtrados = this.aplicarFiltros();
-    this.actualizarPaginacion(filtrados.length);
+    const totalFiltrados = filtrados.length;
+    const nuevasPaginas = Math.max(1, Math.ceil(totalFiltrados / this.tamanioPagina));
+    
+    // Solo actualizar si cambió el total de páginas
+    if (this.totalPaginas !== nuevasPaginas) {
+      this.totalPaginas = nuevasPaginas;
+      // Solo resetear página si la actual es mayor que el total
+      if (this.paginaActual > this.totalPaginas) {
+        this.paginaActual = 1;
+      }
+    }
+    
     return this.paginar(filtrados);
   }
 
@@ -183,10 +195,6 @@ export class ListProductComponent implements OnInit, OnDestroy {
     return temporadaSeleccionada ? producto.nombre_temporada === temporadaSeleccionada.nombre : true;
   }
 
-  private actualizarPaginacion(totalFiltrados: number): void {
-    this.totalPaginas = Math.max(1, Math.ceil(totalFiltrados / this.tamanioPagina));
-    if (this.paginaActual > this.totalPaginas) this.paginaActual = 1;
-  }
 
   private paginar(productos: ProductoDetalles[]): ProductoDetalles[] {
     const inicio = (this.paginaActual - 1) * this.tamanioPagina;
@@ -318,6 +326,36 @@ export class ListProductComponent implements OnInit, OnDestroy {
 
   get esUltimaPagina(): boolean {
     return this.paginaActual === this.totalPaginas;
+  }
+
+  toggleProducto(id: number): void {
+    if (this.productosExpandidos.has(id)) {
+      this.productosExpandidos.delete(id);
+    } else {
+      this.productosExpandidos.add(id);
+    }
+  }
+
+  isProductoExpandido(id: number): boolean {
+    return this.productosExpandidos.has(id);
+  }
+
+  get Math(): Math {
+    return Math;
+  }
+
+  get totalFiltrados(): number {
+    return this.aplicarFiltros().length;
+  }
+
+  get rangoInicio(): number {
+    if (this.totalFiltrados === 0) return 0;
+    return (this.paginaActual - 1) * this.tamanioPagina + 1;
+  }
+
+  get rangoFin(): number {
+    if (this.totalFiltrados === 0) return 0;
+    return Math.min(this.paginaActual * this.tamanioPagina, this.totalFiltrados);
   }
 
   ngOnDestroy(): void {
