@@ -1,61 +1,69 @@
 
+
 <!-- Titulo y Descripción -->
-<div class="mb-4 mt-6 px-4 sm:px-8 lg:px-16">
+<div class="mb-8 mt-10 px-4 sm:px-8 lg:px-16">
   <h1 class="text-[#1C2B21] text-xl sm:text-2xl font-bold leading-tight tracking-[-0.015em]">Lista de productos.</h1>
   <p class="text-[#4A5C52] mt-2 text-xs sm:text-sm font-medium leading-normal">Aquí puedes ver todas las plantas disponibles en el catálogo del vivero.</p>
 </div>
 
 <!-- Filtros y botón agregar -->
-<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-4 px-4 sm:px-8 lg:px-16">
-  <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-4">
-    <div class="relative w-full lg:w-64 bg-white rounded-md shadow-sm border border-[#D7E2DB] h-10 font-sans font-medium text-sm">
-      <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-        <span class="material-symbols-outlined text-[#4A5C52] text-base">search</span>
-      </span>
-      <input type="text" placeholder="Buscar por nombre de planta" [(ngModel)]="filtroBusqueda" name="filtroBusqueda" class="w-full h-10 pl-10 pr-4 rounded-md bg-white text-[#1C2B21] border-none focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium placeholder:text-[#9CA9A2]" />
+<div class="w-full flex flex-col gap-4 mb-8 px-4 sm:px-8 lg:px-16">
+  <div class="w-full flex flex-col md:flex-row md:items-center md:gap-4 gap-3">
+    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto flex-1">
+      <!-- Input de búsqueda auto-width en web -->
+      <div class="relative w-full md:w-auto min-w-0 bg-white rounded-md shadow-sm border border-[#D7E2DB] h-10 font-sans font-medium text-sm transition-all flex items-center">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <span class="material-symbols-outlined text-[#4A5C52] text-base">search</span>
+        </span>
+        <input
+          type="text"
+          placeholder="Buscar por nombre..."
+          [(ngModel)]="filtroBusqueda"
+          name="filtroBusqueda"
+          class="h-10 pl-10 pr-4 rounded-md bg-white text-[#1C2B21] border-none focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium placeholder:text-[#9CA9A2] transition-all w-full md:w-auto min-w-0 md:min-w-[180px] md:max-w-[260px] px-4 placeholder:md:placeholder:text-[#9CA9A2] placeholder:placeholder:text-xs md:placeholder:text-sm"
+        />
+      </div>
+      <!-- Selects auto-width en web -->
+      <select 
+        [(ngModel)]="filtroCategoria" 
+        name="filtroCategoria"
+        (change)="onCategoriaChange()"
+        class="h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium transition-all w-full md:w-auto min-w-0"
+        style="width: auto; min-width: 110px;">
+        <option value="">Categoría</option>
+        <option *ngFor="let categoria of categorias" [value]="categoria.id">
+          {{ categoria.nombre }}
+        </option>
+      </select>
+      <select 
+        *ngIf="mostrarSubcategorias"
+        [(ngModel)]="filtroSubcategoria" 
+        name="filtroSubcategoria"
+        class="h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium transition-all w-full md:w-auto min-w-0"
+        style="width: auto; min-width: 110px;">
+        <option value="">Subcategoría</option>
+        <option *ngFor="let subcategoria of subcategorias" [value]="subcategoria.id">
+          {{ subcategoria.nombre }}
+        </option>
+      </select>
+      <select 
+        [(ngModel)]="filtroTemporada" 
+        name="filtroTemporada"
+        class="h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium transition-all w-full md:w-auto min-w-0"
+        style="width: auto; min-width: 110px;">
+        <option value="">Temporada</option>
+        <option *ngFor="let temporada of temporadas" [value]="temporada.id">
+          {{ temporada.nombre }}
+        </option>
+      </select>
     </div>
-
-    <!-- Filtro de categoria -->
-    <select 
-      [(ngModel)]="filtroCategoria" 
-      name="filtroCategoria"
-      (change)="onCategoriaChange()"
-      class="w-full lg:w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
-      <option value="">Categoría</option>
-      <option *ngFor="let categoria of categorias" [value]="categoria.id">
-        {{ categoria.nombre }}
-      </option>
-    </select>
-
-    <!-- Filtro de subcategoría (solo visible si hay subcategorías) -->
-    <select 
-      *ngIf="mostrarSubcategorias"
-      [(ngModel)]="filtroSubcategoria" 
-      name="filtroSubcategoria"
-      class="w-full lg:w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
-      <option value="">Subcategoría</option>
-      <option *ngFor="let subcategoria of subcategorias" [value]="subcategoria.id">
-        {{ subcategoria.nombre }}
-      </option>
-    </select>
-
-    <!-- Filtro de temporada -->
-    <select 
-      [(ngModel)]="filtroTemporada" 
-      name="filtroTemporada"
-      class="w-full lg:w-40 h-10 px-4 rounded-md bg-white text-[#1C2B21] border border-[#D7E2DB] shadow-sm focus:border-black focus:ring-2 focus:ring-black outline-none text-sm font-sans font-medium">
-      <option value="">Temporada</option>
-      <option *ngFor="let temporada of temporadas" [value]="temporada.id">
-        {{ temporada.nombre }}
-      </option>
-    </select>
+    <div class="flex w-full md:w-auto md:flex-shrink-0 mt-2 md:mt-0">
+      <a href="/admin/products/add" role="button" class="flex w-full md:w-auto min-w-[120px] h-10 items-center justify-center gap-2 overflow-hidden rounded-md bg-[#4B7D63] text-[#FFFFFF] text-sm font-bold leading-normal shadow-sm hover:bg-[#264B39] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#264B39] px-4 font-sans">
+        <span class="material-symbols-outlined text-lg leading-none">add</span>
+        <span class="truncate flex items-center">Agregar planta</span>
+      </a>
+    </div>
   </div>
-  
-  <!-- Ruta agregar planta -->
-  <a href="/admin/products/add" role="button" class="flex w-full lg:w-auto lg:flex-shrink-0 min-w-[120px] h-10 items-center justify-center gap-2 overflow-hidden rounded-md bg-[#4B7D63] text-[#FFFFFF] text-sm font-bold leading-normal shadow-sm hover:bg-[#264B39] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#264B39] px-4 font-sans">
-    <span class="material-symbols-outlined text-lg leading-none">add</span>
-    <span class="truncate flex items-center">Agregar planta</span>
-  </a>
 </div>
 
 <!-- Vista de tabla (Desktop) -->
@@ -202,19 +210,19 @@
 </div>
 
 <!-- Paginador -->
-<nav class="flex items-center justify-end gap-x-1 mt-4 px-4 sm:px-8 lg:px-16" aria-label="Pagination">
+<nav class="w-full flex flex-wrap items-center justify-center md:justify-end gap-x-1 gap-y-2 mt-6 px-4 sm:px-8 lg:px-16" aria-label="Pagination">
+  <!-- Botón grupo anterior eliminado -->
   <!-- Botón página anterior -->
-  <button type="button" 
-    class="min-h-9.5 min-w-9.5 py-2 px-2.5 inline-flex justify-center items-center text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" 
-    aria-label="Previous" 
-    [disabled]="esPrimeraPagina" 
+  <button type="button"
+    class="min-h-9.5 min-w-9.5 py-2 px-2.5 inline-flex justify-center items-center text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
+    aria-label="Anterior"
+    [disabled]="esPrimeraPagina"
     (click)="anteriorPagina()">
-    <span class="material-symbols-outlined text-lg">chevron_left</span>
+    <span class="material-symbols-outlined text-lg">navigate_before</span>
   </button>
-  
   <!-- Números de páginas -->
-  <div class="flex items-center gap-x-1">
-    <button *ngFor="let numeroPagina of numerosPaginas" 
+  <div class="flex flex-wrap items-center gap-x-1 gap-y-1">
+    <button *ngFor="let numeroPagina of numerosPaginas"
       type="button"
       class="min-h-9.5 min-w-9.5 flex justify-center items-center py-2 px-3 text-sm rounded-lg focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none transition-colors duration-200"
       [ngClass]="{
@@ -226,15 +234,15 @@
       {{ numeroPagina }}
     </button>
   </div>
-  
   <!-- Botón página siguiente -->
-  <button type="button" 
-    class="min-h-9.5 min-w-9.5 py-2 px-2.5 inline-flex justify-center items-center text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" 
-    aria-label="Next" 
-    [disabled]="esUltimaPagina" 
+  <button type="button"
+    class="min-h-9.5 min-w-9.5 py-2 px-2.5 inline-flex justify-center items-center text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
+    aria-label="Siguiente"
+    [disabled]="esUltimaPagina"
     (click)="siguientePagina()">
-    <span class="material-symbols-outlined text-lg">chevron_right</span>
+    <span class="material-symbols-outlined text-lg">navigate_next</span>
   </button>
+  <!-- Botón grupo siguiente eliminado -->
 </nav>
 
 <!-- Modal de confirmación de borrado -->
@@ -284,43 +292,5 @@
   </div>
 </div>
 
-<!-- Modal de mensaje (éxito o error) -->
-<div *ngIf="mostrarModalMensaje" class="fixed inset-0 z-50">
-  <!-- Overlay con blur -->
-  <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity"></div>
-  <!-- Contenedor del modal -->
-  <div class="absolute inset-0 flex items-center justify-center p-4">
-    <div 
-      role="alert" 
-      aria-live="polite" 
-      class="flex items-start gap-3 w-full max-w-md p-4 rounded-xl shadow-lg ring-1 animate-in fade-in zoom-in duration-200"
-      [ngClass]="{
-        'text-green-800 bg-green-50 ring-green-200': !esError,
-        'text-red-800 bg-red-50 ring-red-200': esError
-      }">
-      <span 
-        class="material-symbols-outlined text-2xl leading-none shrink-0" 
-        [ngClass]="{
-          'text-green-600': !esError,
-          'text-red-600': esError
-        }"
-        aria-hidden="true">
-        {{ esError ? 'error' : 'check_circle' }}
-      </span>
-      <div class="flex-1 text-sm font-medium">
-        {{ mensaje }}
-      </div>
-      <button 
-        type="button" 
-        (click)="cerrarModal()" 
-        class="ml-2 inline-flex items-center justify-center rounded-md focus:outline-none focus:ring-2"
-        [ngClass]="{
-          'text-green-900/80 hover:text-green-900 focus:ring-green-400': !esError,
-          'text-red-900/80 hover:text-red-900 focus:ring-red-400': esError
-        }">
-        <span class="material-symbols-outlined text-base">close</span>
-      </button>
-    </div>
-  </div>
-</div>
+
 

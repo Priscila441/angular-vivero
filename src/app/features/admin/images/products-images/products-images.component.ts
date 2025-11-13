@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { ProductoService } from '../../../../core/service/producto.service';
+import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ProductoService } from '../../../../core/service/producto.service';
-import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
+
 
 @Component({
   selector: 'app-products-images',

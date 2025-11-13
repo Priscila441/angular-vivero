@@ -95,21 +95,24 @@ export class ListProductComponent implements OnInit, OnDestroy {
   }
 
   onCategoriaChange(): void {
-    const categoriaId = Number(this.filtroCategoria);
-    
-    // Limpiar subcategoría seleccionada y array de subcategorías
     this.filtroSubcategoria = '';
     this.subcategorias = [];
     this.mostrarSubcategorias = false;
-    
     // Si no hay categoría seleccionada, salir
+    const categoriaId = Number(this.filtroCategoria);
     if (!categoriaId) return;
-    
     // Verificar si la categoría tiene subcategorías (IDs 2 o 3)
     if (categoriaId === 2 || categoriaId === 3) {
       this.cargarSubcategorias(categoriaId);
     }
   }
+
+  // Mostrar todos los números de página
+  get numerosPaginas(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
+
 
   private cargarSubcategorias(idCategoriaPadre: number): void {
     this.categoriaService.getSubcategoriasPorCategoria(idCategoriaPadre).subscribe({
@@ -305,10 +308,7 @@ export class ListProductComponent implements OnInit, OnDestroy {
   }
 
   
-  //Metodos de paginacion
-  get numerosPaginas(): number[] {
-    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
-  }
+
 
   esPaginaActual(numeroPagina: number): boolean {
     return this.paginaActual === numeroPagina;
