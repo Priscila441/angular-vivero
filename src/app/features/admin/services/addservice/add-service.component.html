@@ -1,0 +1,29 @@
+<!-- Header contextual para proyección -->
+<div admin-header class="sticky top-0 z-10 bg-[#F6FBF8] p-6 pb-3">
+  <div class="flex items-center gap-4 justify-start">
+    <!-- Botón de vuelta -->
+    <a routerLink="/admin/services" class="flex items-center gap-2 text-[#0e1a13] hover:text-[#51946c] transition-colors">
+      <span class="material-symbols-outlined text-xl">arrow_back</span>
+      <span class="text-sm font-medium">Volver</span>
+    </a>
+    <!-- Separador -->
+    <div class="w-px h-6 bg-[#d1e6d9]"></div>
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm bg-[#F6FBF8] px-2 rounded">
+      <a routerLink="/admin" class="text-[#4A5C52] hover:underline">Panel</a>
+      <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
+      <a routerLink="/admin/services" class="text-[#4A5C52] hover:underline">Lista de Servicios</a>
+      <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
+      <span class="text-[#1C2B21] font-bold">Agregar Servicio</span>
+    </nav>
+  </div>
+</div>
+
+<!-- Componente de formulario compartido -->
+<app-service-form 
+  #serviceFormRef
+  mode="create"
+  [externalSubmit]="true"
+  (formSubmit)="onFormSubmit($event)"
+  (formCancel)="onFormCancel()">
+</app-service-form>

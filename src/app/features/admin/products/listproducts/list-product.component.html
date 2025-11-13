@@ -86,17 +86,23 @@
             <span>{{ producto.nombre }}</span>
           </div>
         </td>
-        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500 max-w-[180px] truncate cursor-pointer" (mouseenter)="descripcionSeleccionada = producto.descripcion" (mouseleave)="descripcionSeleccionada = null">
+        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500 max-w-[180px] truncate">
           {{ producto.descripcion | slice:0:40 }}<span *ngIf="producto.descripcion.length > 40">...</span>
         </td>
-        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500 max-w-[180px] truncate cursor-pointer" (mouseenter)="infoSeleccionada = producto.informacion_extra" (mouseleave)="infoSeleccionada = null">
+        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500 max-w-[180px] truncate">
           {{ producto.informacion_extra | slice:0:40 }}<span *ngIf="producto.informacion_extra.length > 40">...</span>
         </td>
-        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500">{{ $any(producto).categoria?.nombre }}</td>
+        <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-700">
+          {{ producto.nombre_categoria || '-' }}
+        </td>
         <td class="px-5 py-3 whitespace-nowrap text-sm">
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
-            {{ $any(producto).temporada?.nombre }}
-          </span>
+          <ng-container *ngIf="producto.nombre_temporada; else noTemp">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                  [ngClass]="getBadgeClass(producto)">
+              {{ producto.nombre_temporada }}
+            </span>
+          </ng-container>
+          <ng-template #noTemp>-</ng-template>
         </td>
         <td class="px-5 py-3 whitespace-nowrap text-right text-sm font-medium">
           <div class="flex items-center justify-end gap-4">
@@ -239,23 +245,3 @@
   </div>
 </div>
 
-<!-- Modal para descripción -->
-<!--<div *ngIf="descripcionSeleccionada" class="fixed inset-0 flex items-center justify-center z-50">
-  <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-    <h2 class="text-lg font-bold mb-2">Descripción</h2>
-    <p class="text-gray-700">{{ descripcionSeleccionada }}</p>
-    <button (click)="descripcionSeleccionada = null" class="mt-4 px-4 py-2 bg-[#4B7D63] text-white rounded">Cerrar</button>
-  </div>
-  <div class="fixed inset-0 bg-black opacity-30 z-40"></div>
-</div>
--->
-<!-- Modal para información extra -->
-<!--<div *ngIf="infoSeleccionada" class="fixed inset-0 flex items-center justify-center z-50">
-  <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-    <h2 class="text-lg font-bold mb-2">Información extra</h2>
-    <p class="text-gray-700">{{ infoSeleccionada }}</p>
-    <button (click)="infoSeleccionada = null" class="mt-4 px-4 py-2 bg-[#4B7D63] text-white rounded">Cerrar</button>
-  </div>
-  <div class="fixed inset-0 bg-black opacity-30 z-40"></div>
-</div>
--->
