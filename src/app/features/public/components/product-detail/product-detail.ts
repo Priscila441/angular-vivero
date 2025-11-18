@@ -28,6 +28,8 @@ export class ProductDetail implements OnInit, OnDestroy {
   relatedProducts: ProductoDetalles[] = [];
   hoverSecondImageMap: Record<number, string> = {};
 
+  illustrativeMap: Record<number, boolean> = {};
+
   private subs: Subscription[] = [];
 
   constructor(
@@ -75,6 +77,7 @@ export class ProductDetail implements OnInit, OnDestroy {
       // Producto válido
       const data = (res as any).data || {};
       this.product = data;
+      this.prepareIllustrativeMap(this.product);
 
       // Hover principal
       this.prepareHoverMapForProduct(this.product);
@@ -85,6 +88,27 @@ export class ProductDetail implements OnInit, OnDestroy {
 
     this.subs.push(sub);
   }
+
+  isMainImageIllustrative(): boolean {
+  if (!this.product?.imagenes?.length) return false;
+
+  const main = this.product.imagenes.find(i => i.es_principal) ?? this.product.imagenes[0];
+  return !!main.es_ilustrativa;
+}
+
+
+  prepareIllustrativeMap(p: ProductoDetalles) {
+  if (!p?.imagenes) return;
+
+  // Imagen principal
+  const main = p.imagenes.find(i => i.es_principal) ?? p.imagenes[0];
+  if (main) this.illustrativeMap[main.id] = !!main.es_ilustrativa;
+
+  // Imagen secundaria
+  const second = p.imagenes.find(i => !i.es_principal);
+  if (second) this.illustrativeMap[second.id] = !!second.es_ilustrativa;
+}
+
 
   // 🔹 Cargar productos relacionados
   loadRelated(currentProduct: ProductoDetalles) {
