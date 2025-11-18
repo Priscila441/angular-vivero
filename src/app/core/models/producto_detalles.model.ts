@@ -2,6 +2,7 @@ export interface ImagenProducto {
     id: number;
     url: string;
     es_principal: boolean;
+    es_ilustrativa: boolean;
     orden: number;
 }
 

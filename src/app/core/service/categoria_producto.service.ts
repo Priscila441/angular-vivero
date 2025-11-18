@@ -24,7 +24,6 @@ export class CategoriaProductoService {
     );
   }
   
-
   create(categoria: Categoria_producto): Observable<Categoria_producto> {
     return this.http.post<any>(this.api_url, categoria).pipe(
       map(response => response?.data || {})
@@ -44,29 +43,26 @@ export class CategoriaProductoService {
   }
 
   getCategoriaConProductos(id: number) {
-  return this.http.get(`${this.api_url}/productos`).pipe(
-    map((resp: any) => {
-      const allCats = resp?.data || [];
-      const cat = allCats.find((c: any) => c.id === id);
-      if (!cat) return null;
+    return this.http.get(`${this.api_url}/productos`).pipe(
+      map((resp: any) => {
+        const allCats = resp?.data || [];
+        const cat = allCats.find((c: any) => c.id === id);
+        if (!cat) return null;
 
-      // buscamos subcategorías de la categoría madre
-      const subCats = allCats.filter((c: { id_padre: any; }) => c.id_padre === cat.id)
-        .map((sub: { productos: any; }) => ({
-          ...sub,
-          productos: sub.productos || []
-        }));
+        const subCats = allCats
+          .filter((c: any) => c.id_padre === cat.id)
+          .map((sub: any) => ({
+            ...sub,
+            productos: sub.productos || []
+          }));
 
-      return {
-        ...cat,
-        subcategorias: subCats
-      };
-    })
-  );
-}
-
-
-
+        return {
+          ...cat,
+          subcategorias: subCats
+        };
+      })
+    );
+  }
 
   getCategoriasConPorductos(): Observable<Categoria_producto[]> {
     return this.http.get<any>(`${this.api_url}/productos`).pipe(
@@ -74,38 +70,68 @@ export class CategoriaProductoService {
     );
   }
 
-  getCategoriasOrganizadas() {
-  return this.http.get<any>(`${this.api_url}/productos`).pipe(
-    map((resp) => {
-      const categorias = resp.data;
+  // ------------------------------------------------------------
+  // 🚀 NUEVA LÓGICA AVANZADA PARA ORGANIZAR CATEGORÍAS
+  // ------------------------------------------------------------
+  getCategoriasOrganizadas(): Observable<any[]> {
+    return this.http.get<{ data: any[] }>(`${this.api_url}/productos`).pipe(
+      map((resp) => {
 
-      // Agrupar por tipo
-      const tipos: { [key: string]: any } = {};
+        const productos = resp.data;
+        const categoriasUnicas = new Map<number, any>();
 
-      categorias.forEach((cat: { tipo: string | number; id_padre: number; }) => {
-        if (!tipos[cat.tipo]) {
-          tipos[cat.tipo] = { tipo: cat.tipo, categorias: [] };
-        }
+        // 1. Crear mapa de categorías únicas
+        productos.forEach(p => {
+          const cat = p.categoria;
+          if (!categoriasUnicas.has(cat.id)) {
+            categoriasUnicas.set(cat.id, {
+              id: cat.id,
+              nombre: cat.nombre,
+              productos: []
+            });
+          }
+        });
 
-        if (cat.id_padre === 0) {
-          tipos[cat.tipo].categorias.push({ ...cat, subcategorias: [] });
-        } else {
-          const padre = categorias.find((c: { id: number; }) => c.id === cat.id_padre);
-          if (padre) {
-            const padreTipo = padre.tipo;
-            const padreEnTipo = tipos[padreTipo].categorias.find((c: any) => c.id === padre.id);
-            if (padreEnTipo) {
-              padreEnTipo.subcategorias.push(cat);
+        // 2. Crear jerarquía padre → subcategorías
+        const categoriasDePrimerNivel: any[] = [];
+
+        categoriasUnicas.forEach(cat => {
+          const productoEjemplo = productos.find(p => p.categoria_id === cat.id);
+          const idPadre = productoEjemplo?.categoria.id_padre || 0;
+
+          if (idPadre === 0) {
+            categoriasDePrimerNivel.push(cat);
+          } else {
+            const padre = categoriasUnicas.get(idPadre);
+            if (padre) {
+              if (!padre.subcategorias) padre.subcategorias = [];
+              padre.subcategorias.push(cat);
             }
           }
-        }
-      });
+        });
 
-      // Convertir a array para iterar fácilmente
-      return Object.values(tipos);
-    })
-  );
-}
+        // 3. Asignar productos a sus categorías hoja
+        productos.forEach(p => {
+          const categoriaHoja = categoriasUnicas.get(p.categoria_id);
+          if (categoriaHoja) {
+            categoriaHoja.productos.push(p);
+          }
+        });
+
+        // 4. Filtrar solo las categorías principales deseadas
+        const nombresAFiltrar = ['Frutas', 'Plantas', 'Arboles', 'Aromaticas'];
+
+        return categoriasDePrimerNivel
+          .filter(c => nombresAFiltrar.includes(c.nombre))
+          .map(c => {
+            if (c.subcategorias?.length === 0) {
+              delete c.subcategorias;
+            }
+            return c;
+          });
+      })
+    );
+  }
 
   getSubcategoriasPorCategoria(idCategoriaPadre: number): Observable<Categoria_producto[]> {
     return this.http.get<any>(`${this.api_url}/subcategorias`, {

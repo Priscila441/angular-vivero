@@ -22,7 +22,6 @@ export class ProductList implements OnInit{
   private service = inject(CategoriaProductoService);
   private productService = inject(ProductoService);
   
-  
   loading = true;
   selectedCategory: Categoria_producto | null = null;
   // todas las categorias (excluyendo la seleccionada)
@@ -38,16 +37,22 @@ export class ProductList implements OnInit{
 
   // cache de imágenes por productoId
   private imageCache = new Map<number, string>(); // principal
-  hoverSecondImageMap: Record<number, string | null> = {};
 
   // subs
   private subs: Subscription[] = [];
+
+  watermarkMap: Record<number, boolean> = {}; // true = ilustrativa, false = propia
+
+  hoverSecondImageMap: Record<number, string | null> = {};
+
+  // handler guardado para añadir/remover listener correctamente
+  private readonly resizeHandler = () => this.computeCardWidth();
 
 
   ngOnInit(): void {
     // set card width responsive (4 en desktop, 3 en mobile)
     this.computeCardWidth();
-    window.addEventListener('resize', () => this.computeCardWidth());
+    window.addEventListener('resize', this.resizeHandler);
 
     const sub = this.route.paramMap.subscribe(params => {
       const categoryId = Number(params.get('categoryId'));
@@ -63,7 +68,7 @@ export class ProductList implements OnInit{
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
-    window.removeEventListener('resize', () => this.computeCardWidth());
+    window.removeEventListener('resize', this.resizeHandler);
   }
 
   // ---------- Cálculo ancho de card ----------
@@ -81,63 +86,75 @@ export class ProductList implements OnInit{
     this.loading = true;
     this.selectedCategory = null;
     this.service.getCategoriaConProductos(id).subscribe({
-  next: (cat) => {
-    if (!cat) {
-      console.error('Categoría no encontrada');
-      this.loading = false;
-      return;
-    }
-    this.selectedCategory = cat;
-    this.productosMap.set(cat.id, cat.productos || []);
-    this.preloadDetailsForCategory(cat.id, cat.productos || []);
-    this.loadAllCategoriesExcluding(cat.id); // resto de categorías
-    this.loading = false;
-  },
-  error: (err) => {
-    console.error('Error al cargar categoria seleccionada', err);
-    this.loading = false;
-  }
-});
-
-  }
-
-  // ---------- Cargar todas las categorias y excluir la seleccionada ----------
-  // ---------- Cargar todas las categorias y excluir la seleccionada ----------
-private loadAllCategoriesExcluding(selectedId: number) {
-  this.service.getCategoriasConPorductos().subscribe({
-    next: (cats: any[]) => {
-      const filtered = (cats || []).filter((c: any) => c.id !== selectedId);
-
-      // 🔥 agrupamos subcategorías dentro de su padre (como hiciste en getCategoriasOrganizadas)
-      const mapa: Record<number, any> = {};
-      filtered.forEach(cat => (mapa[cat.id] = { ...cat, subcategorias: [] }));
-
-      filtered.forEach(cat => {
-        if (cat.id_padre && mapa[cat.id_padre]) {
-          mapa[cat.id_padre].subcategorias.push(mapa[cat.id]);
+      next: (cat) => {
+        if (!cat) {
+          console.error('Categoría no encontrada');
+          this.loading = false;
+          return;
         }
-      });
-
-      // Solo dejamos los que no tienen padre (niveles principales)
-      this.allCategories = Object.values(mapa).filter((c: any) => !c.id_padre);
-
-      // Cargamos productos
-      this.allCategories.forEach((cat: any) => {
+        this.selectedCategory = cat;
         this.productosMap.set(cat.id, cat.productos || []);
-        this.preloadDetailsForCategory(cat.id, (cat.productos || []).slice(0, 8));
+        this.preloadDetailsForCategory(cat.id, cat.productos || []);
+        this.loadAllCategoriesExcluding(cat.id); // resto de categorías
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar categoria seleccionada', err);
+        this.loading = false;
+      }
+    });
+  }
 
-        // También precargar subcategorías
-        (cat.subcategorias || []).forEach((sub: any) => {
-          this.productosMap.set(sub.id, sub.productos || []);
-          this.preloadDetailsForCategory(sub.id, (sub.productos || []).slice(0, 8));
+  // ---------- Cargar todas las categorias y excluir la seleccionada ----------
+  // Versión corregida y robusta (reemplaza la anterior)
+  private loadAllCategoriesExcluding(selectedId: number) {
+    this.service.getCategoriasConPorductos().subscribe({
+      next: (cats: any[]) => {
+        const all = (cats || []);
+
+        // Excluimos la categoría seleccionada y también sus subcategorías directas
+        const filtered = all.filter((c: any) => c.id !== selectedId && c.id_padre !== selectedId);
+
+        // 1) Construir mapa de categorías únicas
+        const mapa = new Map<number, any>();
+        filtered.forEach(cat => {
+          mapa.set(cat.id, { ...cat, subcategorias: [] });
         });
-      });
-    },
-    error: (err) => console.error('Error al obtener categorías con productos', err)
-  });
-}
 
+        // 2) Insertar subcategorías dentro de su padre (solo si el padre está presente en el mapa)
+        // Esto evita convertir subcategorías en raíces cuando su padre fue excluido.
+        filtered.forEach(cat => {
+          if (cat.id_padre && cat.id_padre !== 0) {
+            const padre = mapa.get(cat.id_padre);
+            const hijo = mapa.get(cat.id);
+            if (padre && hijo) {
+              padre.subcategorias.push(hijo);
+            }
+          }
+        });
 
+        // 3) Tomar sólo las categorías raíz (id_padre === 0)
+        this.allCategories = Array.from(mapa.values()).filter((c: any) => c.id_padre === 0);
+
+        // 4) Llenar productosMap y pre-cargar imágenes para raíces y subcategorías
+        this.allCategories.forEach((cat: any) => {
+          this.productosMap.set(cat.id, cat.productos || []);
+          this.preloadDetailsForCategory(cat.id, (cat.productos || []).slice(0, 8));
+
+          (cat.subcategorias || []).forEach((sub: any) => {
+            this.productosMap.set(sub.id, sub.productos || []);
+            this.preloadDetailsForCategory(sub.id, (sub.productos || []).slice(0, 8));
+          });
+        });
+      },
+      error: (err) => {
+        console.error('Error al obtener categorías con productos', err);
+        // en caso de error, limpiar estructuras para evitar estados inconsistentes
+        this.allCategories = [];
+        this.productosMap.clear();
+      }
+    });
+  }
 
   // ---------- Carrusel: next / prev por category ----------
   next(categoryId: number) {
@@ -194,8 +211,18 @@ private loadAllCategoriesExcluding(selectedId: number) {
       results.forEach((det: ProductoDetalles | null, idx) => {
         if (!det) return;
         const prod = products[idx];
-        const mainImg = det.imagenes?.find(i => i.es_principal)?.url ?? det.imagenes?.[0]?.url ?? null;
-        if (mainImg) this.imageCache.set(prod.id, mainImg);
+        const mainImageObj =
+          det.imagenes?.find(i => i.es_principal) ??
+          det.imagenes?.[0] ??
+          null;
+
+        if (mainImageObj?.url) {
+          this.imageCache.set(prod.id, mainImageObj.url);
+
+          // guardamos si la imagen principal es ilustrativa
+          this.watermarkMap[prod.id] = !!mainImageObj.es_ilustrativa;
+        }
+
         // hover second image
         const second = det.imagenes?.find(i => !i.es_principal)?.url ?? null;
         if (second) this.hoverSecondImageMap[prod.id] = second;
@@ -232,15 +259,17 @@ private loadAllCategoriesExcluding(selectedId: number) {
   private _destroyed = false;
 
   // Devuelve true si la categoría tiene subcategorías
-hasSubcategories(cat: any): boolean {
-  return Array.isArray(cat.subcategorias) && cat.subcategorias.length > 0;
-}
+  hasSubcategories(cat: any): boolean {
+    return Array.isArray(cat.subcategorias) && cat.subcategorias.length > 0;
+  }
 
-// Devuelve true si la categoría tiene productos
-hasProducts(cat: any): boolean {
-  const productos = this.productosMap.get(cat.id);
-  return Array.isArray(productos) && productos.length > 0;
-}
+  // Devuelve true si la categoría tiene productos
+  hasProducts(cat: any): boolean {
+    const productos = this.productosMap.get(cat.id);
+    return Array.isArray(productos) && productos.length > 0;
+  }
 
 
+
+  
 }
