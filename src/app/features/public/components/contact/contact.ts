@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ConsultaService } from '../../../../core/service/consulta.service';
+import { ContactoService } from '../../../../core/service/contacto.service';
+import { Contacto } from '../../../../core/models/contacto.model';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -12,9 +14,29 @@ export class Contact implements OnInit {
   nombre = '';
   mostrarModal = false;
 
-  constructor(public consultaService: ConsultaService) {}
+  contacto?: Contacto | null;
+  whatsappLimpio = ''; // para armar el link
+  telefonoLimpio = '';
+
+  constructor(
+    public consultaService: ConsultaService,
+    private contactoService: ContactoService
+  ) {}
 
   ngOnInit() {
+    // 1) Cargar datos de contacto del backend
+    this.contactoService.obtenerContacto(1).subscribe({
+      next: (data) => {
+        this.contacto = data;
+
+        // limpiar numeros (sacar espacios, +, -)
+        this.whatsappLimpio = data.whatsapp.replace(/\D/g, '');
+        this.telefonoLimpio = data.telefono.replace(/\D/g, '');
+      },
+      error: (err) => console.error('Error al obtener contacto', err),
+    });
+
+    // 2) Cargar consultas almacenadas
     const productos = this.consultaService.obtenerConsultas();
     const servicios = this.consultaService.obtenerConsultasServicios();
 
@@ -47,7 +69,7 @@ export class Contact implements OnInit {
   }
 
   confirmarEnvioWhatsApp() {
-    const telefono = '5493515457821'; // número de WhatsApp de Alejandro
+    const telefono = this.whatsappLimpio; // <-- ahora es dinámico
 
     const texto =
       this.nombre.trim() !== ''
@@ -56,7 +78,6 @@ export class Contact implements OnInit {
 
     const url = `https://wa.me/${telefono}?text=${encodeURIComponent(texto)}`;
 
-    // Limpiar formulario y consultas
     this.consultaService.limpiarConsultas();
     this.nombre = '';
     this.mensaje = '';
@@ -66,8 +87,7 @@ export class Contact implements OnInit {
   }
 
   borrarConsultas() {
-  this.consultaService.limpiarConsultas();
-  this.mensaje = '';
+    this.consultaService.limpiarConsultas();
+    this.mensaje = '';
   }
-
 }
