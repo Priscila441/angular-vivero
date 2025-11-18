@@ -1,0 +1,55 @@
+<!-- ====== Page Title Section Start -->
+<section class="bg-[#F6FBF8] py-[70px]">
+  <div class="mx-auto px-4 sm:container">
+    <div class="border-l-[5px] border-[#4B7D63] pl-5">
+      <h2 class="mb-2 text-2xl font-semibold text-dark dark:text-white">
+        Ordenamiento de Imágenes
+      </h2>
+      <p class="text-sm font-medium text-body-color dark:text-dark-6">
+        Arrastra las imágenes del producto dandole su posición.
+      </p>
+    </div>
+  </div>
+</section>
+<!-- ====== Page Title Section End -->
+
+<div class="mx-auto px-4 sm:container">
+  <!-- Banda con nombre del producto (más ancha que la caja de imágenes) -->
+  <div class="mx-auto max-w-5xl mb-5">
+    <div class="bg-[#4B7D63] border border-[#D7E2DB] rounded-lg px-6 py-3 text-center shadow-sm">
+        <h3 class="text-base sm:text-lg font-semibold text-[#1C2B21]">
+        {{ producto?.nombre || 'Producto' }}
+      </h3>
+        <p class="text-[11px] sm:text-xs text-[#4A5C52] mt-0.5" *ngIf="producto?.descripcion">{{ producto?.descripcion }}</p>
+    </div>
+  </div>
+
+  <!-- Caja para fotos -->
+  <div class="rounded-xl border-2 border-dashed border-[#D7E2DB] bg-white p-4 max-w-4xl mx-auto w-full">
+    <div *ngIf="isLoading" class="py-10 text-center text-[#4A5C52] text-sm">Cargando imágenes...</div>
+
+    <div *ngIf="!isLoading && !((producto?.imagenes?.length || 0) > 0)" class="py-10 text-center">
+      <p class="text-sm text-[#4A5C52]">No hay imágenes para este producto.</p>
+    </div>
+
+    <div *ngIf="!isLoading && ((producto?.imagenes?.length || 0) > 0)"
+         cdkDropList
+         (cdkDropListDropped)="drop($event)"
+         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <div *ngFor="let img of producto!.imagenes; let i = index"
+           cdkDrag
+           class="aspect-square rounded-lg overflow-hidden bg-gray-100 relative">
+        <img [src]="img.url" alt="Imagen {{ i + 1 }}" class="w-full h-full object-cover" />
+        <div class="absolute bottom-1 left-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded">#{{ i + 1 }}</div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && ((producto?.imagenes?.length || 0) > 0)" class="mt-4 flex justify-end">
+      <button type="button"
+              (click)="guardarNuevoOrden()"
+              class="h-10 min-w-[140px] items-center justify-center rounded-md bg-[#4B7D63] px-4 text-sm font-semibold text-white shadow-sm hover:bg-[#264B39]">
+        Guardar orden
+      </button>
+    </div>
+  </div>
+</div>

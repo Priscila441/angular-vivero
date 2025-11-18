@@ -25,10 +25,10 @@
       <div class="px-3 pb-3 flex-1 flex flex-col">
         <h3 class="text-[#1C2B21] text-sm font-semibold mb-1 line-clamp-1" title="{{ item.nombre }}">{{ item.nombre }}</h3>
         <p class="text-[#4A5C52] text-xs leading-relaxed line-clamp-2 mb-1.5">{{ item.descripcion }}</p>
-        <button class="mt-auto inline-flex items-center gap-1 text-xs font-medium text-[#4B7D63] hover:text-[#264B39] transition" (click)="goToPage(currentPage)" [attr.data-id]="item.id">
+        <a class="mt-auto inline-flex items-center gap-1 text-xs font-medium text-[#4B7D63] hover:text-[#264B39] transition" [routerLink]="['/admin/images', item.id]" [attr.data-id]="item.id">
           <span class="material-symbols-outlined text-xs">visibility</span>
           Ver detalles
-        </button>
+        </a>
       </div>
     </div>
   </div>

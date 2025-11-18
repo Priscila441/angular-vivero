@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ProductoService } from '../../../../../core/service/producto.service';
 import { ProductoDetalles, ImagenProducto } from '../../../../../core/models/producto_detalles.model';
 
 @Component({
   selector: 'app-cards-images',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './cards-images.component.html'
 })
 export class CardsImagesComponent implements OnInit {

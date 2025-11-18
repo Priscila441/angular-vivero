@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
@@ -53,7 +53,8 @@ export class ListProductComponent implements OnInit, OnDestroy {
   constructor(
     private productoService: ProductoService,
     private categoriaService: CategoriaProductoService,
-    private temporadaService: TemporadaService
+    private temporadaService: TemporadaService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -356,6 +357,11 @@ export class ListProductComponent implements OnInit, OnDestroy {
   get rangoFin(): number {
     if (this.totalFiltrados === 0) return 0;
     return Math.min(this.paginaActual * this.tamanioPagina, this.totalFiltrados);
+  }
+
+  verDetallesProducto(id: number): void {
+    if (!id) return;
+    this.router.navigate(['/admin/images', id]);
   }
 
   ngOnDestroy(): void {
