@@ -1,89 +1,46 @@
-<!-- Admin Navbar -->
 <nav class="w-full bg-[#E9F3ED] border-l border-[#e8f2ec]">
-  <div class="flex items-center justify-between px-4 sm:px-6 py-3 h-16 w-full gap-3">
-    <!-- Botón hamburguesa (solo en móviles) -->
-    <button
-      *ngIf="isMobile"
-      type="button"
-      (click)="onToggleSidebar()"
-      class="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-white/60 focus:outline-none transition-colors"
-      aria-label="Toggle sidebar"
-    >
-      <span class="material-symbols-outlined text-2xl text-[#1C2B21]">menu</span>
-    </button>
-    
-    <!-- Buscador centrado -->
-    <div class="flex items-center w-full max-w-md flex-1">
+  <div class="flex items-center justify-between px-6 py-3 h-16 w-full">
+    <!-- Buscador -->
+    <div class="flex items-center w-full max-w-md">
       <div class="relative w-full">
-        <input 
-          type="text" 
-          placeholder="Buscar..." 
-          class="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm sm:text-base"
+        <input
+          type="text"
+          placeholder="Buscar..."
+          class="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
         />
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+        <svg xmlns="http://www.w3.org/2000/svg"
+             class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"/>
         </svg>
       </div>
     </div>
+
     <!-- Usuario -->
-    <div class="relative flex-shrink-0" #menuContainer>
-      <button
-        type="button"
-        class="flex items-center gap-2 hover:bg-white/60 rounded-lg px-2 py-1 focus:outline-none"
-        aria-haspopup="menu"
-        [attr.aria-expanded]="isOpen"
-        (click)="toggleDropdown($event)"
-        (keydown.escape)="closeDropdown()"
-      >
+    <div class="relative dropdown">
+      <div class="flex items-center gap-2 cursor-pointer dropdown-button"
+           (click)="toggleUserDropdown($event)">
         <span class="material-symbols-outlined text-base text-black">person_2</span>
-        <div class="text-right hidden sm:block">
-          <div class="font-medium text-gray-800 text-xs font-sans">Juan Gonzalez</div>
-          <div class="text-[10px] text-gray-500 font-sans">Administrador</div>
+        <div class="text-right">
+          <div class="font-medium text-gray-800 text-xs font-sans">Administrador</div>
+          <div class="text-[10px] text-gray-500 font-sans">Vivero Quilino</div>
         </div>
-      </button>
-
-      <!-- Dropdown -->
-      <div
-        *ngIf="isOpen"
-        class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-md ring-1 ring-black/5 z-50 p-1.5"
-        role="menu"
-      >
-        <button
-          type="button"
-          class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-gray-800 hover:bg-gray-50 focus:outline-none text-sm"
-          (click)="onProfile()"
-          role="menuitem"
-        >
-          <span class="material-symbols-outlined text-[18px]">person</span>
-          <span>Perfil</span>
-        </button>
-
-        <button
-          type="button"
-          class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-gray-800 hover:bg-gray-50 focus:outline-none text-sm"
-          (click)="onEditProfile()"
-          role="menuitem"
-        >
-          <span class="material-symbols-outlined text-[18px]">edit_square</span>
-          <span>Editar perfil</span>
-        </button>
-
-        <button
-          type="button"
-          class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-red-600 hover:bg-red-50 focus:outline-none text-sm"
-          (click)="onLogout()"
-          role="menuitem"
-        >
-          <span class="material-symbols-outlined text-[18px] text-red-600">logout</span>
-          <span>Cerrar sesión</span>
-        </button>
+        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+        </svg>
       </div>
+
+      @if (showUserDropdown) {
+        <ul class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+          <li>
+            <a (click)="irASitioPublico()" class="block px-4 py-2 text-sm hover:bg-green-100 cursor-pointer">Ir al sitio público</a>
+          </li>
+          <li>
+            <a (click)="logout()" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 cursor-pointer">Cerrar sesión</a>
+          </li>
+        </ul>
+      }
     </div>
   </div>
 </nav>

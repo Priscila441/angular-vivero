@@ -107,19 +107,36 @@ private loadAllCategoriesExcluding(selectedId: number) {
   this.service.getCategoriasConPorductos().subscribe({
     next: (cats: any[]) => {
       const filtered = (cats || []).filter((c: any) => c.id !== selectedId);
-      this.allCategories = filtered;
 
-      // Cargamos todas las categorías con sus productos e imágenes
+      // 🔥 agrupamos subcategorías dentro de su padre (como hiciste en getCategoriasOrganizadas)
+      const mapa: Record<number, any> = {};
+      filtered.forEach(cat => (mapa[cat.id] = { ...cat, subcategorias: [] }));
+
+      filtered.forEach(cat => {
+        if (cat.id_padre && mapa[cat.id_padre]) {
+          mapa[cat.id_padre].subcategorias.push(mapa[cat.id]);
+        }
+      });
+
+      // Solo dejamos los que no tienen padre (niveles principales)
+      this.allCategories = Object.values(mapa).filter((c: any) => !c.id_padre);
+
+      // Cargamos productos
       this.allCategories.forEach((cat: any) => {
         this.productosMap.set(cat.id, cat.productos || []);
         this.preloadDetailsForCategory(cat.id, (cat.productos || []).slice(0, 8));
+
+        // También precargar subcategorías
+        (cat.subcategorias || []).forEach((sub: any) => {
+          this.productosMap.set(sub.id, sub.productos || []);
+          this.preloadDetailsForCategory(sub.id, (sub.productos || []).slice(0, 8));
+        });
       });
     },
-    error: (err) => {
-      console.error('Error al obtener categorías con productos', err);
-    }
+    error: (err) => console.error('Error al obtener categorías con productos', err)
   });
 }
+
 
 
   // ---------- Carrusel: next / prev por category ----------
@@ -213,5 +230,17 @@ private loadAllCategoriesExcluding(selectedId: number) {
 
   // ---------- clean up y util ----------
   private _destroyed = false;
+
+  // Devuelve true si la categoría tiene subcategorías
+hasSubcategories(cat: any): boolean {
+  return Array.isArray(cat.subcategorias) && cat.subcategorias.length > 0;
+}
+
+// Devuelve true si la categoría tiene productos
+hasProducts(cat: any): boolean {
+  const productos = this.productosMap.get(cat.id);
+  return Array.isArray(productos) && productos.length > 0;
+}
+
 
 }

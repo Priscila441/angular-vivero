@@ -1,0 +1,33 @@
+<div class="min-h-screen flex flex-col items-center justify-center bg-green-50">
+  <div class="text-center mb-8">
+    <img src="favicon.png" alt="logo" class="w-32 h-32 mx-auto rounded-full bg-white p-4 shadow-lg">
+    <h1 class="text-3xl font-bold text-green-800 mt-4">Vivero Quilino</h1>
+    <p class="text-green-600">Inicio de sesión del administrador</p>
+  </div>
+
+  <div class="bg-white shadow-lg rounded-2xl p-8 w-80">
+    <form (ngSubmit)="onLogin()" class="flex flex-col gap-4">
+      <input type="email" [(ngModel)]="email" name="email" placeholder="Correo electrónico"
+        class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-600 outline-none" required>
+
+      <input type="password" [(ngModel)]="password" name="password" placeholder="Contraseña"
+        class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-600 outline-none" required>
+
+      <button type="submit" [disabled]="loading"
+        class="bg-green-600 text-white rounded-lg py-2 hover:bg-green-700 transition-all disabled:opacity-50">
+        {{ loading ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+
+      <a (click)="volverHome()" class="text-green-600 text-sm hover:underline cursor-pointer">Volver al inicio</a>
+      <a href="#" class="text-gray-500 text-sm hover:underline">¿Olvidaste tu contraseña?</a>
+    </form>
+  </div>
+
+  @if (showModal) {
+    <div class="fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in"
+      [ngClass]="modalSuccess ? 'bg-green-600 text-white' : 'bg-red-600 text-white'">
+      <span class="text-lg">{{ modalSuccess ? '✓' : '✗' }}</span>
+      <p>{{ modalMessage }}</p>
+    </div>
+  }
+</div>

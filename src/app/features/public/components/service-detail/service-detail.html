@@ -1,17 +1,11 @@
 <div class="container mx-auto px-4 py-8 pt-24">
-  <!-- 🔄 Loading / Error -->
   @if (loading) {
     <div class="text-center py-8 text-gray-600">Cargando servicio...</div>
-  }
-
-  @if (errorMessage) {
+  } @else if (errorMessage) {
     <div class="text-center py-8 text-red-600">{{ errorMessage }}</div>
-  }
-
-  <!-- ✅ Contenido principal -->
-  @if (!loading && servicio) {
+  } @else if (service) {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-      <!-- Imagen principal con hover -->
+      <!-- Imagen principal -->
       <div
         class="w-full relative overflow-hidden rounded-2xl shadow-lg group"
         (mouseenter)="hoverImage = true"
@@ -19,49 +13,38 @@
       >
         <img
           [src]="getPrimaryImage()"
-          [alt]="servicio.nombre"
+          [alt]="service.nombre"
           class="w-full h-[400px] md:h-[500px] object-cover transition-opacity duration-500"
           [class.opacity-0]="hoverImage && getSecondaryImage()"
         />
         @if (getSecondaryImage()) {
           <img
             [src]="getSecondaryImage()!"
-            [alt]="servicio.nombre"
+            [alt]="service.nombre"
             class="absolute top-0 left-0 w-full h-[400px] md:h-[500px] object-cover transition-opacity duration-500 opacity-0 group-hover:opacity-100"
           />
         }
       </div>
 
-      <!-- Información del servicio -->
+      <!-- Información -->
       <div class="flex flex-col justify-center">
-        <h1 class="text-3xl font-semibold mb-3">{{ servicio.nombre }}</h1>
-        <p class="text-gray-600 mb-4 text-lg leading-relaxed">{{ servicio.descripcion }}</p>
+        <h1 class="text-3xl font-semibold mb-3 text-gray-900">
+          {{ service.nombre }}
+        </h1>
+        <p class="text-gray-600 mb-4 text-lg leading-relaxed">
+          {{ service.descripcion }}
+        </p>
 
-        <!-- Información extra -->
-        @if (servicio.informacion_extra) {
+        @if (service.informacion_extra) {
           <div class="mt-4">
-            <h2 class="text-xl font-semibold mb-3">Detalles</h2>
+            <h2 class="text-xl font-semibold mb-3 text-gray-800">Detalles</h2>
             <ul class="list-disc list-inside text-gray-700 space-y-1">
-              @if (parseExtra(servicio.informacion_extra)?.consumo_directo) {
-                <li><strong>Consumo directo:</strong> {{ parseExtra(servicio.informacion_extra)?.consumo_directo }}</li>
-              }
-              @if (parseExtra(servicio.informacion_extra)?.presentacion) {
-                <li><strong>Presentación:</strong> {{ parseExtra(servicio.informacion_extra)?.presentacion }}</li>
-              }
-              @if (parseExtra(servicio.informacion_extra)?.beneficios) {
-                <li><strong>Beneficios:</strong> {{ parseExtra(servicio.informacion_extra)?.beneficios }}</li>
-              }
-              @if (parseExtra(servicio.informacion_extra)?.conservacion) {
-                <li><strong>Conservación:</strong> {{ parseExtra(servicio.informacion_extra)?.conservacion }}</li>
+              @for (detalle of parseExtra(service.informacion_extra); track $index) {
+                <li>{{ detalle }}</li>
               }
             </ul>
           </div>
         }
-
-        <!-- Categoría -->
-        <div class="mt-6 text-sm text-gray-500">
-          <p><strong>Categoría ID:</strong> {{ servicio.categoria_id }}</p>
-        </div>
 
         <!-- Botón de consulta -->
         @if (!consultaAgregada) {
@@ -81,15 +64,38 @@
         }
       </div>
     </div>
+
+    <!-- Galería -->
+    @if (service.imagenes.length > 1) {
+      <div class="mt-12">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-800">
+          Galería de imágenes
+        </h2>
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+        >
+          @for (img of service.imagenes; track $index) {
+            <img
+              [src]="img.url"
+              [alt]="service.nombre"
+              class="w-full h-48 object-cover rounded-xl shadow hover:scale-105 transition-transform duration-300 cursor-pointer"
+            />
+          }
+        </div>
+      </div>
+    }
   }
 
-  <!-- 🌿 Toast (mensaje flotante) -->
+  <!-- 🔹 Toast de confirmación -->
   @if (showModal) {
     <div
       class="fixed top-4 right-4 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in"
     >
       <span class="text-lg">✓</span>
-      <p>«{{ modalServiceName }}» (Categoría: {{ modalCategoriaName }}) se agregó a tu consulta</p>
+      <p>
+        «{{ modalServiceName }}»
+        se agregó a tu consulta
+      </p>
     </div>
   }
 </div>

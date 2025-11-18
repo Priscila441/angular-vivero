@@ -57,6 +57,7 @@ cardData: InfoCard[] = [
 ];
 
 
+
   getColorClass(color: string): string {
     switch(color) {
       case 'green':

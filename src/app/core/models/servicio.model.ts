@@ -1,4 +1,5 @@
 export interface Servicio {
+    data: Servicio | null;
     id: number;
     nombre: string;
     descripcion: string;
@@ -10,7 +11,8 @@ export interface Servicio {
 
 export interface imagenServicio {
     id : number;
-    url:    string;
+    url: string;
+    public_id?: string;
     es_principal: boolean;
     orden: number;
 }

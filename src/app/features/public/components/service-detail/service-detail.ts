@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ServicioService } from '../../../../core/service/servicio.service';
 import { Servicio } from '../../../../core/models/servicio.model';
+import { ServicioService } from '../../../../core/service/servicio.service';
+import { catchError, of, Subscription } from 'rxjs';
+import { ConsultaService } from '../../../../core/service/consulta.service';
 
 @Component({
   selector: 'app-service-detail',
@@ -10,78 +12,122 @@ import { Servicio } from '../../../../core/models/servicio.model';
   imports: [CommonModule],
   templateUrl: './service-detail.html',
 })
-export class ServiceDetail implements OnInit {
-
-  servicio: Servicio | null = null;
-  loading = false;
+export class ServiceDetail implements OnInit, OnDestroy {
+  service!: Servicio;
+  loading = true;
   errorMessage = '';
   hoverImage = false;
+  subs: Subscription[] = [];
+
+  // 🔹 Propiedades para consulta
+  consultaAgregada = false;
   showModal = false;
   modalServiceName = '';
   modalCategoriaName = '';
-  consultaAgregada = false;
 
   constructor(
     private route: ActivatedRoute,
+    private servicioService: ServicioService,
     private router: Router,
-    private servicioService: ServicioService
+    private consultaService: ConsultaService
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) this.loadService(id);
+    const sub = this.route.params.subscribe(params => {
+      const id = +params['serviceId'];
+      this.loadService(id);
+    });
+    this.subs.push(sub);
   }
 
-  loadService(id: number): void {
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
+  }
+
+  loadService(id: number) {
     this.loading = true;
     this.errorMessage = '';
-
-    this.servicioService.getDetallesById(id).subscribe({
-      next: (response) => {
-        if (response?.data) {
-          this.servicio = response.data;
-        } else {
-          this.errorMessage = 'No se encontró la información del servicio.';
+    const sub = this.servicioService
+      .getDetallesById(id)
+      .pipe(
+        catchError(err => {
+          this.loading = false;
+          this.errorMessage =
+            err?.error?.message || 'Error al cargar el servicio.';
+          console.error('Error getDetallesById', err);
+          return of(null);
+        })
+      )
+      .subscribe(res => {
+        this.loading = false;
+        if (!res) return;
+        if (res.success === false) {
+          this.errorMessage = res.message || 'No se pudo obtener el servicio.';
+          return;
         }
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.errorMessage = 'Ocurrió un error al obtener el detalle del servicio.';
-        this.loading = false;
-      },
-    });
+        this.service = res.data;
+      });
+    this.subs.push(sub);
   }
 
   getPrimaryImage(): string {
-    const principal = this.servicio?.imagenes?.find((img) => img.es_principal);
-    return principal ? principal.url : 'assets/img/placeholder-servicio.jpg';
+    if (!this.service?.imagenes?.length) return '';
+    const main =
+      this.service.imagenes.find(i => i.es_principal) ??
+      this.service.imagenes[0];
+    return main.url;
   }
 
   getSecondaryImage(): string | null {
-    const secundaria = this.servicio?.imagenes?.find((img) => !img.es_principal);
-    return secundaria ? secundaria.url : null;
+    if (!this.service?.imagenes || this.service.imagenes.length < 2)
+      return null;
+    const main =
+      this.service.imagenes.find(i => i.es_principal) ??
+      this.service.imagenes[0];
+    const second = this.service.imagenes.find(i => i !== main);
+    return second ? second.url : null;
   }
 
-  parseExtra(extra: string): any {
+  parseExtra(info: string | object): string[] {
     try {
-      return JSON.parse(extra);
+      const parsed = typeof info === 'string' ? JSON.parse(info) : info;
+      if (typeof parsed === 'string') {
+        return parsed
+          .replace(/[{}"]/g, '')
+          .split('\n')
+          .map(line => line.trim().replace(/^•\s*/, ''))
+          .filter(line => line.length > 0);
+      }
+      return Object.values(parsed)
+        .map(v => String(v).trim().replace(/^•\s*/, ''))
+        .filter(Boolean);
     } catch {
-      return {};
+      if (typeof info === 'string') {
+        return info
+          .replace(/[{}"]/g, '')
+          .split('\n')
+          .map(line => line.trim().replace(/^•\s*/, ''))
+          .filter(line => line.length > 0);
+      }
+      return [];
     }
   }
 
-  onAgregarConsulta(): void {
-    if (!this.servicio) return;
+  // 🔹 Funcionalidad del botón de consulta
+  onAgregarConsulta() {
+    this.modalServiceName = this.service?.nombre || '';
+    this.consultaService.agregarServicio (this.modalServiceName);
+
     this.consultaAgregada = true;
     this.showModal = true;
-    this.modalServiceName = this.servicio.nombre;
-    this.modalCategoriaName = this.servicio.categoria_id.toString();
 
-    setTimeout(() => (this.showModal = false), 3000);
+    // Ocultar automáticamente el toast
+    setTimeout(() => {
+      this.showModal = false;
+    }, 3000);
   }
 
-  verContacto(): void {
+  verContacto() {
     this.router.navigate(['/contacto']);
   }
 }

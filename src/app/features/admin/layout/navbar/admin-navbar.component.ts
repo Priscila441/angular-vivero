@@ -1,53 +1,42 @@
-import { Component, ElementRef, HostListener, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, HostListener, ElementRef, ViewChild, Input, Output,EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/service/auth/auth.service';
 
 @Component({
   selector: 'app-admin-navbar',
   standalone: true,
-  imports: [CommonModule],
   templateUrl: './admin-navbar.component.html',
-  styleUrls: []
 })
-export class AdminNavbarComponent  {
+export class AdminNavbarComponent {
   @Input() isMobile: boolean = false;
   @Output() toggleSidebar = new EventEmitter<void>();
   
-  isOpen = false;
+  showUserDropdown = false;
 
-  @ViewChild('menuContainer', { static: true }) private menuContainer!: ElementRef<HTMLElement>;
+  constructor(private authService: AuthService, private router: Router) {}
 
-  onToggleSidebar(): void {
-    this.toggleSidebar.emit();
+  toggleUserDropdown(event: MouseEvent) {
+    event.stopPropagation(); // Evita que el click cierre inmediatamente el dropdown
+    this.showUserDropdown = !this.showUserDropdown;
   }
 
-  toggleDropdown(event: MouseEvent): void {
-    event.stopPropagation();
-    this.isOpen = !this.isOpen;
+  irASitioPublico() {
+    this.router.navigate(['/']);
+    this.showUserDropdown = false;
   }
 
-  closeDropdown(): void {
-    this.isOpen = false;
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/']);
+    this.showUserDropdown = false;
   }
 
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    const target = event.target as Node | null;
-    if (!this.menuContainer?.nativeElement.contains(target)) {
-      this.closeDropdown();
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown') && !target.closest('.dropdown-button')) {
+      this.showUserDropdown = false;
     }
-  }
-
-  // Acciones del menú (implementación real pendiente de rutas/servicios)
-  onProfile(): void {
-    this.closeDropdown();
-  }
-
-  onEditProfile(): void {
-    this.closeDropdown();
-  }
-
-  onLogout(): void {
-    // TODO: Integrar con servicio de autenticación
-    this.closeDropdown();
   }
 }
