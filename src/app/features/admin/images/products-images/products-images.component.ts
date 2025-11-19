@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles, ImagenProducto } from '../../../../core/models/producto_detalles.model';
 
@@ -13,7 +14,7 @@ import { ProductoDetalles, ImagenProducto } from '../../../../core/models/produc
 export class ProductImagesComponent implements OnInit {
   productosCompletos: ProductoDetalles[] = [];
 
-  constructor(private productoService: ProductoService) {}
+  constructor(private productoService: ProductoService, private router: Router) {}
 
   ngOnInit(): void {
     this.productoService.getAllDetallesCompletos().subscribe((data: ProductoDetalles[]) => {
@@ -32,7 +33,6 @@ export class ProductImagesComponent implements OnInit {
   }
 
   onVerDetalles(productoId: number): void {
-    // Placeholder: navegación futura al detalle
-    console.log('Ver detalles producto:', productoId);
+    this.router.navigate(['/admin/images/products', productoId]);
   }
 }

@@ -1,0 +1,40 @@
+<!-- ====== Page Title Section Start -->
+<section class="bg-[#F6FBF8] py-[70px]">
+  <div class="mx-auto px-4 sm:container">
+    <div class="border-l-[5px] border-[#4B7D63] pl-5">
+      <h2 class="mb-2 text-2xl font-semibold text-dark dark:text-white">
+       Servicio
+      </h2>
+      <p class="text-sm font-medium text-body-color dark:text-dark-6">
+        Información del servicio seleccionado
+      </p>
+    </div>
+  </div>
+</section>
+<!-- ====== Page Title Section End -->
+
+<div class="mx-auto px-4 sm:container">
+  <div *ngIf="isLoading" class="py-10 text-center text-[#4A5C52] text-sm">Cargando servicio...</div>
+
+  <div *ngIf="!isLoading && servicio" class="bg-white rounded-xl border border-[#D7E2DB] p-6 max-w-4xl mx-auto">
+    <h3 class="text-2xl font-semibold text-[#1C2B21] mb-3">{{ servicio.nombre }}</h3>
+    <p class="text-[#4A5C52] text-base mb-4">{{ servicio.descripcion }}</p>
+    
+    <div *ngIf="servicio.imagenes && servicio.imagenes.length > 0" class="mt-6">
+      <h4 class="text-lg font-semibold text-[#1C2B21] mb-3">Imágenes del servicio</h4>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div *ngFor="let img of servicio.imagenes; let i = index" class="aspect-square rounded-lg overflow-hidden bg-gray-100">
+          <img [src]="img.url" [alt]="'Imagen ' + (i + 1)" class="w-full h-full object-cover" />
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!servicio.imagenes || servicio.imagenes.length === 0" class="py-6 text-center">
+      <p class="text-sm text-[#4A5C52]">No hay imágenes para este servicio.</p>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && !servicio" class="py-10 text-center">
+    <p class="text-sm text-[#4A5C52]">No se encontró el servicio.</p>
+  </div>
+</div>

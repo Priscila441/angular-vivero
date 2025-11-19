@@ -1,5 +1,5 @@
 <!-- Contenedor principal -->
-<div class="h-full flex flex-col overflow-hidden">
+<div class="h-full flex flex-col">
   <!-- Encabezado principal (compacto) -->
   <div class="mt-10 mb-2 px-16">
     <h1 class="text-[#1C2B21] text-2xl font-bold leading-tight tracking-[-0.015em]">Imágenes</h1>
@@ -47,7 +47,7 @@
   <div class="px-16 overflow-x-hidden">
     <div class="p-0 bg-transparent border-0 shadow-none">
       <app-cards-images *ngIf="selectedTab === 'productos'"></app-cards-images>
-      <ng-container *ngIf="selectedTab === 'servicios'" [ngComponentOutlet]="servicesComp"></ng-container>
+      <app-services-images *ngIf="selectedTab === 'servicios'"></app-services-images>
     </div>
   </div>
 </div>

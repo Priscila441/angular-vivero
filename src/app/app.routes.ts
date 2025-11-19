@@ -30,7 +30,8 @@ export const routes: Routes = [
           { path: 'services/add', loadComponent: () => import('./features/admin/services/addservice/add-service.component').then(m => m.AddserviceComponent) },
           { path: 'services/edit/:id', loadComponent: () => import('./features/admin/services/editservice/edit-service.component').then(m => m.EditserviceComponent) },
           { path: 'images', loadComponent: () => import('./features/admin/images/shared-images/images.component').then(m => m.ImagesComponent) },
-          { path: 'images/:id', loadComponent: () => import('./features/admin/images/shared-images/forms/images-order-form.component').then(m => m.ImagesOrderFormComponent) },
+          { path: 'images/services/:id', loadComponent: () => import('./features/admin/images/shared-images/forms/services-images-order-form.component').then(m => m.ServicesImagesOrderFormComponent) },
+          { path: 'images/products/:id', loadComponent: () => import('./features/admin/images/shared-images/forms/images-order-form.component').then(m => m.ImagesOrderFormComponent) },
           
         ]
       }

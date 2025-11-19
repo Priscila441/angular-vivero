@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ProductoService } from '../../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../../core/models/producto_detalles.model';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -36,29 +36,52 @@ export class ImagesOrderFormComponent implements OnInit {
     });
   }
 
-  private cargarProductoCompleto(id: number): void {
+  private cargarProductoCompleto(id: number, forzarRecarga: boolean = false): void {
     this.isLoading = true;
-    // Fallback robusto: si el método nuevo no está disponible, usar getAllDetallesCompletos
-    if (typeof (this.productoService as any).getProductoCompletoById === 'function') {
-      (this.productoService as any).getProductoCompletoById(id).subscribe({
-        next: (data: ProductoDetalles) => {
-          this.producto = data as ProductoDetalles;
+    
+    if (forzarRecarga) {
+      // Recarga forzada: GET directo sin caché
+      const timestamp = new Date().getTime();
+      const url = `${environment.API_URL}/productos/completos?_t=${timestamp}`;
+      
+      const headers = new HttpHeaders({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+      
+      this.http.get<any>(url, { headers }).subscribe({
+        next: (response) => {
+          const productos = Array.isArray(response) ? response : (response.data || []);
+          const encontrado = productos.find((p: ProductoDetalles) => p.id === id);
+          if (encontrado) {
+            // Ordenar las imágenes por el campo 'orden'
+            if (encontrado.imagenes && encontrado.imagenes.length > 0) {
+              encontrado.imagenes.sort((a: any, b: any) => (a.orden || 0) - (b.orden || 0));
+            }
+            this.producto = encontrado;
+          }
           this.isLoading = false;
         },
         error: () => {
-          this.producto = null;
           this.isLoading = false;
         }
       });
     } else {
-      // Fallback: cargar todos y filtrar
+      // Carga normal: usar servicio
       this.productoService.getAllDetallesCompletos().subscribe({
-        next: (lista: ProductoDetalles[]) => {
-          this.producto = lista.find(p => p.id === id) || null;
+        next: (productos) => {
+          const encontrado = productos.find(p => p.id === id);
+          if (encontrado) {
+            // Ordenar imágenes por el campo 'orden'
+            if (encontrado.imagenes && encontrado.imagenes.length > 0) {
+              encontrado.imagenes.sort((a: any, b: any) => (a.orden || 0) - (b.orden || 0));
+            }
+            this.producto = encontrado;
+          }
           this.isLoading = false;
         },
         error: () => {
-          this.producto = null;
           this.isLoading = false;
         }
       });
@@ -75,19 +98,24 @@ export class ImagesOrderFormComponent implements OnInit {
       return;
     }
     
-    const ordenIds = this.producto.imagenes.map(img => img.id);
+    // Array de IDs en el orden visual actual
+    const ordenIds = this.producto.imagenes.map((img: any) => img.id);
     const payload = { orden: ordenIds };
     
-    // Usar API_URL (4001) donde está el endpoint de ordenamiento
     const url = `${environment.API_URL}/productos/${this.productoId}/imagenes/orden`;
     
     this.http.put(url, payload).subscribe({
-      next: () => {
-        alert('✅ Orden de imágenes guardado exitosamente');
+      next: (response: any) => {
+        alert('✅ Orden guardado correctamente');
+        // Recargar con forzado = true para bypasear caché
+        setTimeout(() => {
+          if (this.productoId) {
+            this.cargarProductoCompleto(this.productoId, true);
+          }
+        }, 500);
       },
-      error: (err: any) => {
-        alert('❌ Error al guardar: ' + (err.error?.message || err.message || 'Ver consola'));
-        console.error('Error completo:', err);
+      error: () => {
+        alert('❌ Error al guardar el orden de las imágenes');
       }
     });
   }

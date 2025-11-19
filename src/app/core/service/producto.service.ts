@@ -14,6 +14,7 @@ export class ProductoService {
     private readonly api_url = environment.API_URL_PRODUCTOS + '/productos';
     private readonly api_url_completos = environment.API_URL + '/productos/completos';
     private readonly api_url_detalles = environment.API_URL + '/productos/detalles';
+    private readonly api_url_base = environment.API_URL + '/productos';
 
     constructor(private http: HttpClient) {}
 
@@ -60,7 +61,32 @@ export class ProductoService {
         );
     }
 
+    // Nuevo: obtiene producto completo (incluye imágenes) desde API 4001
+    getProductoCompletoById(id: number): Observable<ProductoDetalles> {
+        return this.http.get<any>(`${this.api_url_completos}/${id}`).pipe(
+            map(response => response?.data || response || {})
+        );
+    }
+
     uploadImagenes(productoId: number, formData: FormData): Observable<any> {
         return this.http.post<any>(`${environment.API_URL}/productos/${productoId}/imagenes/multiples`, formData);
     }
+
+    getImagesByProductId(id: number): Observable<any[]> {
+      return this.http.get<any>(`${this.api_url}/${id}/imagenes`).pipe(
+        map(response => response.data || [])
+      );
+    }
+
+    updateImagesOrder(productId: number, images: { id: number }[]): Observable<any> {
+      const imageIds = images.map(image => image.id);
+      const payload = { orden: imageIds };
+      return this.http.put(`${this.api_url}/${productId}/imagenes/orden`, payload);
+    }
+
+        // Nuevo: actualiza orden recibiendo directamente arreglo de IDs en API 4001
+        actualizarOrdenImagenes(productoId: number, ordenIds: number[]): Observable<any> {
+            const payload = { orden: ordenIds };
+            return this.http.put(`${this.api_url_base}/${productoId}/imagenes/orden`, payload);
+        }
 }

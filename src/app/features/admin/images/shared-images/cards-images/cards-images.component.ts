@@ -28,10 +28,6 @@ export class CardsImagesComponent implements OnInit {
         this.slides = this.paginas.map((_, i) => i);
         this.currentPage = 0;
         this.actualizarVisible();
-        // Debug opcional: inspeccionar estructura para ver categoría si no aparece
-        if (this.items.length) {
-          // console.log('Ejemplo producto detalles:', this.items[0]);
-        }
         this.isLoading = false;
       },
       error: () => {

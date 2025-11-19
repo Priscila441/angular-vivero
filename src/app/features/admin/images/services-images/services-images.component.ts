@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ServicioService } from '../../../../core/service/servicio.service';
+import { RouterModule, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment.development';
 import { Servicio, imagenServicio } from '../../../../core/models/servicio.model';
 
 @Component({
 	selector: 'app-services-images',
 	standalone: true,
-	imports: [CommonModule],
+	imports: [CommonModule, RouterModule],
 	templateUrl: './services-images.component.html',
 	styleUrls: []
 })
@@ -18,13 +20,27 @@ export class ServicesImagesComponent implements OnInit {
 	currentPage = 0;
 	slides: number[] = [];
 
-	constructor(private servicioService: ServicioService) {}
+	constructor(private http: HttpClient, private router: Router) {}
 
 	ngOnInit(): void {
-		this.servicioService.getAllDetalles().subscribe({
+		// Usar la misma URL que list-service
+		const url = `${environment.API_URL}/servicios/completos`;
+		this.http.get<any>(url).subscribe({
 			next: (resp: any) => {
-				const data: Servicio[] = Array.isArray(resp) ? resp : (resp?.data || []);
-				this.items = data || [];
+				const data = Array.isArray(resp) ? resp : (resp?.data || []);
+				
+				// Mapear igual que en list-service para asegurar que tenemos el id
+				this.items = data.map((s: any) => ({
+					id: s.id,
+					nombre: s.nombre,
+					descripcion: s.descripcion,
+					informacion_extra: s.informacion_extra,
+					esta_activo: s.esta_activo,
+					imagenes: s.imagenes || [],
+					categoria_id: s.categoria_id,
+					nombre_categoria: s.nombre_categoria
+				})) as Servicio[];
+				
 				this.paginas = this.agruparEnPaginas(this.items, 3);
 				this.slides = this.paginas.map((_, i) => i);
 				this.currentPage = 0;
@@ -82,5 +98,9 @@ export class ServicesImagesComponent implements OnInit {
 
 	getCategoriaNombre(item: any): string {
 		return item?.nombre_categoria || item?.categoria?.nombre || item?.categoria_nombre || '';
+	}
+
+	navegarADetalle(id: number): void {
+		this.router.navigate(['/admin/images/services', id]);
 	}
 }
