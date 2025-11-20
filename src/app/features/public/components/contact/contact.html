@@ -9,6 +9,9 @@
       <h1 class="text-4xl md:text-5xl font-bold mb-4">¡Hola!</h1>
       <p class="text-lg md:text-xl leading-relaxed text-gray-100">Conversemos sobre tu proyecto, así te asesoramos sobre las especies más convenientes según tu zona, tipo de suelo, presupuesto y estilo. 🌱 ¡Esperamos tu contacto!</p>
     </div>
+    
+    
+
     <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] rotate-180">
       <svg class="relative block w-[calc(100%+1.3px)] h-[120px]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 2600 131.1">
         <path d="M0 0L2600 0 2600 69.1 0 0z" class="fill-white"></path>
@@ -18,9 +21,59 @@
     </div>
   </div>
 
+  @if (authService.isAuthenticated()) {
+  <div class="w-full bg-[#E9F3ED] border-l-4 border-[#51946c] text-[#0e1a13] p-4 flex items-center justify-between rounded-md shadow-sm mt-4 mb-6">
+    <p class="text-sm font-medium text-[#4A5C52]">Estás viendo una sección editable. Solo administradores pueden modificar esta información.</p>
+    <button (click)="abrirEdicion()" class="ml-4 px-4 py-2 bg-[#51946c] text-white text-sm rounded-lg shadow hover:bg-[#3d7354] transition">Editar Contacto</button>
+  </div>
+}
+
   <!-- Contenido principal -->
   <div class="p-6 max-w-6xl mx-auto mt-10">
     <h2 class="text-3xl font-semibold text-center text-green-700 mb-10">Vías de Contacto</h2>
+
+    @if (editando) {
+  <div class="fixed inset-0 z-50">
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="w-full max-w-md bg-white rounded-lg p-6 shadow-lg">
+        <h3 class="text-xl font-semibold text-green-700 mb-4">Editar contacto</h3>
+
+        <div class="space-y-4">
+          <input class="w-full border p-3 rounded"
+                 placeholder="Email"
+                 [(ngModel)]="formContacto.email"/>
+
+          <input class="w-full border p-3 rounded"
+                 placeholder="Teléfono"
+                 [(ngModel)]="formContacto.telefono"/>
+
+          <input class="w-full border p-3 rounded"
+                 placeholder="WhatsApp"
+                 [(ngModel)]="formContacto.whatsapp"/>
+
+          <input class="w-full border p-3 rounded"
+                 placeholder="Horario de atención"
+                 [(ngModel)]="formContacto.horario_atencion"/>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-3">
+          <button (click)="cerrarEdicion()"
+                  class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
+            Cancelar
+          </button>
+
+          <button (click)="guardarCambios()"
+                  class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+            Guardar cambios
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
 
     <div class="grid md:grid-cols-2 gap-10 items-start">
       <!-- Columna izquierda -->
@@ -108,4 +161,35 @@
       <iframe loading="lazy" class="w-full h-96 rounded-lg shadow-md" src="https://maps.google.com/maps?q=30°12'21.8%22S+64°28'30.1%22W&amp;t=m&amp;z=12&amp;output=embed&amp;iwloc=near" title="Ubicación" aria-label="Ubicación"></iframe>
     </div>
   </div>
+
+  <!-- Modal de éxito / error -->
+@if(mostrarModalResultado){
+  <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity"></div>
+
+    <!-- Contenedor del modal -->
+    <div role="alert" aria-live="polite" class="relative bg-white w-[90%] max-w-md rounded-xl shadow-lg ring-1 transition-all duration-200 p-6 flex flex-col items-center gap-4 z-10">
+      
+      <!-- Icono dinámico -->
+      <span class="material-symbols-outlined text-3xl" [ngClass]="modalMensaje.toLowerCase().includes('error') ? 'text-red-600' : 'text-green-600'">
+        {{ modalMensaje.toLowerCase().includes('error') ? 'error' : 'check_circle' }}
+      </span>
+
+      <!-- Mensaje -->
+      <h2 class="text-center text-lg font-semibold text-gray-900">{{ modalMensaje }}</h2>
+
+      <!-- Botón aceptar -->
+      <button type="button" (click)="cerrarModalResultado()" class="mt-2 px-5 py-2 rounded-lg font-medium text-white transition-colors duration-200" [ngClass]="modalMensaje.toLowerCase().includes('error') ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'">
+        Aceptar
+      </button>
+
+      <!-- Botón cerrar esquina superior -->
+      <button type="button" (click)="cerrarModalResultado()" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-400 rounded-full p-1">
+        <span class="material-symbols-outlined text-base">close</span>
+      </button>
+    </div>
+  </div>
+}
+
 </section>

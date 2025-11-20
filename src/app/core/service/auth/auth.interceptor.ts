@@ -7,30 +7,44 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  let authReq = req;
-  if (token) {
-    authReq = req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` }
-    });
-  }
+  // Agregar access token
+  const authReq = req.clone({
+    withCredentials: true,        // ✔ necesario para cookies
+    setHeaders: token ? { Authorization: `Bearer ${token}` } : {}
+  });
 
   return next(authReq).pipe(
     catchError((error) => {
-      if (error.status === 401) {
-        return authService.refreshToken().pipe(
-          switchMap((newToken) => {
-            const refreshed = authService.getToken();
-            if (refreshed) {
-              const retryReq = req.clone({
-                setHeaders: { Authorization: `Bearer ${refreshed}` }
-              });
-              return next(retryReq);
-            }
-            return throwError(() => error);
-          })
-        );
+      if (error.status !== 401) {
+        return throwError(() => error);
       }
-      return throwError(() => error);
+
+      if (req.url.includes('/auth/refresh')) {
+        authService.logout();
+        return throwError(() => error);
+      }
+
+      return authService.refreshToken().pipe(
+        switchMap(() => {
+          const newToken = authService.getToken();
+
+          if (!newToken) {
+            authService.logout();
+            return throwError(() => error);
+          }
+
+          const retryReq = req.clone({
+            withCredentials: true, // ✔ cookies en reintento
+            setHeaders: { Authorization: `Bearer ${newToken}` }
+          });
+
+          return next(retryReq);
+        }),
+        catchError(() => {
+          authService.logout();
+          return throwError(() => error);
+        })
+      );
     })
   );
 };

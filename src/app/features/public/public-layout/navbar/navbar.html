@@ -7,7 +7,7 @@
 
     <div class="flex">
       <!--admin visible al lado de la hamburguesa cuando está logueado-->
-    @if (authService.isAdminLoggedIn()) {
+    @if (authService.isAuthenticated()) {
       <div class="md:hidden flex items-center ml-2">
         <span class="material-symbols-outlined text-green-700">person_2</span>
       </div>
@@ -111,7 +111,7 @@
         </a>
 
         <!-- Si el admin NO está logueado -->
-        @if (!authService.isAdminLoggedIn()) {
+        @if (!authService.isAuthenticated()) {
           <a
             routerLink="/login"
             class="px-4 py-2 rounded-full bg-green-600 text-white text-sm font-medium hover:bg-green-700"
@@ -222,7 +222,7 @@
         <li><a routerLink="/contacto" class="block py-2">Contacto</a></li>
 
         <!--  Bloque usuario móvil -->
-        @if (!authService.isAdminLoggedIn()) {
+        @if (!authService.isAuthenticated()) {
           <li>
             <a
               routerLink="/login"

@@ -11,11 +11,17 @@ export class ContactoService {
 
   private readonly api_url = `${environment.API_URL}/contacto`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient ) {}
 
   obtenerContacto(id: number): Observable<Contacto> {
     return this.http.get<any>(`${this.api_url}/${id}`).pipe(
       map((resp) => resp.data)
+    );
+  }
+
+  actualizarContacto(id: number, cambios: Partial<Contacto>): Observable<Contacto> {
+    return this.http.put<any>(`${this.api_url}/${id}`, cambios).pipe(
+      map((resp) => resp.data) // la API devuelve dentro de "data"
     );
   }
 }

@@ -3,24 +3,34 @@ import { ConsultaService } from '../../../../core/service/consulta.service';
 import { ContactoService } from '../../../../core/service/contacto.service';
 import { Contacto } from '../../../../core/models/contacto.model';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../../core/service/auth/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-contact',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './contact.html',
 })
 export class Contact implements OnInit {
   mensaje = '';
   nombre = '';
   mostrarModal = false;
+  mostrarModalResultado = false;
+  modalMensaje = '';
+  
 
   contacto?: Contacto | null;
   whatsappLimpio = ''; // para armar el link
   telefonoLimpio = '';
 
+  editando = false;
+  formContacto: Partial<Contacto> = {};
+
   constructor(
     public consultaService: ConsultaService,
-    private contactoService: ContactoService
+    private contactoService: ContactoService, 
+    public authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -90,4 +100,93 @@ export class Contact implements OnInit {
     this.consultaService.limpiarConsultas();
     this.mensaje = '';
   }
+
+  abrirEdicion() {
+    console.log("ABRIENDO EDICIÓN");  
+  if (!this.contacto) return;
+
+  this.editando = true;
+
+  // Copia inicial para editar
+  this.formContacto = {
+    email: this.contacto.email,
+    telefono: this.contacto.telefono,
+    whatsapp: this.contacto.whatsapp,
+    horario_atencion: this.contacto.horario_atencion
+  };
+}
+  cerrarEdicion() {
+  this.editando = false;
+}
+
+private mostrarResultado(mensaje: string) {
+  this.modalMensaje = mensaje;
+  this.mostrarModalResultado = true;
+}
+
+cerrarModalResultado() {
+  this.mostrarModalResultado = false;
+}
+
+// Guarda SOLO los valores modificados
+guardarCambios() {
+  if (!this.contacto) return;
+
+  const cambios: Partial<Contacto> = {};
+
+  if (this.formContacto.horario_atencion !== this.contacto.horario_atencion) {
+    cambios.horario_atencion = this.formContacto.horario_atencion;
+  }
+
+  if (this.formContacto.email !== this.contacto.email) {
+    cambios.email = this.formContacto.email;
+  }
+
+  if (this.formContacto.telefono !== this.contacto.telefono) {
+    cambios.telefono = this.formContacto.telefono;
+  }
+
+  if (this.formContacto.whatsapp !== this.contacto.whatsapp) {
+    cambios.whatsapp = this.formContacto.whatsapp;
+  }
+
+  if (Object.keys(cambios).length === 0) {
+    this.editando = false;
+    return;
+  }
+
+  this.contactoService.actualizarContacto(this.contacto.id!, cambios).subscribe({
+    next: (resp) => {
+
+      // Actualizar objeto local
+      this.contacto = { ...this.contacto!, ...resp };
+
+      // Regenerar números limpios
+      this.whatsappLimpio = this.contacto.whatsapp.replace(/\D/g, '');
+      this.telefonoLimpio = this.contacto.telefono.replace(/\D/g, '');
+
+      this.editando = false;
+
+      // Mostrar modal éxito
+      this.mostrarResultado("Los cambios fueron realizados con éxito.");
+
+      // Recargar form
+      this.formContacto = {};
+    },
+
+    error: (err) => {
+      console.error('Error al actualizar contacto', err);
+
+      let mensaje = "No se pudieron guardar los cambios.";
+
+      if (err.status === 400) mensaje = "Hay errores en los datos ingresados.Los valores no pueden estar vacíos.";
+      if (err.status === 403) mensaje = "No tenés permiso para editar.";
+      if (err.status === 500) mensaje = "Error interno del servidor.";
+
+      this.mostrarResultado(mensaje);
+    }
+  });
+}
+
+
 }
