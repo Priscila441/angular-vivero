@@ -17,6 +17,9 @@ export class ImagesOrderFormComponent implements OnInit {
   isLoading = true;
   producto: ProductoDetalles | null = null;
   private productoId: number | null = null;
+  showSuccessModal = false;
+  successMessage = '';
+  errorMessage = '';
 
   constructor(
     private route: ActivatedRoute, 
@@ -40,7 +43,6 @@ export class ImagesOrderFormComponent implements OnInit {
     this.isLoading = true;
     
     if (forzarRecarga) {
-      // Recarga forzada: GET directo sin caché
       const timestamp = new Date().getTime();
       const url = `${environment.API_URL}/productos/completos?_t=${timestamp}`;
       
@@ -98,7 +100,6 @@ export class ImagesOrderFormComponent implements OnInit {
       return;
     }
     
-    // Array de IDs en el orden visual actual
     const ordenIds = this.producto.imagenes.map((img: any) => img.id);
     const payload = { orden: ordenIds };
     
@@ -106,17 +107,23 @@ export class ImagesOrderFormComponent implements OnInit {
     
     this.http.put(url, payload).subscribe({
       next: (response: any) => {
-        alert('✅ Orden guardado correctamente');
-        // Recargar con forzado = true para bypasear caché
+        this.successMessage = 'Imágenes actualizadas';
+        this.showSuccessModal = true;
+        setTimeout(() => { this.showSuccessModal = false; }, 2000);
         setTimeout(() => {
           if (this.productoId) {
             this.cargarProductoCompleto(this.productoId, true);
           }
-        }, 500);
+        }, 1500);
       },
       error: () => {
-        alert('❌ Error al guardar el orden de las imágenes');
+        this.errorMessage = 'Error al guardar el orden de las imágenes';
+        setTimeout(() => { this.errorMessage = ''; }, 5000);
       }
     });
+  }
+
+  cancelar(): void {
+    window.history.back();
   }
 }

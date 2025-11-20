@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { ProductoService } from '../../../../../core/service/producto.service';
 import { ProductoDetalles, ImagenProducto } from '../../../../../core/models/producto_detalles.model';
 
@@ -18,7 +18,7 @@ export class CardsImagesComponent implements OnInit {
   currentPage = 0;
   slides: number[] = [];
 
-  constructor(private productoService: ProductoService) {}
+  constructor(private productoService: ProductoService, private router: Router) {}
 
   ngOnInit(): void {
     this.productoService.getAllDetallesCompletos().subscribe({
@@ -72,8 +72,6 @@ export class CardsImagesComponent implements OnInit {
     }
   }
 
-  // Métodos antiguos de slide eliminados (se mantiene paginación por grupos)
-
   trackById(_: number, item: ProductoDetalles): number {
     return item.id;
   }
@@ -84,7 +82,10 @@ export class CardsImagesComponent implements OnInit {
   }
 
   getCategoriaNombre(producto: any): string {
-    // Soporta diferentes posibles estructuras de la API
     return producto?.nombre_categoria || producto?.categoria?.nombre || producto?.categoria_nombre || '';
+  }
+
+  navegarADetalle(id: number): void {
+    this.router.navigate(['/admin/images/products', id]);
   }
 }

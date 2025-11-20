@@ -3,10 +3,10 @@
   <div class="mx-auto px-4 sm:container">
     <div class="border-l-[5px] border-[#4B7D63] pl-5">
       <h2 class="mb-2 text-2xl font-semibold text-dark dark:text-white">
-       Servicio
+        Ordenamiento de Imágenes
       </h2>
       <p class="text-sm font-medium text-body-color dark:text-dark-6">
-        Información del servicio seleccionado
+        Arrastra las imágenes del servicio dandole su posición.
       </p>
     </div>
   </div>
@@ -14,27 +14,74 @@
 <!-- ====== Page Title Section End -->
 
 <div class="mx-auto px-4 sm:container">
-  <div *ngIf="isLoading" class="py-10 text-center text-[#4A5C52] text-sm">Cargando servicio...</div>
-
-  <div *ngIf="!isLoading && servicio" class="bg-white rounded-xl border border-[#D7E2DB] p-6 max-w-4xl mx-auto">
-    <h3 class="text-2xl font-semibold text-[#1C2B21] mb-3">{{ servicio.nombre }}</h3>
-    <p class="text-[#4A5C52] text-base mb-4">{{ servicio.descripcion }}</p>
-    
-    <div *ngIf="servicio.imagenes && servicio.imagenes.length > 0" class="mt-6">
-      <h4 class="text-lg font-semibold text-[#1C2B21] mb-3">Imágenes del servicio</h4>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        <div *ngFor="let img of servicio.imagenes; let i = index" class="aspect-square rounded-lg overflow-hidden bg-gray-100">
-          <img [src]="img.url" [alt]="'Imagen ' + (i + 1)" class="w-full h-full object-cover" />
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="!servicio.imagenes || servicio.imagenes.length === 0" class="py-6 text-center">
-      <p class="text-sm text-[#4A5C52]">No hay imágenes para este servicio.</p>
+  <!-- Banda con nombre del servicio (más ancha que la caja de imágenes) -->
+  <div class="mx-auto max-w-5xl mb-5">
+    <div class="bg-[#4B7D63] border border-[#D7E2DB] rounded-lg px-6 py-3 text-center shadow-sm">
+      <h3 class="text-base sm:text-lg font-semibold text-white">
+        {{ servicio?.nombre || 'Servicio' }}
+      </h3>
+      <p class="text-[11px] sm:text-xs text-[#E8F4EE] mt-0.5" *ngIf="servicio?.descripcion">{{ servicio?.descripcion }}</p>
     </div>
   </div>
 
-  <div *ngIf="!isLoading && !servicio" class="py-10 text-center">
-    <p class="text-sm text-[#4A5C52]">No se encontró el servicio.</p>
+  <!-- Caja para fotos -->
+  <div class="rounded-xl border-2 border-dashed border-[#D7E2DB] bg-white p-4 max-w-4xl mx-auto w-full">
+    <div *ngIf="isLoading" class="py-10 text-center text-[#4A5C52] text-sm">Cargando imágenes...</div>
+
+    <div *ngIf="!isLoading && !((servicio?.imagenes?.length || 0) > 0)" class="py-10 text-center">
+      <p class="text-sm text-[#4A5C52]">No hay imágenes para este servicio.</p>
+    </div>
+
+    <div *ngIf="!isLoading && ((servicio?.imagenes?.length || 0) > 0)"
+         cdkDropList
+         (cdkDropListDropped)="drop($event)"
+         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <div *ngFor="let img of servicio!.imagenes; let i = index"
+           cdkDrag
+           class="aspect-square rounded-lg overflow-hidden bg-gray-100 relative cursor-move">
+        <img [src]="img.url" alt="Imagen {{ i + 1 }}" class="w-full h-full object-cover" />
+        <div class="absolute bottom-1 left-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded">#{{ i + 1 }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Botones de acción fuera de la caja -->
+  <div *ngIf="!isLoading && ((servicio?.imagenes?.length || 0) > 0)" class="mt-6 flex justify-end items-center gap-3 max-w-4xl mx-auto">
+    <button type="button"
+            (click)="cancelar()"
+            class="h-10 min-w-[140px] items-center justify-center rounded-md bg-white border border-[#D7E2DB] px-4 text-sm font-semibold text-[#4A5C52] shadow-sm hover:bg-gray-50 cursor-pointer">
+      Cancelar
+    </button>
+    <button type="button"
+            (click)="guardarNuevoOrden()"
+            class="h-10 min-w-[140px] items-center justify-center rounded-md bg-[#4B7D63] px-4 text-sm font-semibold text-white shadow-sm hover:bg-[#264B39] cursor-pointer">
+      Guardar orden
+    </button>
+  </div>
+</div>
+
+<!-- Modal de éxito -->
+<div *ngIf="showSuccessModal" class="fixed inset-0 z-50">
+  <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="flex items-start gap-3 w-full max-w-md p-4 text-green-800 rounded-xl bg-green-50 shadow-lg ring-1 ring-green-200">
+      <span class="material-symbols-outlined text-2xl leading-none shrink-0">check_circle</span>
+      <div class="flex-1 text-sm font-medium">{{ successMessage }}</div>
+      <button type="button" (click)="showSuccessModal = false" class="ml-2 inline-flex items-center justify-center rounded-md text-green-900/80 hover:text-green-900 cursor-pointer">
+        <span class="material-symbols-outlined text-base">close</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mensaje de error -->
+<div *ngIf="errorMessage" class="fixed bottom-4 right-4 z-50 max-w-md p-4 text-red-800 rounded-xl bg-red-50 shadow-lg ring-1 ring-red-200">
+  <div class="flex items-start gap-3">
+    <span class="material-symbols-outlined text-2xl leading-none shrink-0">error</span>
+    <div class="flex-1 text-sm font-medium">{{ errorMessage }}</div>
+    <button type="button" (click)="errorMessage = ''" class="inline-flex items-center justify-center rounded-md text-red-900/80 hover:text-red-900 cursor-pointer">
+      <span class="material-symbols-outlined text-base">close</span>
+    </button>
   </div>
 </div>

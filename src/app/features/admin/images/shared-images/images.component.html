@@ -15,7 +15,7 @@
         <!-- Tab Productos -->
         <button
           (click)="selectTab('productos')"
-          class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all relative"
+          class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all relative cursor-pointer"
           [ngClass]="selectedTab === 'productos' ? 'text-[#4B7D63]' : 'text-[#4A5C52] hover:text-[#4B7D63]'"
         >
           <span class="material-symbols-outlined text-xl">psychiatry</span>
@@ -29,7 +29,7 @@
         <!-- Tab Servicios -->
         <button
           (click)="selectTab('servicios')"
-          class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all relative"
+          class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all relative cursor-pointer"
           [ngClass]="selectedTab === 'servicios' ? 'text-[#4B7D63]' : 'text-[#4A5C52] hover:text-[#4B7D63]'"
         >
           <span class="material-symbols-outlined text-xl">agriculture</span>

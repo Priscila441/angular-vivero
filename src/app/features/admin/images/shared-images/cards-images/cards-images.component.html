@@ -15,7 +15,10 @@
 <!-- Carrusel con páginas de 3 -->
 <div *ngIf="!isLoading && items.length > 0" class="flex flex-col pb-4 w-full max-w-6xl mx-auto">
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-    <div *ngFor="let item of visibleItems; trackBy: trackById" class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col group overflow-hidden" [attr.data-id]="item.id">
+    <div *ngFor="let item of visibleItems; trackBy: trackById" 
+       (click)="navegarADetalle(item.id)"
+       class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col group overflow-hidden hover:shadow-lg transition-all cursor-pointer" 
+       [attr.data-id]="item.id">
       <div class="relative h-48 m-2 overflow-hidden rounded-md bg-gray-50">
         <img [src]="getImagenPrincipal(item)" [alt]="item.nombre" class="h-full w-full object-cover group-hover:scale-105 transition duration-500" *ngIf="getImagenPrincipal(item)" />
         <div *ngIf="getCategoriaNombre(item)" class="absolute top-1 left-1 z-10 rounded-md bg-[#4B7D63] bg-opacity-95 py-1 px-2 text-[11px] font-semibold text-white tracking-wide shadow-sm">
@@ -25,10 +28,12 @@
       <div class="px-3 pb-3 flex-1 flex flex-col">
         <h3 class="text-[#1C2B21] text-sm font-semibold mb-1 line-clamp-1" title="{{ item.nombre }}">{{ item.nombre }}</h3>
         <p class="text-[#4A5C52] text-xs leading-relaxed line-clamp-2 mb-1.5">{{ item.descripcion }}</p>
-        <a class="mt-auto inline-flex items-center gap-1 text-xs font-medium text-[#4B7D63] hover:text-[#264B39] transition" [routerLink]="['/admin/images/products', item.id]" [attr.data-id]="item.id">
+        <span 
+          class="mt-auto inline-flex items-center gap-1 text-xs font-medium text-[#4B7D63] hover:text-[#264B39] transition cursor-pointer" 
+          (click)="navegarADetalle(item.id); $event.stopPropagation()">
           <span class="material-symbols-outlined text-xs">visibility</span>
           Ver detalles
-        </a>
+        </span>
       </div>
     </div>
   </div>
