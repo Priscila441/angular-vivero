@@ -12,6 +12,107 @@
     </div>
   </div>
 
+  @if (authService.isAuthenticated()) {
+  <div class="w-full bg-[#E9F3ED] border-l-4 border-[#51946c] text-[#0e1a13] p-4 flex items-center justify-between rounded-md shadow-sm mt-4 mb-6">
+    <p class="text-sm font-medium text-[#4A5C52]">
+      Estás viendo una sección editable. Solo administradores pueden modificar esta información.
+    </p>
+
+    <button (click)="abrirEdicion()" 
+      class="ml-4 px-4 py-2 bg-[#51946c] text-white text-sm rounded-lg shadow hover:bg-[#3d7354] transition">
+      Editar Sobre Nosotros
+    </button>
+  </div>
+  }
+
+  <!-- MODAL DE EDICIÓN -->
+  @if (editando) {
+  <div class="fixed inset-0 z-50 flex items-start justify-center p-6 overflow-y-auto">
+    <div class="fixed inset-0 bg-black/40 z-0"></div>
+
+    <div class="relative z-10 w-full max-w-xl bg-white rounded-lg p-6 shadow-lg 
+                max-h-[90vh] overflow-y-auto mt-10">
+
+      <h3 class="text-xl font-semibold text-green-700 mb-4">Editar sección</h3>
+
+      <div class="space-y-4">
+
+        <textarea
+          class="w-full border p-3 rounded h-28"
+          placeholder="Nuestro origen"
+          [(ngModel)]="formSobreNosotros.nuestro_origen">
+        </textarea>
+
+        <textarea
+          class="w-full border p-3 rounded h-28"
+          placeholder="Producción histórica"
+          [(ngModel)]="formSobreNosotros.produccion_historica">
+        </textarea>
+
+        <textarea
+          class="w-full border p-3 rounded h-28"
+          placeholder="Nuevas producciones"
+          [(ngModel)]="formSobreNosotros.nuevas_producciones">
+        </textarea>
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen principal"
+              [(ngModel)]="formSobreNosotros.imagen_url" />
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen 2"
+              [(ngModel)]="formSobreNosotros.imagen2_url" />
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen 3"
+              [(ngModel)]="formSobreNosotros.imagen3_url" />
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen 4"
+              [(ngModel)]="formSobreNosotros.imagen4_url" />
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen 5"
+              [(ngModel)]="formSobreNosotros.imagen5_url" />
+
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button (click)="cerrarEdicion()"
+                class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
+          Cancelar
+        </button>
+
+        <button (click)="guardarCambios()"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          Guardar cambios
+        </button>
+      </div>
+
+    </div>
+  </div>
+  }
+
+
+
+  <!-- MODAL RESULTADO -->
+  @if (mostrarModalResultado) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40"></div>
+
+    <div class="relative bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+      <p class="text-center text-lg font-medium mb-4">{{ modalMensaje }}</p>
+      <div class="flex justify-center">
+        <button 
+          (click)="cerrarModalResultado()"
+          class="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+
   <!-- SECCIÓN 1: ORIGEN -->
   <div class="bg-[#DFF6E3] py-20 px-8 lg:px-20">
     <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10">

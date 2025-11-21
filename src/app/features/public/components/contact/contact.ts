@@ -34,40 +34,22 @@ export class Contact implements OnInit {
   ) {}
 
   ngOnInit() {
-    // 1) Cargar datos de contacto del backend
-    this.contactoService.obtenerContacto(1).subscribe({
-      next: (data) => {
-        this.contacto = data;
-
-        // limpiar numeros (sacar espacios, +, -)
-        this.whatsappLimpio = data.whatsapp.replace(/\D/g, '');
-        this.telefonoLimpio = data.telefono.replace(/\D/g, '');
-      },
-      error: (err) => console.error('Error al obtener contacto', err),
-    });
-
-    // 2) Cargar consultas almacenadas
-    const productos = this.consultaService.obtenerConsultas();
-    const servicios = this.consultaService.obtenerConsultasServicios();
-
-    if (productos.length > 0 || servicios.length > 0) {
-      let partesMensaje: string[] = [];
-
-      if (productos.length > 0) {
-        partesMensaje.push(
-          `Hola Alejandro, me gustaría consultar sobre los siguientes productos:\n- ${productos.join('\n- ')}`
-        );
-      }
-
-      if (servicios.length > 0) {
-        partesMensaje.push(
-          `Además, me gustaría consultar sobre los siguientes servicios:\n- ${servicios.join('\n- ')}`
-        );
-      }
-
-      this.mensaje = partesMensaje.join('\n\n');
-    }
+    this.cargarDatosContacto();
   }
+
+  cargarDatosContacto() {
+  this.contactoService.obtenerContacto(1).subscribe({
+    next: (data) => {
+      this.contacto = data;
+
+      // regenerar números limpios
+      this.whatsappLimpio = data.whatsapp.replace(/\D/g, '');
+      this.telefonoLimpio = data.telefono.replace(/\D/g, '');
+    },
+    error: (err) => console.error('Error al obtener contacto', err),
+  });
+}
+
 
   onEnviarFormulario(event: Event) {
     event.preventDefault();
@@ -101,8 +83,7 @@ export class Contact implements OnInit {
     this.mensaje = '';
   }
 
-  abrirEdicion() {
-    console.log("ABRIENDO EDICIÓN");  
+  abrirEdicion() { 
   if (!this.contacto) return;
 
   this.editando = true;
@@ -158,19 +139,13 @@ guardarCambios() {
   this.contactoService.actualizarContacto(this.contacto.id!, cambios).subscribe({
     next: (resp) => {
 
-      // Actualizar objeto local
-      this.contacto = { ...this.contacto!, ...resp };
-
-      // Regenerar números limpios
-      this.whatsappLimpio = this.contacto.whatsapp.replace(/\D/g, '');
-      this.telefonoLimpio = this.contacto.telefono.replace(/\D/g, '');
-
-      this.editando = false;
-
       // Mostrar modal éxito
       this.mostrarResultado("Los cambios fueron realizados con éxito.");
 
-      // Recargar form
+      // 🔥 RECARGAR DESDE EL BACKEND
+      this.cargarDatosContacto();
+
+      this.editando = false;
       this.formContacto = {};
     },
 
@@ -178,7 +153,6 @@ guardarCambios() {
       console.error('Error al actualizar contacto', err);
 
       let mensaje = "No se pudieron guardar los cambios.";
-
       if (err.status === 400) mensaje = "Hay errores en los datos ingresados.Los valores no pueden estar vacíos.";
       if (err.status === 403) mensaje = "No tenés permiso para editar.";
       if (err.status === 500) mensaje = "Error interno del servidor.";
@@ -187,6 +161,7 @@ guardarCambios() {
     }
   });
 }
+
 
 
 }

@@ -1,35 +1,119 @@
 <!-- SECCIÓN 4: ENCARGADOS -->
-  <div class="bg-[#EACDCD] py-24 px-8 lg:px-20 text-[#0E1E2C]">
-    <h2 class="text-3xl font-semibold text-center mb-16 text-[#6B5CC6]">Nuestros Encargados</h2>
-    <div class="flex flex-col lg:flex-row justify-center items-center gap-16">
-      <!-- ALEJANDRO -->
-      <div class="flex flex-col items-center text-center max-w-sm">
-        <img src="about-us/vivero7.jpeg" alt="Alejandro - Encargado"
-             class="w-64 h-64 object-cover rounded-full mb-6 shadow-lg border-4 border-white">
-        <h3 class="text-2xl font-semibold mb-2">Alejandro</h3>
-        <p class="text-[#7A7A7A]">
-          Ingeniero Agrónomo y Profesor en la UNC de Córdoba Capital. Responsable del área
-          de investigación y planificación del vivero.
-        </p>
+<div class="bg-[#EACDCD] py-24 px-8 lg:px-20 text-[#0E1E2C]">
+  <h2 class="text-3xl font-semibold text-center mb-16 text-[#6B5CC6]">
+    Nuestros Encargados
+  </h2>
+
+  <div class="flex flex-col lg:flex-row justify-center items-start gap-16">
+
+    <!-- ENCARGADO 1 -->
+    <div class="flex flex-col items-center text-center max-w-sm relative">
+
+      <!-- Botón editar -->
+      @if (authService.isAuthenticated()) {
+        <button
+          (click)="abrirEdicion(encargado1!)"
+          class="absolute top-0 right-0 px-3 py-1 bg-[#6B5CC6] text-white text-xs rounded shadow hover:bg-[#5848b3]">
+          Editar Encargado
+        </button>
+      }
+
+      <img [src]="encargado1?.foto" [alt]="encargado1?.nombre"
+        class="w-64 h-64 object-cover rounded-full mb-6 shadow-lg border-4 border-white">
+
+      <h3 class="text-2xl font-semibold mb-2">{{ encargado1?.nombre }}</h3>
+      <p class="text-[#7A7A7A]">
+        {{ encargado1?.descripcion }}
+      </p>
+    </div>
+
+    <!-- ENCARGADO 2 -->
+    <div class="flex flex-col items-center text-center max-w-sm relative">
+
+      <!-- Botón editar -->
+      @if (authService.isAuthenticated()) {
+        <button
+          (click)="abrirEdicion(encargado2!)"
+          class="absolute top-0 right-0 px-3 py-1 bg-[#6B5CC6] text-white text-xs rounded shadow hover:bg-[#5848b3]">
+          Editar
+        </button>
+      }
+
+      <img [src]="encargado2?.foto" [alt]="encargado2?.nombre"
+        class="w-64 h-64 object-cover rounded-full mb-6 shadow-lg border-4 border-white">
+
+      <h3 class="text-2xl font-semibold mb-2">{{ encargado2?.nombre }}</h3>
+      <p class="text-[#7A7A7A]">
+        {{ encargado2?.descripcion }}
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL EDICIÓN (REUTILIZABLE PARA 1 Y 2) -->
+@if (editando) {
+<div class="fixed inset-0 z-50">
+  <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-lg p-6 shadow-lg">
+      <h3 class="text-xl font-semibold text-green-700 mb-4">
+        Editar Encargado
+      </h3>
+
+      <div class="space-y-4">
+        <input class="w-full border p-3 rounded"
+               placeholder="Nombre"
+               [(ngModel)]="formEncargado.nombre"/>
+
+        <textarea class="w-full border p-3 rounded h-28"
+                  placeholder="Descripción"
+                  [(ngModel)]="formEncargado.descripcion"></textarea>
+
+        <input class="w-full border p-3 rounded"
+               placeholder="URL de Foto"
+               [(ngModel)]="formEncargado.foto"/>
       </div>
-      <!-- HORACIO -->
-      <div class="flex flex-col items-center text-center max-w-sm">
-        <img src="about-us/vivero8.jpeg" alt="Horacio - Encargado"
-             class="w-64 h-64 object-cover rounded-full mb-6 shadow-lg border-4 border-white">
-        <h3 class="text-2xl font-semibold mb-2">Horacio</h3>
-        <p class="text-[#7A7A7A]">
-          Ingeniero Agrónomo y encargado de coordinar los procesos productivos.
-          Su experiencia y compromiso son pilares fundamentales del crecimiento del vivero.
-        </p>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button (click)="cerrarEdicion()"
+                class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
+          Cancelar
+        </button>
+
+        <button (click)="guardarCambios()"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          Guardar Cambios
+        </button>
       </div>
     </div>
   </div>
+</div>
+}
 
-  <!-- SECCIÓN 5: CIERRE -->
-  <div class="bg-[#799f7f] text-white py-20 px-8 text-center">
-    <h2 class="text-4xl font-bold mb-4">Cuidamos lo que crece 🌱</h2>
-    <p class="max-w-2xl mx-auto text-lg text-black">
-      Nuestra misión es mantener viva la conexión entre la comunidad y la tierra,
-      promoviendo la producción sustentable y la educación ambiental.
-    </p>
+<!-- MODAL RESULTADO -->
+@if (mostrarModalResultado) {
+<div class="fixed inset-0 z-50">
+  <div class="absolute inset-0 bg-black/20"></div>
+
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
+      <p class="text-lg font-semibold mb-4">{{ modalMensaje }}</p>
+      <button (click)="cerrarModalResultado()"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+        Cerrar
+      </button>
+    </div>
   </div>
+</div>
+}
+
+<!-- CIERRE -->
+<div class="bg-[#799f7f] text-white py-20 px-8 text-center">
+  <h2 class="text-4xl font-bold mb-4">Cuidamos lo que crece 🌱</h2>
+  <p class="max-w-2xl mx-auto text-lg text-black">
+    Nuestra misión es mantener viva la conexión entre la comunidad y la tierra,
+    promoviendo la producción sustentable y la educación ambiental.
+  </p>
+</div>
