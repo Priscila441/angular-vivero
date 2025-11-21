@@ -1,14 +1,15 @@
-export interface Sobre_nosotros {
+export interface SobreNosotros {
   id?: number;
   nuestro_origen: string;
   produccion_historica: string;
   nuevas_producciones: string;
-  ultima_actualizacion?: string; // ISO
-  imagen_url?: string | null;
-  imagen2_url?: string | null;
-  imagen3_url?: string | null;
-  imagen4_url?: string | null;
-  imagen5_url?: string | null;
+  ultima_actualizacion?: Date;
+  imagen_url?: string;
+  imagen2_url?: string;
+  imagen3_url?: string;
+  imagen4_url?: string;
+  imagen5_url?: string;
 }
+
 
 

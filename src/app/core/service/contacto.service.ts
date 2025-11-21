@@ -21,7 +21,7 @@ export class ContactoService {
 
   actualizarContacto(id: number, cambios: Partial<Contacto>): Observable<Contacto> {
     return this.http.put<any>(`${this.api_url}/${id}`, cambios).pipe(
-      map((resp) => resp.data) // la API devuelve dentro de "data"
+      map((resp) => resp.data)
     );
   }
 }

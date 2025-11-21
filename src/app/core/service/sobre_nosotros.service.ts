@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
-import { Observable } from 'rxjs';
-import { Sobre_nosotros } from '../models/sobre_nosotros.model';
+import { map, Observable } from 'rxjs';
+import { SobreNosotros } from '../models/sobre_nosotros.model';
+import { ApiResponse } from '../models/ApiResponse.models';
+
 
 @Injectable({ providedIn: 'root' })
 export class SobreNosotrosService {
@@ -10,12 +12,26 @@ export class SobreNosotrosService {
 
   constructor(private http: HttpClient) {}
 
-  getSobreNosotros(id = 1): Observable<{ success: boolean; data: Partial<Sobre_nosotros> }> {
-    return this.http.get<{ success: boolean; data: Partial<Sobre_nosotros> }>(`${this.api_url}/${id}`);
+  getSobreNosotros(id: number): Observable<SobreNosotros> {
+  return this.http.get<ApiResponse<SobreNosotros>>(`${this.api_url}/${id}`).pipe(
+    map((resp) => this.unwrapResponse<SobreNosotros>(resp))
+  );
+}
+
+
+
+  updateSobreNosotros(id: number, cambios: Partial<SobreNosotros>) {
+    return this.http.put<ApiResponse<SobreNosotros>>(`${this.api_url}/${id}`, cambios).pipe(
+      map((resp) => this.unwrapResponse<SobreNosotros>(resp))
+    );
   }
 
-  updateSobreNosotros(payload: Partial<Sobre_nosotros>, id = 1) {
-    // PUT según tu API
-    return this.http.put<{ success: boolean; data: Sobre_nosotros }>(`${this.api_url}/${id}`, payload);
+  private unwrapResponse<T>(resp: any): T {
+  if (!resp.success) {
+    throw new Error(resp.message || 'Error en el backend');
   }
+
+  return resp.data as T;
+}
+
 }
