@@ -1,17 +1,29 @@
-<!-- ====== Page Title Section Start -->
-<section class="bg-[#F6FBF8] py-[70px]">
-  <div class="mx-auto px-4 sm:container">
-    <div class="border-l-[5px] border-[#4B7D63] pl-5">
-      <h2 class="mb-2 text-2xl font-semibold text-dark dark:text-white">
-        Ordenamiento de Imágenes
-      </h2>
-      <p class="text-sm font-medium text-body-color dark:text-dark-6">
-        Arrastra las imágenes del servicio dandole su posición.
-      </p>
-    </div>
+<!-- Header contextual con breadcrumb -->
+<div class="sticky top-0 z-10 bg-[#F6FBF8] p-6 pb-3">
+  <div class="flex items-center gap-4 justify-start">
+    <!-- Botón de vuelta -->
+    <a routerLink="/admin/images" class="flex items-center gap-2 text-[#0e1a13] hover:text-[#51946c] transition-colors">
+      <span class="material-symbols-outlined text-xl">arrow_back</span>
+      <span class="text-sm font-medium">Volver</span>
+    </a>
+    <!-- Separador -->
+    <div class="w-px h-6 bg-[#d1e6d9]"></div>
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm bg-[#F6FBF8] px-2 rounded">
+      <a routerLink="/admin" class="text-[#4A5C52] hover:underline">Panel</a>
+      <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
+      <a routerLink="/admin/images" class="text-[#4A5C52] hover:underline">Imágenes</a>
+      <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
+      <span class="text-[#1C2B21] font-bold">Ordenamiento de Imágenes</span>
+    </nav>
   </div>
-</section>
-<!-- ====== Page Title Section End -->
+</div>
+
+<!-- Titulo y Descripción -->
+<div class="mb-8 mt-10 px-4 sm:px-8 lg:px-16">
+  <h1 class="text-[#1C2B21] text-xl sm:text-2xl font-bold leading-tight tracking-[-0.015em]">Ordenamiento de Imágenes</h1>
+  <p class="text-[#4A5C52] mt-2 text-xs sm:text-sm font-medium leading-normal">Arrastra las imágenes del servicio dandole su posición.</p>
+</div>
 
 <div class="mx-auto px-4 sm:container">
   <!-- Banda con nombre del servicio (más ancha que la caja de imágenes) -->
