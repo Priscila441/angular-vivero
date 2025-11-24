@@ -6,6 +6,7 @@ import { AuthService } from '../../../../core/service/auth/auth.service';
 @Component({
   selector: 'app-admin-navbar',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './admin-navbar.component.html',
 })
 export class AdminNavbarComponent {
@@ -15,6 +16,10 @@ export class AdminNavbarComponent {
   showUserDropdown = false;
 
   constructor(private authService: AuthService, private router: Router) {}
+
+  onToggleSidebar(): void {
+    this.toggleSidebar.emit();
+  }
 
   toggleUserDropdown(event: MouseEvent) {
     event.stopPropagation(); // Evita que el click cierre inmediatamente el dropdown
