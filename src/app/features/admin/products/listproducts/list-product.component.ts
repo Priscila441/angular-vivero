@@ -108,6 +108,20 @@ export class ListProductComponent implements OnInit, OnDestroy {
     }
   }
 
+  limpiarFiltros(): void {
+    this.filtroBusqueda = '';
+    this.filtroCategoria = '';
+    this.filtroSubcategoria = '';
+    this.filtroTemporada = '';
+    this.subcategorias = [];
+    this.mostrarSubcategorias = false;
+    this.paginaActual = 1;
+  }
+
+  get hayFiltrosActivos(): boolean {
+    return !!(this.filtroBusqueda || this.filtroCategoria || this.filtroSubcategoria || this.filtroTemporada);
+  }
+
   // Mostrar todos los números de página
   get numerosPaginas(): number[] {
     return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);

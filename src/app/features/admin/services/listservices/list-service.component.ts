@@ -145,6 +145,16 @@ export class ListservicesComponent implements OnInit, OnDestroy {
   anteriorPagina() { if (!this.esPrimeraPagina) this.paginaActual--; }
   siguientePagina() { if (!this.esUltimaPagina) this.paginaActual++; }
 
+  limpiarFiltros(): void {
+    this.filtroBusqueda = '';
+    this.filtroCategoria = '';
+    this.paginaActual = 1;
+  }
+
+  get hayFiltrosActivos(): boolean {
+    return !!(this.filtroBusqueda || this.filtroCategoria);
+  }
+
 
   // Acciones
   borrarServicio(id: number) {
