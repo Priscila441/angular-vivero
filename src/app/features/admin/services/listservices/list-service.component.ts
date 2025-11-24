@@ -42,6 +42,9 @@ export class ListservicesComponent implements OnInit, OnDestroy {
   esError = false;
   private closeTimer: any;
 
+  // Manejo de expansión de servicios en vista móvil
+  serviciosExpandidos: Set<number> = new Set();
+
   constructor(
     private http: HttpClient,
     private categoriaServicio: CategoriaServicioService,
@@ -190,4 +193,17 @@ export class ListservicesComponent implements OnInit, OnDestroy {
     });
   }
   cerrarModal() { this.mostrarModalMensaje = false; this.mensaje = ''; }
+
+  // Métodos para manejo de acordeón en vista móvil
+  toggleServicio(id: number): void {
+    if (this.serviciosExpandidos.has(id)) {
+      this.serviciosExpandidos.delete(id);
+    } else {
+      this.serviciosExpandidos.add(id);
+    }
+  }
+
+  isServicioExpandido(id: number): boolean {
+    return this.serviciosExpandidos.has(id);
+  }
 }
