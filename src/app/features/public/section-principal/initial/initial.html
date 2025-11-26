@@ -19,14 +19,14 @@
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">{{ cardData[currentCardIndex].title }}</h2>
             <p class="text-gray-600 mb-6">{{ cardData[currentCardIndex].description }}</p>
-            <button class="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 font-medium">
+            <button class="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 font-medium" [routerLink]="cardData[currentCardIndex].route">
               {{ cardData[currentCardIndex].buttonText }} <i class="fas fa-arrow-right ml-2"></i>
             </button>
           </div>
         </div>
         
         <!-- Controles de navegación -->
-        <div class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+        <div class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 pt-4">
           <button 
             *ngFor="let card of cardData; let i = index" 
             (click)="selectCard(i)"
@@ -39,10 +39,10 @@
         <!-- Botones de anterior/siguiente -->
         <div class="absolute bottom-4 right-4 flex space-x-2">
           <button (click)="prevCard()" class="p-2 text-green-600 hover:text-green-800">
-           <i class="material-icons">chevron_left</i>
+           <i class="fas fa-arrow-left ml-2"></i>
           </button>
           <button (click)="nextCard()" class="p-2 text-green-600 hover:text-green-800">
-           <i class="material-icons">chevron_right</i>
+           <i class="fas fa-arrow-right ml-2"></i>
           </button>
         </div>
       </div>
