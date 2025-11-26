@@ -11,7 +11,9 @@ export const routes: Routes = [
           { path: 'producto/:id' , loadComponent: () => import ('./features/public/components/product-detail/product-detail').then(m => m.ProductDetail)},
           { path: 'contacto' , loadComponent: () => import('./features/public/components/contact/contact').then(m => m.Contact) },
           { path: 'sobre-nosotros' , loadComponent: () => import('./features/public/components/about-us/about-us').then(m => m.AboutUs) },
-          { path: 'servicio/:serviceId' , loadComponent: () => import('./features/public/components/service-detail/service-detail').then(m => m.ServiceDetail) }
+          { path: 'servicio/:serviceId' , loadComponent: () => import('./features/public/components/service-detail/service-detail').then(m => m.ServiceDetail) },
+          { path: 'terminos-condiciones' , loadComponent: () => import('./features/public/components/terminos-condiciones/terminos-condiciones').then(m => m.TerminosCondiciones) },
+          { path: 'politicas-privacidad' , loadComponent: () => import('./features/public/components/politicas-privacidad/politicas-privacidad').then(m => m.PoliticasPrivacidad) }
     ]
       },
       {
