@@ -7,9 +7,15 @@
     <!-- Categoría principal (la seleccionada por URL) -->
     @if (selectedCategory; as cat) {
       <section class="mb-10">
-        <div class="flex flex-col items-center mb-4">
-          <h2 class="text-2xl font-semibold text-center mb-2 text-green-800">{{ cat.nombre }}</h2>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-2xl font-semibold text-green-800">{{ cat.nombre }}</h2>
+
+          <div class="flex gap-2 items-center">
+            <button (click)="prev(cat.id)" class="p-2 rounded-full hover:bg-slate-100">‹</button>
+            <button (click)="next(cat.id)" class="p-2 rounded-full hover:bg-slate-100">›</button>
+          </div>
         </div>
+
 
         <!-- Carrusel de la categoría seleccionada -->
         <div class="overflow-hidden">

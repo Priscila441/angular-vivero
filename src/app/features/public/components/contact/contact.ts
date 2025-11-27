@@ -35,7 +35,38 @@ export class Contact implements OnInit {
 
   ngOnInit() {
     this.cargarDatosContacto();
+    this.armarMensajeInicial();
   }
+
+  armarMensajeInicial() {
+  const productos = this.consultaService.obtenerConsultas();
+  const servicios = this.consultaService.obtenerConsultasServicios();
+
+  if (productos.length > 0 || servicios.length > 0) {
+    let partesMensaje: string[] = [];
+
+    // Si hay productos → mensaje normal
+    if (productos.length > 0) {
+      partesMensaje.push(
+        `Hola, me gustaría consultar sobre los siguientes productos:\n- ${productos.join('\n- ')}`
+      );
+    }
+
+    // Si hay servicios → título depende de si ya había productos antes
+    if (servicios.length > 0) {
+      const tituloServicios = productos.length > 0
+        ? `Además, me gustaría consultar sobre los siguientes servicios:`
+        : `Hola, me gustaría consultar sobre los siguientes servicios:`;
+
+      partesMensaje.push(
+        `${tituloServicios}\n- ${servicios.join('\n- ')}`
+      );
+    }
+
+    this.mensaje = partesMensaje.join('\n\n');
+  }
+}
+
 
   cargarDatosContacto() {
   this.contactoService.obtenerContacto(1).subscribe({
