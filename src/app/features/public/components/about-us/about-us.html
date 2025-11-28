@@ -12,20 +12,118 @@
     </div>
   </div>
 
+  @if (authService.isAuthenticated()) {
+  <div class="w-full bg-[#E9F3ED] border-l-4 border-[#51946c] text-[#0e1a13] p-4 flex items-center justify-between rounded-md shadow-sm mt-4 mb-6">
+    <p class="text-sm font-medium text-[#4A5C52]">
+      Estás viendo una sección editable. Solo administradores pueden modificar esta información.
+    </p>
+
+    <button (click)="abrirEdicion()" 
+      class="ml-4 px-4 py-2 bg-[#51946c] text-white text-sm rounded-lg shadow hover:bg-[#3d7354] transition">
+      Editar Sobre Nosotros
+    </button>
+  </div>
+  }
+
+  <!-- MODAL DE EDICIÓN -->
+  @if (editando) {
+  <div class="fixed inset-0 z-50 flex items-start justify-center p-6 overflow-y-auto">
+    <div class="fixed inset-0 bg-black/40 z-0"></div>
+
+    <div class="relative z-10 w-full max-w-xl bg-white rounded-lg p-6 shadow-lg 
+                max-h-[90vh] overflow-y-auto mt-10">
+
+      <h3 class="text-xl font-semibold text-green-700 mb-4">Editar sección</h3>
+
+      <div class="space-y-4">
+
+        <textarea
+          class="w-full border p-3 rounded h-28"
+          placeholder="Nuestro origen"
+          [(ngModel)]="formSobreNosotros.nuestro_origen">
+        </textarea>
+
+        <textarea
+          class="w-full border p-3 rounded h-28"
+          placeholder="Producción histórica"
+          [(ngModel)]="formSobreNosotros.produccion_historica">
+        </textarea>
+
+        <textarea
+          class="w-full border p-3 rounded h-28"
+          placeholder="Nuevas producciones"
+          [(ngModel)]="formSobreNosotros.nuevas_producciones">
+        </textarea>
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen principal"
+              [(ngModel)]="formSobreNosotros.imagen_url" />
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen 2"
+              [(ngModel)]="formSobreNosotros.imagen2_url" />
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen 3"
+              [(ngModel)]="formSobreNosotros.imagen3_url" />
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen 4"
+              [(ngModel)]="formSobreNosotros.imagen4_url" />
+
+        <input class="w-full border p-3 rounded"
+              placeholder="Imagen 5"
+              [(ngModel)]="formSobreNosotros.imagen5_url" />
+
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button (click)="cerrarEdicion()"
+                class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
+          Cancelar
+        </button>
+
+        <button (click)="guardarCambios()"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          Guardar cambios
+        </button>
+      </div>
+
+    </div>
+  </div>
+  }
+
+
+
+  <!-- MODAL RESULTADO -->
+  @if (mostrarModalResultado) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40"></div>
+
+    <div class="relative bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+      <p class="text-center text-lg font-medium mb-4">{{ modalMensaje }}</p>
+      <div class="flex justify-center">
+        <button 
+          (click)="cerrarModalResultado()"
+          class="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+
   <!-- SECCIÓN 1: ORIGEN -->
   <div class="bg-[#DFF6E3] py-20 px-8 lg:px-20">
     <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10">
       <div class="lg:w-1/2">
         <h2 class="text-3xl font-semibold mb-4 text-[#157040]">Nuestro Origen</h2>
         <p class="text-[#0E1E2C] text-lg leading-relaxed">
-          El vivero municipal se extiende sobre <strong>13 hectáreas</strong> de tierra fértil, dedicadas
-          a la producción y conservación de especies locales.
-          Hasta 1976 funcionó como vivero provincial, y desde entonces forma parte de la municipalidad,
-          impulsando la producción autóctona con una mirada sustentable.
+          {{sobreNosotros?.nuestro_origen}}
         </p>
       </div>
       <div class="lg:w-1/2">
-        <img src="about-us/vivero1.jpeg" alt="Campo del vivero"
+        <img [src]="sobreNosotros?.imagen_url" alt="Campo del vivero"
              class="rounded-2xl shadow-lg w-full h-[350px] object-cover">
       </div>
     </div>
@@ -37,21 +135,15 @@
       <div class="lg:w-1/2">
         <h2 class="text-3xl font-semibold mb-4 text-[#1C8B4C]">Producción Histórica</h2>
         <p class="text-[#212121] text-lg leading-relaxed">
-          A lo largo de su historia, el vivero ha cultivado especies frutales locales como la 
-          <strong>tuna, la higuera y la mandarina</strong>, fomentando la producción regional y el valor
-          de las especies autóctonas.
-        </p>
-        <p class="mt-4 text-[#212121] text-lg leading-relaxed">
-          Entre los años 2000 y 2008 se desarrolló el <strong>Proyecto Citrus</strong>,
-          donde se construyó la innovadora cámara de enraizamiento, fortaleciendo la capacidad productiva.
+          {{sobreNosotros?.produccion_historica}}
         </p>
       </div>
       <div class="lg:w-1/2 grid grid-cols-2 gap-4">
-        <img src="about-us/enraizamiento2.jpeg" alt="Cámara de enraizamiento"
+        <img [src]="sobreNosotros?.imagen4_url" alt="Cámara de enraizamiento"
              class="rounded-2xl shadow-lg object-cover h-[170px] w-full">
-        <img src="about-us/citricos.jpeg" alt="Producción de cítricos"
+        <img [src]="sobreNosotros?.imagen2_url" alt="Producción de cítricos"
              class="rounded-2xl shadow-lg object-cover h-[170px] w-full">
-        <img src="about-us/vivero3.jpeg" alt="Cultivos"
+        <img [src]="sobreNosotros?.imagen3_url" alt="Cultivos"
              class="rounded-2xl shadow-lg object-cover h-[170px] w-full col-span-2">
       </div>
     </div>
@@ -61,58 +153,16 @@
   <div class="bg-[#F5F6F8] py-20 px-8 lg:px-20">
     <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10">
       <div class="lg:w-1/2">
-        <img src="about-us/vivero4.jpeg" alt="Pitayas del vivero"
+        <img [src]="sobreNosotros?.imagen5_url" alt="Pitayas del vivero"
              class="rounded-2xl shadow-lg w-full h-[350px] object-cover">
       </div>
       <div class="lg:w-1/2">
         <h2 class="text-3xl font-semibold mb-4 text-[#6B5CC6]">Nuevas Producciones</h2>
         <p class="text-[#0E1E2C] text-lg leading-relaxed">
-          Actualmente, el vivero desarrolla nuevas líneas de producción que incluyen 
-          <strong>pitaya</strong> y la <strong>recuperación de vides criollas</strong> para la elaboración
-          de vino local a mediano y largo plazo.
-        </p>
-        <p class="mt-4 text-[#7A7A7A] text-lg leading-relaxed">
-          Estos proyectos reflejan el compromiso continuo con la innovación sustentable y
-          la preservación de la identidad regional.
+          {{sobreNosotros?.nuevas_producciones}}
         </p>
       </div>
     </div>
   </div>
-
-  <!-- SECCIÓN 4: ENCARGADOS -->
-  <div class="bg-[#EACDCD] py-24 px-8 lg:px-20 text-[#0E1E2C]">
-    <h2 class="text-3xl font-semibold text-center mb-16 text-[#6B5CC6]">Nuestros Encargados</h2>
-    <div class="flex flex-col lg:flex-row justify-center items-center gap-16">
-      <!-- ALEJANDRO -->
-      <div class="flex flex-col items-center text-center max-w-sm">
-        <img src="about-us/vivero7.jpeg" alt="Alejandro - Encargado"
-             class="w-64 h-64 object-cover rounded-full mb-6 shadow-lg border-4 border-white">
-        <h3 class="text-2xl font-semibold mb-2">Alejandro</h3>
-        <p class="text-[#7A7A7A]">
-          Ingeniero Agrónomo y Profesor en la UNC de Córdoba Capital. Responsable del área
-          de investigación y planificación del vivero.
-        </p>
-      </div>
-      <!-- HORACIO -->
-      <div class="flex flex-col items-center text-center max-w-sm">
-        <img src="about-us/vivero8.jpeg" alt="Horacio - Encargado"
-             class="w-64 h-64 object-cover rounded-full mb-6 shadow-lg border-4 border-white">
-        <h3 class="text-2xl font-semibold mb-2">Horacio</h3>
-        <p class="text-[#7A7A7A]">
-          Ingeniero Agrónomo y encargado de coordinar los procesos productivos.
-          Su experiencia y compromiso son pilares fundamentales del crecimiento del vivero.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- SECCIÓN 5: CIERRE -->
-  <div class="bg-[#799f7f] text-white py-20 px-8 text-center">
-    <h2 class="text-4xl font-bold mb-4">Cuidamos lo que crece 🌱</h2>
-    <p class="max-w-2xl mx-auto text-lg text-black">
-      Nuestra misión es mantener viva la conexión entre la comunidad y la tierra,
-      promoviendo la producción sustentable y la educación ambiental.
-    </p>
-  </div>
-
+  <app-encargados></app-encargados>
 </section>

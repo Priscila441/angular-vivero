@@ -1,25 +1,29 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
-import { BehaviorSubject, catchError, map, of, tap } from 'rxjs';
+import { BehaviorSubject, catchError, of, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly api_url = environment.API_URL + '/auth';
   private tokenKey = 'auth_token';
-  private refreshTokenKey = 'refresh_token';
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string) {
-    return this.http.post<any>(`${this.api_url}/login`, { email, password }).pipe(
+    return this.http.post<any>(
+      `${this.api_url}/login`,
+      { email, password },
+      { withCredentials: true }   // ✔ necesario por cookies httpOnly
+    )
+    .pipe(
       tap((res) => {
-        if (res?.data?.token) {
-          localStorage.setItem(this.tokenKey, res.data.token);
-          // Simulamos refresh token para cuando el backend lo implemente
-          localStorage.setItem(this.refreshTokenKey, 'dummy_refresh_token');
+        const token = res?.data?.token;
+
+        if (token) {
+          localStorage.setItem(this.tokenKey, token);
           this.isLoggedInSubject.next(true);
         }
       })
@@ -27,13 +31,16 @@ export class AuthService {
   }
 
   refreshToken() {
-    const refreshToken = localStorage.getItem(this.refreshTokenKey);
-    if (!refreshToken) return of(null);
-
-    return this.http.post<any>(`${this.api_url}/refresh`, { refreshToken }).pipe(
+    return this.http.post<any>(
+      `${this.api_url}/refresh`,
+      {},                 // sin refreshToken en body
+      { withCredentials: true }   // ✔ cookie con httpOnly
+    )
+    .pipe(
       tap((res) => {
-        if (res?.data?.token) {
-          localStorage.setItem(this.tokenKey, res.data.token);
+        const newToken = res?.data?.accessToken;
+        if (newToken) {
+          localStorage.setItem(this.tokenKey, newToken);
         }
       }),
       catchError(() => {
@@ -45,7 +52,6 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.refreshTokenKey);
     this.isLoggedInSubject.next(false);
   }
 
@@ -57,13 +63,7 @@ export class AuthService {
     return !!localStorage.getItem(this.tokenKey);
   }
 
-  getUserInfo() {
-
-    return { nombre: 'Administrador', email: 'admin@example.com' };
-    }
-
-    isAdminLoggedIn(): boolean {
+  isAuthenticated(): boolean {
     return this.hasToken();
-    }
-
+  }
 }

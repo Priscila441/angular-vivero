@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { RouterModule } from "@angular/router";
 
 interface InfoCard {
   title: string;
   description: string;
   buttonText: string;
+  route: string;
   color: string;
 }
 
@@ -12,7 +14,7 @@ interface InfoCard {
 @Component({
   selector: 'app-initial',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './initial.html',
   styles: [
     `.animate-fade-in {
@@ -34,24 +36,28 @@ cardData: InfoCard[] = [
     title: "Maquinaria y Herramientas",
     description: "Contamos con equipamiento especializado para facilitar el trabajo en tú vivero. ¡Consulta nuestras opciones de alquiler por hora!",
     buttonText: "Ver más",
+    route: "/servicio/1",
     color: "green"
   },
   {
     title: "Amplia Superficie",
     description: "Nuestro vivero se extiende sobre 13 hectáreas, ofreciendo el espacio ideal para la producción de plantas y árboles de todo tipo.",
     buttonText: "Explorar vivero",
+    route: "/sobre-nosotros",
     color: "amber"
   },
   {
     title: "Variedad de Productos",
     description: "Desde frutas de estación hasta árboles autóctonos y ornamentales, tenemos todo lo que tu jardín o emprendimiento necesita.",
     buttonText: "Descubrir productos",
+    route: "/productos/1",
     color: "blue"
   },
   {
     title: "Historia y Tradición",
-    description: "Con décadas de trayectoria, nuestro vivero combina experiencia y nuevas alternativas de producción para ofrecer lo mejor a nuestros clientes.",
-    buttonText: "Conocer historia",
+    description: "Con décadas de trayectoria, nuestro vivero combina experiencia y nuevas alternativas de producción para ofrecer lo mejor a nuestros clientes. Comunicate con nosotros!",
+    buttonText: "Comunicarme con el vivero",
+    route: "/contacto",
     color: "purple"
   }
 ];

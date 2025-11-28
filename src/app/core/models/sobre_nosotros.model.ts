@@ -1,11 +1,15 @@
-export interface Sobre_nosotros {
-    id: number;
-    titulo: string;
-    contenido: string;
-    imagen_url: string;
-    mision: string;
-    vision: string;
-    valores: string;
-    ultima_actualizacion: Date;
-    esta_activo: boolean;
+export interface SobreNosotros {
+  id?: number;
+  nuestro_origen: string;
+  produccion_historica: string;
+  nuevas_producciones: string;
+  ultima_actualizacion?: Date;
+  imagen_url?: string;
+  imagen2_url?: string;
+  imagen3_url?: string;
+  imagen4_url?: string;
+  imagen5_url?: string;
 }
+
+
+

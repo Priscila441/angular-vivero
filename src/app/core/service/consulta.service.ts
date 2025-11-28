@@ -70,4 +70,6 @@ export class ConsultaService {
     sessionStorage.removeItem(this.keyProductos);
     sessionStorage.removeItem(this.keyServicios);
   }
+
+  
 }

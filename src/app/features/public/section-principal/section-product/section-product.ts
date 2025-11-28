@@ -17,6 +17,11 @@ export class SectionProduct {
   errorMessage: string = '';
   loading: boolean = true;
   productos : Producto[] = [];
+
+  currentIndex: number = 0;
+  touchStartX: number = 0;
+  touchEndX: number = 0;
+
   
   constructor(private categoriaService : CategoriaProductoService, private router: Router, private productoService : ProductoService) {}
 
@@ -84,5 +89,42 @@ export class SectionProduct {
     this.router.navigate(['/productos', categoryId]);
   }
 }
+
+prevCategory() {
+  if (this.currentIndex > 0) {
+    this.currentIndex--;
+  } else {
+    this.currentIndex = this.categorias.length - 1;
+  }
+}
+
+nextCategory() {
+  if (this.currentIndex < this.categorias.length - 1) {
+    this.currentIndex++;
+  } else {
+    this.currentIndex = 0;
+  }
+}
+
+onTouchStart(event: TouchEvent) {
+  this.touchStartX = event.changedTouches[0].screenX;
+}
+
+onTouchEnd(event: TouchEvent) {
+  this.touchEndX = event.changedTouches[0].screenX;
+  this.handleSwipe();
+}
+
+handleSwipe() {
+  const deltaX = this.touchStartX - this.touchEndX;
+  if (Math.abs(deltaX) > 50) {
+    if (deltaX > 0) {
+      this.nextCategory();
+    } else {
+      this.prevCategory();
+    }
+  }
+}
+
 
 }
