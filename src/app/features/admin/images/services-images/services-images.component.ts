@@ -23,13 +23,12 @@ export class ServicesImagesComponent implements OnInit {
 	constructor(private http: HttpClient, private router: Router) {}
 
 	ngOnInit(): void {
-		// Usar la misma URL que list-service
 		const url = `${environment.API_URL}/servicios/completos`;
 		this.http.get<any>(url).subscribe({
 			next: (resp: any) => {
 				const data = Array.isArray(resp) ? resp : (resp?.data || []);
 				
-				// Mapear igual que en list-service para asegurar que tenemos el id
+				// Mapeo
 				this.items = data.map((s: any) => ({
 					id: s.id,
 					nombre: s.nombre,

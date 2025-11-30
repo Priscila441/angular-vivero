@@ -61,7 +61,6 @@ export class ProductoService {
         );
     }
 
-    // Nuevo: obtiene producto completo (incluye imágenes) desde API 4001
     getProductoCompletoById(id: number): Observable<ProductoDetalles> {
         return this.http.get<any>(`${this.api_url_completos}/${id}`).pipe(
             map(response => response?.data || response || {})
@@ -84,9 +83,8 @@ export class ProductoService {
       return this.http.put(`${this.api_url}/${productId}/imagenes/orden`, payload);
     }
 
-        // Nuevo: actualiza orden recibiendo directamente arreglo de IDs en API 4001
-        actualizarOrdenImagenes(productoId: number, ordenIds: number[]): Observable<any> {
-            const payload = { orden: ordenIds };
-            return this.http.put(`${this.api_url_base}/${productoId}/imagenes/orden`, payload);
-        }
+    actualizarOrdenImagenes(productoId: number, ordenIds: number[]): Observable<any> {
+        const payload = { orden: ordenIds };
+        return this.http.put(`${this.api_url_base}/${productoId}/imagenes/orden`, payload);
+    }
 }
