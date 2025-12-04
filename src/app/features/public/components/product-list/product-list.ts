@@ -269,6 +269,12 @@ export class ProductList implements OnInit{
     return Array.isArray(productos) && productos.length > 0;
   }
 
+  // Devuelve true si se deben mostrar las flechas de navegación para la categoría
+  showArrows(categoryId: number): boolean {
+  const products = this.productosMap.get(categoryId) ?? [];
+  const visibleCount = window.innerWidth >= 1024 ? 4 : 3;
+  return products.length > visibleCount;
+}
 
 
   
