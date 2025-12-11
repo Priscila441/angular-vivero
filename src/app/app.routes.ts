@@ -34,7 +34,8 @@ export const routes: Routes = [
           { path: 'images', loadComponent: () => import('./features/admin/images/shared-images/images.component').then(m => m.ImagesComponent) },
           { path: 'images/services/:id', loadComponent: () => import('./features/admin/images/shared-images/forms/services-images-order-form.component').then(m => m.ServicesImagesOrderFormComponent) },
           { path: 'images/products/:id', loadComponent: () => import('./features/admin/images/shared-images/forms/images-order-form.component').then(m => m.ImagesOrderFormComponent) },
-          
+          { path: 'category', loadComponent: () => import('./features/admin/category/category.compoent').then(m => m.CategoryComponent) },
+          { path: 'seasons', loadComponent: () => import('./features/admin/seasons/seasons.component').then(m => m.SeasonsComponent) },
         ]
       }
 
