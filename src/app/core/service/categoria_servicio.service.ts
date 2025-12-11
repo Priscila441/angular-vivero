@@ -4,7 +4,6 @@ import { HttpClient } from "@angular/common/http";
 import { map, Observable } from "rxjs";
 import { Categoria_servicio } from "../models/categoria_servicio.model";
 import { environment } from "../../../environments/environment.development";
-import { response } from "express";
 
 @Injectable({
   providedIn: "root"
