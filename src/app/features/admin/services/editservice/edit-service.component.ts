@@ -112,7 +112,7 @@ export class EditserviceComponent implements OnInit {
     const originalIds: number[] = (this.serviceData?.imagenes || [])
       .map((img: any) => img.id)
       .filter((id: any) => !!id);
-    const uiExistingIds: number[] = (this.serviceForm as any)?.existingImages?.map((img: any) => img.id).filter((id: any) => !!id) || [];
+    const uiExistingIds: number[] = this.serviceForm?.existingImages?.map((img: any) => img.id).filter((id: any) => !!id) || [];
     const removedIds = originalIds.filter((id: number) => !uiExistingIds.includes(id));
     const hasNewFiles = imageInputMode === 'file' && selectedFiles?.length > 0;
     const hasNewUrl = imageInputMode === 'url' && !!imagen_url;
@@ -194,19 +194,13 @@ export class EditserviceComponent implements OnInit {
     return hasFiles ? formData : null;
   }
 
-  // Intenta borrar una imagen del servicio probando posibles endpoints; no falla si ninguno existe
+  // Elimina una imagen del servicio usando el endpoint correcto
   private tryDeleteImage(imageId: number) {
-    const c1 = `${environment.API_URL}/servicios/${this.serviceId}/imagenes/${imageId}`;
-    const c2 = `${environment.API_URL}/servicios/imagenes/${imageId}`;
-    const c3 = `${environment.API_URL}/imagenes/${imageId}`;
-
-  const del$ = (url: string) => this.http.delete<void>(url);
-    return del$(c1).pipe(
-      catchError(() => del$(c2).pipe(
-        catchError(() => del$(c3).pipe(
-          catchError(() => of(void 0))
-        ))
-      ))
-    ); 
+    return this.servicioService.deleteImagenServicio(imageId).pipe(
+      catchError((err) => {
+        console.error(`Error al eliminar imagen ${imageId}:`, err);
+        return of(void 0);
+      })
+    );
   }
 }
