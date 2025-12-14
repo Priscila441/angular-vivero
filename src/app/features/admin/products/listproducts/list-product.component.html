@@ -130,8 +130,12 @@
         </td>
         <td class="px-5 py-2 whitespace-nowrap text-right text-sm font-medium">
           <div class="flex items-center justify-end gap-4">
-            <a aria-label="Ver detalles" class="text-gray-500 hover:text-gray-700 cursor-pointer" (click)="verDetallesProducto(producto.id)">
-              <span class="material-symbols-outlined text-xl"> visibility </span>
+            <a [attr.aria-label]="producto.esta_activo ? 'Desactivar' : 'Activar'" 
+               class="cursor-pointer transition-colors"
+               [ngClass]="producto.esta_activo ? 'text-gray-500 hover:text-gray-700' : 'text-gray-400 hover:text-gray-600'"
+               (click)="toggleEstadoProducto(producto)"
+               [title]="producto.esta_activo ? 'Producto visible - Click para ocultar' : 'Producto oculto - Click para mostrar'">
+              <span class="material-symbols-outlined text-xl">{{ producto.esta_activo ? 'visibility' : 'visibility_off' }}</span>
             </a>
             <a aria-label="Editar" class="text-gray-500 hover:text-gray-700" [routerLink]="['/admin/products/edit', producto.id]">
               <span class="material-symbols-outlined text-xl"> edit </span>
@@ -207,8 +211,12 @@
         
         <!-- Acciones (reutilizando los mismos botones de la tabla) -->
         <div class="flex items-center justify-end gap-4 pt-3 border-t border-[#D7E2DB]" (click)="$event.stopPropagation()">
-          <a aria-label="Ver detalles" class="text-gray-500 hover:text-gray-700 cursor-pointer" (click)="verDetallesProducto(producto.id)">
-            <span class="material-symbols-outlined text-xl"> visibility </span>
+          <a [attr.aria-label]="producto.esta_activo ? 'Desactivar' : 'Activar'" 
+             class="cursor-pointer transition-colors"
+             [ngClass]="producto.esta_activo ? 'text-gray-500 hover:text-gray-700' : 'text-gray-400 hover:text-gray-600'"
+             (click)="toggleEstadoProducto(producto)"
+             [title]="producto.esta_activo ? 'Producto visible - Click para ocultar' : 'Producto oculto - Click para mostrar'">
+            <span class="material-symbols-outlined text-xl">{{ producto.esta_activo ? 'visibility' : 'visibility_off' }}</span>
           </a>
           <a aria-label="Editar" class="text-gray-500 hover:text-gray-700" [routerLink]="['/admin/products/edit', producto.id]">
             <span class="material-symbols-outlined text-xl"> edit </span>

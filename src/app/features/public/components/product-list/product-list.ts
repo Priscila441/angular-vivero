@@ -183,7 +183,8 @@ export class ProductList implements OnInit{
   // para obtener los productos que se muestran (no transformar arreglo, solo devolver el arr completo,
   // el movimiento se simula con translateX en el contenedor padre)
   displayedProductsByCategory(categoryId: number) {
-    return this.productosMap.get(categoryId) ?? [];
+    const productos = this.productosMap.get(categoryId) ?? [];
+    return productos.filter(p => p.esta_activo !== false);
   }
 
   // ---------- Manejo de imágenes: fetch de getDetallesById y caching ----------

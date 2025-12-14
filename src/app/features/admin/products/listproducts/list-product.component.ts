@@ -378,6 +378,21 @@ export class ListProductComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/images', id]);
   }
 
+  toggleEstadoProducto(producto: ProductoDetalles): void {
+    const nuevoEstado = !producto.esta_activo;
+    
+    this.productoService.partialUpdate(producto.id, { esta_activo: nuevoEstado }).subscribe({
+      next: () => {
+        producto.esta_activo = nuevoEstado;
+        const accion = nuevoEstado ? 'activado' : 'desactivado';
+        this.mostrarMensaje(`El producto "${producto.nombre}" ha sido ${accion}.`, false);
+      },
+      error: () => {
+        this.mostrarMensaje('Error al cambiar el estado del producto.', true);
+      }
+    });
+  }
+
   ngOnDestroy(): void {
     if (this.closeTimer) {
       clearTimeout(this.closeTimer);
