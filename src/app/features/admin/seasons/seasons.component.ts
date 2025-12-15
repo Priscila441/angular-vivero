@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { TemporadaService } from '../../../core/service/temporada.service';
 import { Temporada } from '../../../core/models/temporada.model';
@@ -7,7 +8,7 @@ import { Temporada } from '../../../core/models/temporada.model';
 @Component({
   selector: 'app-seasons',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './seasons.component.html',
   styleUrls: []
 })
@@ -17,6 +18,23 @@ export class SeasonsComponent implements OnInit {
   paginaActual = 1;
   itemsPorPagina = 5;
   totalPaginas = 1;
+
+  isModalOpen = false;
+  nuevaTemporada = {
+    nombre: '',
+    fecha_desde: null as number | null,
+    fecha_hasta: null as number | null
+  };
+
+  // Variables para modal de borrar
+  modalBorrar = false;
+  temporadaABorrar: any = null;
+  mensaje: string = '';
+  mostrarMensajeExito = false;
+
+  // Variable para modal de éxito al crear
+  showSuccessModal = false;
+  successMessage = '';
 
   private readonly coloresTemporadas: Record<number, string> = {
     1: 'bg-orange-100 text-orange-800',   
@@ -71,5 +89,118 @@ export class SeasonsComponent implements OnInit {
 
   getColorClass(temporadaId: number): string {
     return this.coloresTemporadas[temporadaId] || 'bg-gray-100 border-gray-300';
+  }
+
+  openModal(): void {
+    console.log('openModal llamado');
+    this.isModalOpen = true;
+    console.log('isModalOpen:', this.isModalOpen);
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    // Limpiar el formulario al cerrar
+    this.nuevaTemporada = {
+      nombre: '',
+      fecha_desde: null,
+      fecha_hasta: null
+    };
+  }
+
+  guardarTemporada(): void {
+    if (!this.nuevaTemporada.nombre || !this.nuevaTemporada.fecha_desde || !this.nuevaTemporada.fecha_hasta) {
+      console.error('Todos los campos son requeridos');
+      return;
+    }
+
+    const temporadaData = {
+      nombre: this.nuevaTemporada.nombre,
+      fecha_desde: this.nuevaTemporada.fecha_desde,  // Enviar solo el número del mes
+      fecha_hasta: this.nuevaTemporada.fecha_hasta   // Enviar solo el número del mes
+    };
+
+    console.log('Enviando temporada:', temporadaData);
+
+    // Enviar directamente el objeto sin tipado de Temporada
+    this.http.post<any>('http://localhost:4001/api/temporadas', temporadaData).subscribe({
+      next: (response) => {
+        console.log('Temporada creada exitosamente:', response);
+        this.loadTemporadas(); // Recargar la lista
+        this.closeModal();
+        this.mostrarModalExito(`La temporada "${temporadaData.nombre}" ha sido agregada exitosamente.`);
+      },
+      error: (error) => {
+        console.error('Error al crear temporada:', error);
+        console.error('Detalles del error:', error.error);
+        if (error.error?.errors) {
+          console.error('Errores de validación:', error.error.errors);
+          error.error.errors.forEach((err: any, index: number) => {
+            console.error(`Error ${index + 1}:`, err);
+          });
+        }
+      }
+    });
+  }
+
+  // Funcionalidad de borrar temporada
+  borrarTemporada(temporada: any): void {
+    this.temporadaABorrar = temporada;
+    this.modalBorrar = true;
+  }
+
+  cancelarBorrado(): void {
+    this.modalBorrar = false;
+    this.temporadaABorrar = null;
+  }
+
+  confirmarBorrado(): void {
+    if (!this.temporadaABorrar) return;
+    
+    const nombreTemporada = this.temporadaABorrar.nombre;
+    const idTemporada = this.temporadaABorrar.id;
+    
+    this.http.delete(`http://localhost:4001/api/temporadas/${idTemporada}`).subscribe({
+      next: () => {
+        this.temporadas = this.temporadas.filter(t => t.id !== idTemporada);
+        this.totalPaginas = Math.ceil(this.temporadas.length / this.itemsPorPagina);
+        this.cerrarModalBorrar();
+        this.mostrarMensajeTemporada(`La temporada "${nombreTemporada}" ha sido eliminada exitosamente.`, false);
+      },
+      error: (error) => {
+        console.error('Error al eliminar temporada:', error);
+        this.cerrarModalBorrar();
+        this.mostrarMensajeTemporada('Error al eliminar la temporada. Por favor, intenta nuevamente.', true);
+      }
+    });
+  }
+
+  private cerrarModalBorrar(): void {
+    this.modalBorrar = false;
+    this.temporadaABorrar = null;
+  }
+
+  private mostrarMensajeTemporada(mensaje: string, esError: boolean = false): void {
+    this.mensaje = mensaje;
+    this.mostrarMensajeExito = true;
+    
+    setTimeout(() => {
+      this.mostrarMensajeExito = false;
+      this.mensaje = '';
+    }, 3000);
+  }
+
+  private mostrarModalExito(mensaje: string): void {
+    this.successMessage = mensaje;
+    this.showSuccessModal = true;
+    
+    setTimeout(() => {
+      this.showSuccessModal = false;
+      this.successMessage = '';
+    }, 3500);
+  }
+
+  closeSuccessModal(): void {
+    this.showSuccessModal = false;
+    this.successMessage = '';
   }
 }
