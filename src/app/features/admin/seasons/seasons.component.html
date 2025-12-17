@@ -43,7 +43,7 @@
               <td class="px-5 py-2">
                 <div class="flex items-center gap-2">
                   <span class="material-symbols-outlined text-xl text-[#4B7D63]">event</span>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="getColorClass(temporada.id)">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="getColorClass(temporada)">
                     {{ temporada.nombre }}
                   </span>
                 </div>
@@ -70,7 +70,7 @@
           <div class="flex items-start justify-between gap-3 mb-3">
             <div class="flex items-center gap-2 flex-1 min-w-0">
               <span class="material-symbols-outlined text-xl text-[#4B7D63] flex-shrink-0">event</span>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium truncate" [ngClass]="getColorClass(temporada.id)">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium truncate" [ngClass]="getColorClass(temporada)">
                 {{ temporada.nombre }}
               </span>
             </div>

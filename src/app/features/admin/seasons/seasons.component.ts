@@ -19,6 +19,23 @@ export class SeasonsComponent implements OnInit {
   itemsPorPagina = 5;
   totalPaginas = 1;
 
+  // Mapa para almacenar colores asignados a cada temporada por ID
+  private coloresAsignados: Map<number, string> = new Map();
+
+  // Paleta de colores disponibles
+  private readonly coloresDisponibles = [
+    'bg-orange-100 text-orange-800',
+    'bg-yellow-100 text-yellow-800',
+    'bg-blue-100 text-blue-800',
+    'bg-green-100 text-green-800',
+    'bg-rose-100 text-rose-800',
+    'bg-purple-100 text-purple-800',
+    'bg-pink-100 text-pink-800',
+    'bg-indigo-100 text-indigo-800',
+    'bg-cyan-100 text-cyan-800',
+    'bg-teal-100 text-teal-800'
+  ];
+
   isModalOpen = false;
   nuevaTemporada = {
     nombre: '',
@@ -58,6 +75,14 @@ export class SeasonsComponent implements OnInit {
       next: (response) => {
         this.temporadas = response?.data || [];
         this.totalPaginas = Math.ceil(this.temporadas.length / this.itemsPorPagina);
+        
+        // Asignar colores aleatorios a temporadas que no tienen color asignado
+        this.temporadas.forEach(temporada => {
+          if (!this.coloresAsignados.has(temporada.id)) {
+            const colorAleatorio = this.coloresDisponibles[Math.floor(Math.random() * this.coloresDisponibles.length)];
+            this.coloresAsignados.set(temporada.id, colorAleatorio);
+          }
+        });
       },
       error: (error) => {
         console.error('Error al cargar temporadas:', error);
@@ -87,8 +112,34 @@ export class SeasonsComponent implements OnInit {
     return meses[mes - 1] || '';
   }
 
-  getColorClass(temporadaId: number): string {
-    return this.coloresTemporadas[temporadaId] || 'bg-gray-100 border-gray-300';
+  getColorClass(temporada: any): string {
+    // 1. Prioridad: usar el mapeo hardcodeado por ID si existe
+    if (this.coloresTemporadas[temporada.id]) {
+      return this.coloresTemporadas[temporada.id];
+    }
+
+    // 2. Si ya tiene color asignado en el mapa, usarlo
+    if (this.coloresAsignados.has(temporada.id)) {
+      return this.coloresAsignados.get(temporada.id) || 'bg-gray-100 text-gray-800';
+    }
+
+    // 3. Buscar si hay otra temporada con el mismo nombre y usar su color
+    const temporadaMismoNombre = this.temporadas.find(t => 
+      t.nombre.toLowerCase().trim() === temporada.nombre.toLowerCase().trim() && 
+      t.id !== temporada.id &&
+      this.coloresAsignados.has(t.id)
+    );
+    
+    if (temporadaMismoNombre) {
+      const colorExistente = this.coloresAsignados.get(temporadaMismoNombre.id)!;
+      this.coloresAsignados.set(temporada.id, colorExistente);
+      return colorExistente;
+    }
+
+
+    const colorAleatorio = this.coloresDisponibles[Math.floor(Math.random() * this.coloresDisponibles.length)];
+    this.coloresAsignados.set(temporada.id, colorAleatorio);
+    return colorAleatorio;
   }
 
   openModal(): void {
