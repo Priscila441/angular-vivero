@@ -13,13 +13,7 @@
 
   
   <!-- Navegación Principal -->
-  <nav class="flex flex-col gap-1 p-4">
-    <!-- Enlace Panel (Dashboard) -->
-    <a class="flex items-center gap-3 rounded-md px-4 py-2 text-[#51946c] hover:bg-[#D1E4D8] hover:text-[#1A3B2A] transition-colors" href="#" (click)="onCloseSidebar()">
-      <span class="material-symbols-outlined text-xl" style="color: #1C2B21;">home</span>
-      <span class="text-sm font-medium leading-normal" style="color: #1C2B21;">Panel</span>
-    </a>
-
+  <nav class="flex flex-col gap-1 p-3">
     <!-- Enlace Plantas -->
     <a routerLink="products" routerLinkActive="bg-[#D1E4D8] text-[#1A3B2A]" class="flex items-center gap-3 rounded-md px-4 py-2 text-[#51946c] hover:bg-[#D1E4D8] hover:text-[#1A3B2A] transition-colors" (click)="onCloseSidebar()">
       <span class="material-symbols-outlined text-xl" style="color: #1C2B21;">psychiatry</span>
@@ -50,13 +44,4 @@
       <span class="text-sm font-medium leading-normal" style="color: #1C2B21;">Temporadas</span>
     </a>
   </nav>
-
-  <!-- Navegación Secundaria (Parte inferior) -->
-  <div class="mt-auto flex flex-col gap-1 p-4">
-    <!-- Enlace de configuración -->
-    <a class="flex items-center gap-3 rounded-md px-4 py-2 text-[#51946c] hover:bg-[#D1E4D8] hover:text-[#1A3B2A] transition-colors" href="#" (click)="onCloseSidebar()">
-      <span class="material-symbols-outlined text-xl" style="color: #1C2B21;">settings</span>
-      <span class="text-sm font-medium leading-normal" style="color: #1C2B21;">Configuración</span>
-    </a>
-  </div>
 </aside>
