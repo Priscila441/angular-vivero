@@ -297,51 +297,18 @@ export class CategoryComponent implements OnInit {
         }
       });
     } else if (this.tipoBorrado === 'servicio') {
-      console.log('=== INICIO ELIMINACIÓN CATEGORÍA SERVICIO ===');
-      console.log('Categoría completa:', JSON.stringify(this.categoriaABorrar, null, 2));
-      console.log('ID a usar:', idCategoria);
-      console.log('URL imágenes:', `http://localhost:4001/api/imagenes-servicio/${idCategoria}`);
-      console.log('URL servicio:', `http://localhost:4001/api/servicios/${idCategoria}`);
-      
-      // Primero eliminar las imágenes
-      this.http.delete(`http://localhost:4001/api/imagenes-servicio/${idCategoria}`).subscribe({
+      this.http.delete(`http://localhost:4001/api/categorias-servicios/${idCategoria}`).subscribe({
         next: () => {
-          console.log('✅ Imágenes eliminadas exitosamente');
-          // Luego eliminar el servicio (categoría)
-          this.http.delete(`http://localhost:4001/api/servicios/${idCategoria}`).subscribe({
-            next: () => {
-              console.log('Categoría de servicio eliminada exitosamente');
-              // Recargar las categorías (la paginación se ajusta dentro de loadCategoriasServicio)
-              this.loadCategoriasServicio();
-              this.modalBorrar = false;
-              this.categoriaABorrar = null;
-              this.mostrarMensajeTemporada(`La categoría de servicio "${nombreCategoria}" ha sido eliminada exitosamente.`);
-            },
-            error: (error) => {
-              console.error('Error al eliminar categoría de servicio:', error);
-              this.modalBorrar = false;
-              this.categoriaABorrar = null;
-            }
-          });
+          console.log('Categoría de servicio eliminada exitosamente');
+          this.loadCategoriasServicio();
+          this.modalBorrar = false;
+          this.categoriaABorrar = null;
+          this.mostrarMensajeTemporada(`La categoría de servicio "${nombreCategoria}" ha sido eliminada exitosamente.`);
         },
         error: (error) => {
-          console.error('Error al eliminar imágenes de servicio:', error);
-          // Intentar eliminar el servicio de todas formas
-          this.http.delete(`http://localhost:4001/api/servicios/${idCategoria}`).subscribe({
-            next: () => {
-              console.log('Categoría de servicio eliminada exitosamente (sin imágenes)');
-              // Recargar las categorías (la paginación se ajusta dentro de loadCategoriasServicio)
-              this.loadCategoriasServicio();
-              this.modalBorrar = false;
-              this.categoriaABorrar = null;
-              this.mostrarMensajeTemporada(`La categoría de servicio "${nombreCategoria}" ha sido eliminada exitosamente.`);
-            },
-            error: (error2) => {
-              console.error('Error al eliminar categoría de servicio:', error2);
-              this.modalBorrar = false;
-              this.categoriaABorrar = null;
-            }
-          });
+          console.error('Error al eliminar categoría de servicio:', error);
+          this.modalBorrar = false;
+          this.categoriaABorrar = null;
         }
       });
     }
@@ -379,16 +346,15 @@ export class CategoryComponent implements OnInit {
       return;
     }
 
-    const categoriaData: Categoria_servicio = {
-      id: 0,
+    const categoriaData = {
       nombre: this.nuevaCategoriaServicio.nombre,
-      id_padre: this.nuevaCategoriaServicio.id_padre || 0,
-      tipo: this.nuevaCategoriaServicio.tipo || 'principal',
+      id_padre: 0, // Siempre 0 por defecto
+      tipo: 'principal', // Siempre 'principal'
       imagen_url: this.nuevaCategoriaServicio.imagen_url || '',
       imagen2_url: this.nuevaCategoriaServicio.imagen2_url || ''
     };
 
-    this.categoriaServicioService.create(categoriaData).subscribe({
+    this.http.post<any>('http://localhost:4001/api/categorias-servicios', categoriaData).subscribe({
       next: (response) => {
         console.log('Categoría de servicio creada exitosamente:', response);
         this.loadCategoriasServicio();
