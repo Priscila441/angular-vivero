@@ -51,7 +51,7 @@ export class SectionProduct {
     this.loading = true;
     this.productoService.getAll().subscribe({
       next: res => {
-        this.productos = res;
+        this.productos = res.filter(p => p.esta_activo !== false);
         this.loading = false;
         if (this.productos.length === 0){
           this.errorMessage = 'No se han encontrado productos.';

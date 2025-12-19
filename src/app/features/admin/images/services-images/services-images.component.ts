@@ -1,158 +1,105 @@
-import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { ServicioService } from '../../../../core/service/servicio.service';
 import { environment } from '../../../../../environments/environment.development';
-
-// Tipo local para no tocar modelos globales
-interface ServicioCompleto {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  informacion_extra?: string;
-  esta_activo?: boolean;
-  categoria_id?: number;
-  nombre_categoria?: string;
-  imagenes?: Array<{ id?: number; url: string; es_principal?: boolean; orden?: number }>;
-}
+import { Servicio, imagenServicio } from '../../../../core/models/servicio.model';
 
 @Component({
-  selector: 'app-services-images',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './services-images.component.html'
+	selector: 'app-services-images',
+	standalone: true,
+	imports: [CommonModule, RouterModule],
+	templateUrl: './services-images.component.html',
+	styleUrls: []
 })
-export class ServicesImagesComponent implements OnInit, AfterViewInit, OnDestroy {
-  servicios: ServicioCompleto[] = [];
-  currentIndex = 0;
-  itemsPerView = 3;
-  isLoading = true;
-  
-  private readonly destroy$ = new Subject<void>();
-  private ro?: ResizeObserver;
+export class ServicesImagesComponent implements OnInit {
+	isLoading = true;
+	items: Servicio[] = [];
+	paginas: Servicio[][] = [];
+	visibleItems: Servicio[] = [];
+	currentPage = 0;
+	slides: number[] = [];
 
-  readonly cardWidth = 372;
-  readonly gap = 24;
+	constructor(private http: HttpClient, private router: Router) {}
 
-  @ViewChild('viewportRef', { static: false }) viewportRef?: ElementRef<HTMLDivElement>;
+	ngOnInit(): void {
+		const url = `${environment.API_URL}/servicios/completos`;
+		this.http.get<any>(url).subscribe({
+			next: (resp: any) => {
+				const data = Array.isArray(resp) ? resp : (resp?.data || []);
+				
+				// Mapeo
+				this.items = data.map((s: any) => ({
+					id: s.id,
+					nombre: s.nombre,
+					descripcion: s.descripcion,
+					informacion_extra: s.informacion_extra,
+					esta_activo: s.esta_activo,
+					imagenes: s.imagenes || [],
+					categoria_id: s.categoria_id,
+					nombre_categoria: s.nombre_categoria
+				})) as Servicio[];
+				
+				this.paginas = this.agruparEnPaginas(this.items, 3);
+				this.slides = this.paginas.map((_, i) => i);
+				this.currentPage = 0;
+				this.actualizarVisible();
+				this.isLoading = false;
+			},
+			error: () => {
+				this.isLoading = false;
+				this.items = [];
+				this.paginas = [];
+				this.visibleItems = [];
+			}
+		});
+	}
 
-  constructor(private servicioService: ServicioService, private http: HttpClient) {}
+	agruparEnPaginas(servicios: Servicio[], tam: number): Servicio[][] {
+		const grupos: Servicio[][] = [];
+		for (let i = 0; i < servicios.length; i += tam) {
+			grupos.push(servicios.slice(i, i + tam));
+		}
+		return grupos;
+	}
 
-  @HostListener('window:resize')
-  onResize(): void {
-    this.calculateItemsPerViewByWindow();
-    this.adjustItemsPerViewByContainer();
-  }
+	actualizarVisible(): void {
+		this.visibleItems = this.paginas[this.currentPage] || [];
+	}
 
-  ngOnInit(): void {
-    this.calculateItemsPerViewByWindow();
-    this.loadServicios();
-  }
+	prevPage(): void {
+		if (this.currentPage > 0) {
+			this.currentPage--;
+			this.actualizarVisible();
+		}
+	}
 
-  ngAfterViewInit(): void {
-    this.adjustItemsPerViewByContainer();
-    if ('ResizeObserver' in window && this.viewportRef?.nativeElement) {
-      this.ro = new ResizeObserver(() => this.adjustItemsPerViewByContainer());
-      this.ro.observe(this.viewportRef.nativeElement);
-    }
-  }
+	nextPage(): void {
+		if (this.currentPage < this.paginas.length - 1) {
+			this.currentPage++;
+			this.actualizarVisible();
+		}
+	}
 
-  ngOnDestroy(): void {
-    this.ro?.disconnect();
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+	goToPage(index: number): void {
+		if (index >= 0 && index < this.paginas.length) {
+			this.currentPage = index;
+			this.actualizarVisible();
+		}
+	}
 
-  private calculateItemsPerViewByWindow(): void {
-    const width = window.innerWidth;
-    if (width >= 1280) {
-      this.itemsPerView = 3;
-    } else if (width >= 1024) {
-      this.itemsPerView = 2;
-    } else {
-      this.itemsPerView = 1;
-    }
-    this.currentIndex = Math.min(this.currentIndex, this.maxIndex);
-  }
+	trackById(_: number, item: Servicio): number { return item.id; }
 
-  private adjustItemsPerViewByContainer(): void {
-    const el = this.viewportRef?.nativeElement;
-    if (!el) return;
-    
-    const available = el.clientWidth;
-    const fit = Math.max(1, Math.min(3, Math.floor((available + this.gap) / (this.cardWidth + this.gap))));
-    
-    if (fit !== this.itemsPerView) {
-      this.itemsPerView = fit;
-      this.currentIndex = Math.min(this.currentIndex, this.maxIndex);
-    }
-  }
+	getImagenPrincipal(servicio: Servicio): string {
+		const principal: imagenServicio | undefined = servicio.imagenes?.find((img: imagenServicio) => img.es_principal) || servicio.imagenes?.[0];
+		return principal?.url || '';
+	}
 
-  private loadServicios(): void {
-    this.isLoading = true;
-    // Consumimos el endpoint de servicios completos sin tocar el servicio (igual que list-service)
-    this.http.get<any>(`${environment.API_URL}/servicios/completos`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          // Algunos backends envían { data: [...] } y otros un array directo
-          const arr = Array.isArray(data) ? data : (data as any)?.data || [];
-          // Mostrar todos los servicios; si trae esta_activo=false se excluye, si no viene la propiedad se incluye
-          this.servicios = (arr as ServicioCompleto[]).filter((s: any) => s?.esta_activo !== false);
-          this.isLoading = false;
-          this.currentIndex = Math.min(this.currentIndex, this.maxIndex);
-        },
-        error: (error) => {
-          console.error('Error al cargar servicios:', error);
-          this.isLoading = false;
-        }
-      });
-  }
+	getCategoriaNombre(item: any): string {
+		return item?.nombre_categoria || item?.categoria?.nombre || item?.categoria_nombre || '';
+	}
 
-  getImagenPrincipal(servicio: ServicioCompleto): string {
-    const imagenPrincipal = servicio.imagenes?.find(img => img.es_principal);
-    return imagenPrincipal?.url || servicio.imagenes?.[0]?.url || 'assets/placeholder-image.jpg';
-  }
-
-  get viewportWidth(): number {
-    return this.itemsPerView * this.cardWidth + (this.itemsPerView - 1) * this.gap;
-  }
-
-  get maxIndex(): number {
-    return Math.max(0, this.servicios.length - this.itemsPerView);
-  }
-
-  get totalSlides(): number {
-    return Math.ceil(this.servicios.length / this.itemsPerView);
-  }
-
-  get slides(): number[] {
-    return Array(this.totalSlides).fill(0).map((_, i) => i);
-  }
-
-  get currentSlide(): number {
-    return Math.floor(this.currentIndex / this.itemsPerView);
-  }
-
-  get visibleServicios(): ServicioCompleto[] {
-    return this.servicios.slice(this.currentIndex, this.currentIndex + this.itemsPerView);
-  }
-
-  nextSlide(): void {
-    if (this.currentIndex < this.maxIndex) {
-      this.currentIndex++;
-    }
-  }
-
-  prevSlide(): void {
-    if (this.currentIndex > 0) {
-      this.currentIndex--;
-    }
-  }
-
-  goToSlide(index: number): void {
-    this.currentIndex = Math.min(index * this.itemsPerView, this.maxIndex);
-  }
+	navegarADetalle(id: number): void {
+		this.router.navigate(['/admin/images/services', id]);
+	}
 }

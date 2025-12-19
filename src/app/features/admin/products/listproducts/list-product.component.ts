@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ProductoService } from '../../../../core/service/producto.service';
 import { ProductoDetalles } from '../../../../core/models/producto_detalles.model';
 import { CategoriaProductoService } from '../../../../core/service/categoria_producto.service';
@@ -48,11 +48,13 @@ export class ListProductComponent implements OnInit, OnDestroy {
   mensaje = '';
   esError = false;
   private closeTimer: any;
+  productosExpandidos: Set<number> = new Set();
 
   constructor(
     private productoService: ProductoService,
     private categoriaService: CategoriaProductoService,
-    private temporadaService: TemporadaService
+    private temporadaService: TemporadaService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -94,21 +96,38 @@ export class ListProductComponent implements OnInit, OnDestroy {
   }
 
   onCategoriaChange(): void {
-    const categoriaId = Number(this.filtroCategoria);
-    
-    // Limpiar subcategoría seleccionada y array de subcategorías
     this.filtroSubcategoria = '';
     this.subcategorias = [];
     this.mostrarSubcategorias = false;
-    
     // Si no hay categoría seleccionada, salir
+    const categoriaId = Number(this.filtroCategoria);
     if (!categoriaId) return;
-    
     // Verificar si la categoría tiene subcategorías (IDs 2 o 3)
     if (categoriaId === 2 || categoriaId === 3) {
       this.cargarSubcategorias(categoriaId);
     }
   }
+
+  limpiarFiltros(): void {
+    this.filtroBusqueda = '';
+    this.filtroCategoria = '';
+    this.filtroSubcategoria = '';
+    this.filtroTemporada = '';
+    this.subcategorias = [];
+    this.mostrarSubcategorias = false;
+    this.paginaActual = 1;
+  }
+
+  get hayFiltrosActivos(): boolean {
+    return !!(this.filtroBusqueda || this.filtroCategoria || this.filtroSubcategoria || this.filtroTemporada);
+  }
+
+  // Mostrar todos los números de página
+  get numerosPaginas(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
+
 
   private cargarSubcategorias(idCategoriaPadre: number): void {
     this.categoriaService.getSubcategoriasPorCategoria(idCategoriaPadre).subscribe({
@@ -128,7 +147,18 @@ export class ListProductComponent implements OnInit, OnDestroy {
 
   get productosPaginados(): ProductoDetalles[] {
     let filtrados = this.aplicarFiltros();
-    this.actualizarPaginacion(filtrados.length);
+    const totalFiltrados = filtrados.length;
+    const nuevasPaginas = Math.max(1, Math.ceil(totalFiltrados / this.tamanioPagina));
+    
+    // Solo actualizar si cambió el total de páginas
+    if (this.totalPaginas !== nuevasPaginas) {
+      this.totalPaginas = nuevasPaginas;
+      // Solo resetear página si la actual es mayor que el total
+      if (this.paginaActual > this.totalPaginas) {
+        this.paginaActual = 1;
+      }
+    }
+    
     return this.paginar(filtrados);
   }
 
@@ -183,10 +213,6 @@ export class ListProductComponent implements OnInit, OnDestroy {
     return temporadaSeleccionada ? producto.nombre_temporada === temporadaSeleccionada.nombre : true;
   }
 
-  private actualizarPaginacion(totalFiltrados: number): void {
-    this.totalPaginas = Math.max(1, Math.ceil(totalFiltrados / this.tamanioPagina));
-    if (this.paginaActual > this.totalPaginas) this.paginaActual = 1;
-  }
 
   private paginar(productos: ProductoDetalles[]): ProductoDetalles[] {
     const inicio = (this.paginaActual - 1) * this.tamanioPagina;
@@ -297,10 +323,7 @@ export class ListProductComponent implements OnInit, OnDestroy {
   }
 
   
-  //Metodos de paginacion
-  get numerosPaginas(): number[] {
-    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
-  }
+
 
   esPaginaActual(numeroPagina: number): boolean {
     return this.paginaActual === numeroPagina;
@@ -318,6 +341,56 @@ export class ListProductComponent implements OnInit, OnDestroy {
 
   get esUltimaPagina(): boolean {
     return this.paginaActual === this.totalPaginas;
+  }
+
+  toggleProducto(id: number): void {
+    if (this.productosExpandidos.has(id)) {
+      this.productosExpandidos.delete(id);
+    } else {
+      this.productosExpandidos.add(id);
+    }
+  }
+
+  isProductoExpandido(id: number): boolean {
+    return this.productosExpandidos.has(id);
+  }
+
+  get Math(): Math {
+    return Math;
+  }
+
+  get totalFiltrados(): number {
+    return this.aplicarFiltros().length;
+  }
+
+  get rangoInicio(): number {
+    if (this.totalFiltrados === 0) return 0;
+    return (this.paginaActual - 1) * this.tamanioPagina + 1;
+  }
+
+  get rangoFin(): number {
+    if (this.totalFiltrados === 0) return 0;
+    return Math.min(this.paginaActual * this.tamanioPagina, this.totalFiltrados);
+  }
+
+  verDetallesProducto(id: number): void {
+    if (!id) return;
+    this.router.navigate(['/admin/images', id]);
+  }
+
+  toggleEstadoProducto(producto: ProductoDetalles): void {
+    const nuevoEstado = !producto.esta_activo;
+    
+    this.productoService.partialUpdate(producto.id, { esta_activo: nuevoEstado }).subscribe({
+      next: () => {
+        producto.esta_activo = nuevoEstado;
+        const accion = nuevoEstado ? 'activado' : 'desactivado';
+        this.mostrarMensaje(`El producto "${producto.nombre}" ha sido ${accion}.`, false);
+      },
+      error: () => {
+        this.mostrarMensaje('Error al cambiar el estado del producto.', true);
+      }
+    });
   }
 
   ngOnDestroy(): void {

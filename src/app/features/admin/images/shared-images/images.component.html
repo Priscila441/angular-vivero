@@ -1,65 +1,54 @@
 <!-- Contenedor principal -->
-<div class="h-full flex flex-col overflow-hidden">
-  <!-- Header con breadcrumb -->
-  <div class="px-8 pt-3 pb-1 flex-shrink-0">
-    <div class="flex items-center gap-4 mb-2">
-      <a routerLink="/admin" class="flex items-center gap-2 text-[#0e1a13] hover:text-[#51946c] transition-colors">
-        <span class="material-symbols-outlined text-xl">arrow_back</span>
-        <span class="text-sm font-medium">Volver</span>
-      </a>
-      
-      <div class="w-px h-6 bg-[#d1e6d9]"></div>
-      
-      <nav class="flex items-center gap-2 text-sm bg-[#F6FBF8] px-2 rounded">
-        <a routerLink="/admin" class="text-[#4A5C52] hover:underline">Panel</a>
-        <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
-        <span class="text-[#1C2B21] font-bold">Imágenes</span>
-      </nav>
-    </div>
-    
-    <h1 class="text-[#1C2B21] text-xl font-bold leading-tight mt-6">Imágenes</h1>
-    <p class="text-[#4A5C52] mt-2 text-sm">
+<div class="h-full flex flex-col">
+  <!-- Encabezado principal (compacto) -->
+  <div class="mt-10 mb-2 px-16">
+    <h1 class="text-[#1C2B21] text-2xl font-bold leading-tight tracking-[-0.015em]">Imágenes</h1>
+    <p class="text-[#4A5C52] mt-3 text-base font-medium leading-normal">
       Administración y vista general de las imágenes asociadas a productos y servicios.
     </p>
-    <div class="border-t border-[#51946c] opacity-60 my-1.5 w-full"></div>
+    <div class="border-t border-[#51946c] opacity-60 my-2 w-full"></div>
   </div>
 
-  <!-- Tabs -->
-  <div class="px-8 pb-1 flex-shrink-0">
+  <!-- Tabs con barra inferior -->
+  <div class="px-16 mb-3">
     <div class="w-full max-w-2xl">
       <nav class="flex border-b border-[#D7E2DB]">
+        <!-- Tab Productos -->
         <button
           (click)="selectTab('productos')"
-          class="flex-1 flex items-center justify-center gap-2 py-3.5 text-base font-medium transition-all relative"
-          [ngClass]="selectedTab === 'productos' ? 'text-[#4B7D63]' : 'text-[#4A5C52] hover:text-[#4B7D63]'">
+          class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all relative cursor-pointer"
+          [ngClass]="selectedTab === 'productos' ? 'text-[#4B7D63]' : 'text-[#4A5C52] hover:text-[#4B7D63]'"
+        >
           <span class="material-symbols-outlined text-xl">psychiatry</span>
           <span>Productos</span>
-          <span *ngIf="selectedTab === 'productos'" 
-                class="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#4B7D63]"></span>
+          <span
+            *ngIf="selectedTab === 'productos'"
+            class="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#4B7D63]"
+          ></span>
         </button>
 
+        <!-- Tab Servicios -->
         <button
           (click)="selectTab('servicios')"
-          class="flex-1 flex items-center justify-center gap-2 py-3.5 text-base font-medium transition-all relative"
-          [ngClass]="selectedTab === 'servicios' ? 'text-[#4B7D63]' : 'text-[#4A5C52] hover:text-[#4B7D63]'">
+          class="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all relative cursor-pointer"
+          [ngClass]="selectedTab === 'servicios' ? 'text-[#4B7D63]' : 'text-[#4A5C52] hover:text-[#4B7D63]'"
+        >
           <span class="material-symbols-outlined text-xl">agriculture</span>
           <span>Servicios</span>
-          <span *ngIf="selectedTab === 'servicios'" 
-                class="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#4B7D63]"></span>
+          <span
+            *ngIf="selectedTab === 'servicios'"
+            class="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#4B7D63]"
+          ></span>
         </button>
       </nav>
     </div>
   </div>
 
-  <!-- Contenido -->
-  <div class="px-8 flex-1 overflow-y-auto overflow-x-hidden">
-    <div class="h-full">
-      <ng-container *ngIf="selectedTab === 'productos'; else contentServicios">
-        <app-products-images></app-products-images>
-      </ng-container>
-      <ng-template #contentServicios>
-        <app-services-images></app-services-images>
-      </ng-template>
+  <!-- Contenido principal -->
+  <div class="px-16 overflow-x-hidden">
+    <div class="p-0 bg-transparent border-0 shadow-none">
+      <app-cards-images *ngIf="selectedTab === 'productos'"></app-cards-images>
+      <app-services-images *ngIf="selectedTab === 'servicios'"></app-services-images>
     </div>
   </div>
 </div>

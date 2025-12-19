@@ -42,4 +42,8 @@ export class ServicioService {
     uploadImagenes(servicioId: number, formData: FormData): Observable<any> {
         return this.http.post<any>(`${environment.API_URL}/servicios/${servicioId}/imagenes/multiples`, formData);
     }
+
+    deleteImagenServicio(imagenId: number): Observable<void> {
+        return this.http.delete<void>(`${environment.API_URL}/imagenes-servicio/${imagenId}`);
+    }
 }

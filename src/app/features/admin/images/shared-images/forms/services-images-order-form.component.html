@@ -1,0 +1,100 @@
+<!-- Header contextual con breadcrumb -->
+<div class="sticky top-0 z-10 bg-[#F6FBF8] px-4 sm:px-8 lg:px-16 py-4">
+  <div class="flex items-center gap-4 justify-start">
+    <!-- Botón de vuelta -->
+    <a routerLink="/admin/images" class="flex items-center gap-2 text-[#0e1a13] hover:text-[#51946c] transition-colors">
+      <span class="material-symbols-outlined text-xl">arrow_back</span>
+      <span class="text-sm font-medium">Volver</span>
+    </a>
+    <!-- Separador -->
+    <div class="w-px h-6 bg-[#d1e6d9]"></div>
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm bg-[#F6FBF8] px-2 rounded">
+      <a routerLink="/admin" class="text-[#4A5C52] hover:underline">Panel</a>
+      <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
+      <a routerLink="/admin/images" class="text-[#4A5C52] hover:underline">Imágenes</a>
+      <span class="material-symbols-outlined text-sm text-[#4A5C52]">chevron_right</span>
+      <span class="text-[#1C2B21] font-bold">Ordenamiento de Imágenes</span>
+    </nav>
+  </div>
+</div>
+
+<!-- Titulo y Descripción -->
+<div class="mb-8 mt-6 sm:mt-8 px-4 sm:px-8 lg:px-16">
+  <h1 class="text-[#1C2B21] text-xl sm:text-2xl font-bold leading-tight tracking-[-0.015em]">Ordenamiento de Imágenes</h1>
+  <p class="text-[#4A5C52] mt-2 text-sm sm:text-base font-medium leading-normal">Arrastra las imágenes del servicio dandole su posición.</p>
+  <div class="border-t border-[#51946c] opacity-60 my-2 w-full"></div>
+</div>
+
+<div class="mx-auto px-4 sm:container">
+  <!-- Banda con nombre del servicio (más ancha que la caja de imágenes) -->
+  <div class="mx-auto max-w-5xl mb-5">
+    <div class="bg-[#4B7D63] border border-[#D7E2DB] rounded-lg px-6 py-3 text-center shadow-sm">
+      <h3 class="text-base sm:text-lg font-semibold text-white">
+        {{ servicio?.nombre || 'Servicio' }}
+      </h3>
+      <p class="text-[11px] sm:text-xs text-[#E8F4EE] mt-0.5" *ngIf="servicio?.descripcion">{{ servicio?.descripcion }}</p>
+    </div>
+  </div>
+
+  <!-- Caja para fotos -->
+  <div class="rounded-xl border-2 border-dashed border-[#D7E2DB] bg-white p-4 max-w-4xl mx-auto w-full">
+    <div *ngIf="isLoading" class="py-10 text-center text-[#4A5C52] text-sm">Cargando imágenes...</div>
+
+    <div *ngIf="!isLoading && !((servicio?.imagenes?.length || 0) > 0)" class="py-10 text-center">
+      <p class="text-sm text-[#4A5C52]">No hay imágenes para este servicio.</p>
+    </div>
+
+    <div *ngIf="!isLoading && ((servicio?.imagenes?.length || 0) > 0)"
+         cdkDropList
+         (cdkDropListDropped)="drop($event)"
+         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <div *ngFor="let img of servicio!.imagenes; let i = index"
+           cdkDrag
+           class="aspect-square rounded-lg overflow-hidden bg-gray-100 relative cursor-move">
+        <img [src]="img.url" alt="Imagen {{ i + 1 }}" class="w-full h-full object-cover" />
+        <div class="absolute bottom-1 left-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded">#{{ i + 1 }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Botones de acción fuera de la caja -->
+  <div *ngIf="!isLoading && ((servicio?.imagenes?.length || 0) > 0)" class="mt-6 flex justify-end items-center gap-3 max-w-4xl mx-auto">
+    <button type="button"
+            (click)="cancelar()"
+            class="h-10 min-w-[140px] items-center justify-center rounded-md bg-white border border-[#D7E2DB] px-4 text-sm font-semibold text-[#4A5C52] shadow-sm hover:bg-gray-50 cursor-pointer">
+      Cancelar
+    </button>
+    <button type="button"
+            (click)="guardarNuevoOrden()"
+            class="h-10 min-w-[140px] items-center justify-center rounded-md bg-[#4B7D63] px-4 text-sm font-semibold text-white shadow-sm hover:bg-[#264B39] cursor-pointer">
+      Guardar orden
+    </button>
+  </div>
+</div>
+
+<!-- Modal de éxito -->
+<div *ngIf="showSuccessModal" class="fixed inset-0 z-50">
+  <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="flex items-start gap-3 w-full max-w-md p-4 text-green-800 rounded-xl bg-green-50 shadow-lg ring-1 ring-green-200">
+      <span class="material-symbols-outlined text-2xl leading-none shrink-0">check_circle</span>
+      <div class="flex-1 text-sm font-medium">{{ successMessage }}</div>
+      <button type="button" (click)="showSuccessModal = false" class="ml-2 inline-flex items-center justify-center rounded-md text-green-900/80 hover:text-green-900 cursor-pointer">
+        <span class="material-symbols-outlined text-base">close</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mensaje de error -->
+<div *ngIf="errorMessage" class="fixed bottom-4 right-4 z-50 max-w-md p-4 text-red-800 rounded-xl bg-red-50 shadow-lg ring-1 ring-red-200">
+  <div class="flex items-start gap-3">
+    <span class="material-symbols-outlined text-2xl leading-none shrink-0">error</span>
+    <div class="flex-1 text-sm font-medium">{{ errorMessage }}</div>
+    <button type="button" (click)="errorMessage = ''" class="inline-flex items-center justify-center rounded-md text-red-900/80 hover:text-red-900 cursor-pointer">
+      <span class="material-symbols-outlined text-base">close</span>
+    </button>
+  </div>
+</div>

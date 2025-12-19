@@ -1,18 +1,20 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductsImagesComponent } from '../products-images/products-images.component';
+import { RouterModule } from '@angular/router';
+import { CardsImagesComponent } from './cards-images/cards-images.component';
 import { ServicesImagesComponent } from '../services-images/services-images.component';
 
 @Component({
   selector: 'app-images',
   standalone: true,
-  imports: [CommonModule, ProductsImagesComponent, ServicesImagesComponent],
-  templateUrl: './images.component.html'
+  imports: [CommonModule, RouterModule, CardsImagesComponent, ServicesImagesComponent],
+  templateUrl: './images.component.html',
+  styleUrls: []
 })
 export class ImagesComponent {
-  selectedTab: 'productos' | 'servicios' = 'productos';
+  selectedTab: string = 'productos';
 
-  selectTab(tab: 'productos' | 'servicios'): void {
+  selectTab(tab: string): void {
     this.selectedTab = tab;
   }
 }

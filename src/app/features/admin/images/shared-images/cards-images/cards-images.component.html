@@ -1,15 +1,15 @@
 <!-- Loading State -->
 <div *ngIf="isLoading" class="flex items-center justify-center py-8">
-	<div class="text-center">
-		<div class="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-[#4B7D63] border-r-transparent"></div>
-		<p class="mt-3 text-xs text-[#4A5C52]">Cargando servicios...</p>
-	</div>
+  <div class="text-center">
+    <div class="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-[#4B7D63] border-r-transparent"></div>
+    <p class="mt-3 text-xs text-[#4A5C52]">Cargando productos...</p>
+  </div>
 </div>
 
 <!-- Empty State -->
 <div *ngIf="!isLoading && items.length === 0" class="text-center py-8">
-	<span class="material-symbols-outlined text-5xl text-[#D7E2DB]">home_repair_service</span>
-	<p class="mt-3 text-sm text-[#4A5C52]">No hay servicios disponibles</p>
+  <span class="material-symbols-outlined text-5xl text-[#D7E2DB]">inventory_2</span>
+  <p class="mt-3 text-sm text-[#4A5C52]">No hay elementos disponibles</p>
 </div>
 
 <!-- Carrusel con páginas de 3 -->
@@ -17,7 +17,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
     <div *ngFor="let item of visibleItems; trackBy: trackById" 
        (click)="navegarADetalle(item.id)"
-       class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col group overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+       class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col group overflow-hidden hover:shadow-lg transition-all cursor-pointer" 
        [attr.data-id]="item.id">
       <div class="relative h-48 m-2 overflow-hidden rounded-md bg-gray-50">
         <img [src]="getImagenPrincipal(item)" [alt]="item.nombre" class="h-full w-full object-cover group-hover:scale-105 transition duration-500" *ngIf="getImagenPrincipal(item)" />
