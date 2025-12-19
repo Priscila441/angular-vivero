@@ -97,7 +97,7 @@ export class Initial {
       description: "Nuestro vivero se extiende sobre 13 hectáreas, ofreciendo el espacio ideal para la producción de plantas y árboles de todo tipo.",
       buttonText: "Explorar vivero",
       route: "/sobre-nosotros",
-      color: "amber"
+      color: "purple"
     },
     {
       title: "Variedad de Productos",

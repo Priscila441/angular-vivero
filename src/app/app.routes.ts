@@ -19,6 +19,12 @@ export const routes: Routes = [
       {
         path: 'login' , loadComponent: () => import('./features/login/login').then(m => m.Login)
       },
+      {
+        path: 'forgot-password' , loadComponent: () => import('./features/login/forgot-password/forgot-password').then(m => m.ForgotPassword)
+      },
+      {
+        path: 'reset-password' , loadComponent: () => import('./features/login/reset-password/reset-password').then(m => m.ResetPassword)
+      },
       { 
         path: 'admin', 
         canActivate: [authGuard],

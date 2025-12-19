@@ -66,4 +66,19 @@ export class AuthService {
   isAuthenticated(): boolean {
     return this.hasToken();
   }
+
+  forgotPassword(email: string) {
+  return this.http.post<any>(
+    `${this.api_url}/forgot-password`,
+    { email }
+  );
+}
+
+resetPassword(token: string, password: string) {
+  return this.http.post<any>(
+    `${this.api_url}/reset-password`,
+    { token, password }
+  );
+}
+
 }
