@@ -26,72 +26,156 @@
   }
 
   <!-- MODAL DE EDICIÓN -->
-  @if (editando) {
-  <div class="fixed inset-0 z-50 flex items-start justify-center p-6 overflow-y-auto">
-    <div class="fixed inset-0 bg-black/40 z-0"></div>
+@if (editando) {
+<div class="fixed inset-0 z-[50] flex items-start justify-center p-3 sm:p-4 overflow-y-auto">
 
-    <div class="relative z-10 w-full max-w-xl bg-white rounded-lg p-6 shadow-lg 
-                max-h-[90vh] overflow-y-auto mt-10">
+  <!-- Overlay -->
+  <div (click)="cerrarEdicion()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
 
-      <h3 class="text-xl font-semibold text-green-700 mb-4">Editar sección</h3>
+  <!-- Modal -->
+  <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-xl z-10 max-h-[90vh] overflow-y-auto">
 
-      <div class="space-y-4">
+    <!-- Header -->
+    <div class="px-4 py-3 sm:px-6 sm:py-4 border-b border-[#D7E2DB] bg-[#F6FBF8] sticky top-0 z-10">
+      <div class="flex items-center justify-between gap-2">
+        <h3 class="text-base sm:text-lg font-bold text-[#1C2B21]">
+          Editar sección “Sobre Nosotros”
+        </h3>
+        <button (click)="cerrarEdicion()"
+                class="text-[#4A5C52] hover:text-[#1C2B21] transition-colors">
+          <span class="material-symbols-outlined text-xl sm:text-2xl">close</span>
+        </button>
+      </div>
+    </div>
 
+    <!-- Body -->
+    <div class="px-4 py-4 sm:px-6 sm:py-6 space-y-5">
+
+      <!-- Nuestro origen -->
+      <div>
+        <label class="block text-xs sm:text-sm font-medium text-[#1C2B21] mb-1.5">
+          Nuestro origen
+        </label>
+        <p class="text-xs text-[#4A5C52] mb-2">
+          Contá brevemente cómo nació el negocio, quiénes lo iniciaron y en qué contexto.
+        </p>
         <textarea
-          class="w-full border p-3 rounded h-28"
-          placeholder="Nuestro origen"
-          [(ngModel)]="formSobreNosotros.nuestro_origen">
+          [(ngModel)]="formSobreNosotros.nuestro_origen"
+          placeholder="Ej: Somos una familia que comenzó este proyecto luego de la pandemia..."
+          class="w-full px-3 py-2.5 text-sm border border-[#D7E2DB] rounded-md
+                 focus:ring-2 focus:ring-[#4B7D63] focus:border-transparent
+                 outline-none transition-all text-[#1C2B21] placeholder-[#9CA8A1]
+                 min-h-[110px]">
         </textarea>
-
-        <textarea
-          class="w-full border p-3 rounded h-28"
-          placeholder="Producción histórica"
-          [(ngModel)]="formSobreNosotros.produccion_historica">
-        </textarea>
-
-        <textarea
-          class="w-full border p-3 rounded h-28"
-          placeholder="Nuevas producciones"
-          [(ngModel)]="formSobreNosotros.nuevas_producciones">
-        </textarea>
-
-        <input class="w-full border p-3 rounded"
-              placeholder="Imagen principal"
-              [(ngModel)]="formSobreNosotros.imagen_url" />
-
-        <input class="w-full border p-3 rounded"
-              placeholder="Imagen 2"
-              [(ngModel)]="formSobreNosotros.imagen2_url" />
-
-        <input class="w-full border p-3 rounded"
-              placeholder="Imagen 3"
-              [(ngModel)]="formSobreNosotros.imagen3_url" />
-
-        <input class="w-full border p-3 rounded"
-              placeholder="Imagen 4"
-              [(ngModel)]="formSobreNosotros.imagen4_url" />
-
-        <input class="w-full border p-3 rounded"
-              placeholder="Imagen 5"
-              [(ngModel)]="formSobreNosotros.imagen5_url" />
-
       </div>
 
-      <div class="mt-6 flex justify-end gap-3">
-        <button (click)="cerrarEdicion()"
-                class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
-          Cancelar
-        </button>
+      <!-- Producción histórica -->
+      <div>
+        <label class="block text-xs sm:text-sm font-medium text-[#1C2B21] mb-1.5">
+          Producción histórica
+        </label>
+        <p class="text-xs text-[#4A5C52] mb-2">
+          Explicá cómo fue creciendo la producción o el trabajo a lo largo de los años.
+        </p>
+        <textarea
+          [(ngModel)]="formSobreNosotros.produccion_historica"
+            placeholder="Ej: Durante los primeros años nos enfocamos en..."
+            class="w-full px-3 py-2.5 text-sm border border-[#D7E2DB] rounded-md
+                  focus:ring-2 focus:ring-[#4B7D63] focus:border-transparent
+                  outline-none transition-all text-[#1C2B21] placeholder-[#9CA8A1]
+                  min-h-[110px]">
+          </textarea>
+        </div>
 
-        <button (click)="guardarCambios()"
-                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-          Guardar cambios
-        </button>
+      <!-- Nuevas producciones -->
+      <div>
+        <label class="block text-xs sm:text-sm font-medium text-[#1C2B21] mb-1.5">
+          Nuevas producciones
+        </label>
+        <p class="text-xs text-[#4A5C52] mb-2">
+          Detallá en qué están trabajando actualmente o qué nuevas líneas incorporaron.
+        </p>
+        <textarea
+          [(ngModel)]="formSobreNosotros.nuevas_producciones"
+          placeholder="Ej: Actualmente incorporamos nuevas tecnologías y productos..."
+          class="w-full px-3 py-2.5 text-sm border border-[#D7E2DB] rounded-md
+                 focus:ring-2 focus:ring-[#4B7D63] focus:border-transparent
+                 outline-none transition-all text-[#1C2B21] placeholder-[#9CA8A1]
+                 min-h-[110px]">
+        </textarea>
+      </div>
+
+      <!-- Imágenes -->
+      <div class="pt-2">
+        <h4 class="text-sm font-semibold text-[#1C2B21] mb-3">
+          Imágenes de la sección
+        </h4>
+
+        <div class="space-y-4">
+
+          <div>
+            <label class="block text-xs sm:text-sm font-medium text-[#1C2B21] mb-1.5">
+              Imagen principal
+            </label>
+            <input
+              [(ngModel)]="formSobreNosotros.imagen_url"
+              placeholder="https://ejemplo.com/imagen-principal.jpg"
+              class="w-full px-3 py-2.5 text-sm border border-[#D7E2DB] rounded-md
+                     focus:ring-2 focus:ring-[#4B7D63] focus:border-transparent
+                     outline-none transition-all text-[#1C2B21] placeholder-[#9CA8A1]" />
+          </div>
+
+          <div>
+            <label class="block text-xs sm:text-sm font-medium text-[#1C2B21] mb-1.5">
+              Imagen secundaria 1 (opcional)
+            </label>
+            <input
+              [(ngModel)]="formSobreNosotros.imagen2_url"
+              placeholder="https://ejemplo.com/imagen2.jpg"
+              class="w-full px-3 py-2.5 text-sm border border-[#D7E2DB] rounded-md
+                     focus:ring-2 focus:ring-[#4B7D63] focus:border-transparent
+                     outline-none transition-all text-[#1C2B21] placeholder-[#9CA8A1]" />
+          </div>
+
+          <div>
+            <label class="block text-xs sm:text-sm font-medium text-[#1C2B21] mb-1.5">
+              Imagen secundaria 2 (opcional)
+            </label>
+            <input
+              [(ngModel)]="formSobreNosotros.imagen3_url"
+              placeholder="https://ejemplo.com/imagen3.jpg"
+              class="w-full px-3 py-2.5 text-sm border border-[#D7E2DB] rounded-md
+                     focus:ring-2 focus:ring-[#4B7D63] focus:border-transparent
+                     outline-none transition-all text-[#1C2B21] placeholder-[#9CA8A1]" />
+          </div>
+
+        </div>
       </div>
 
     </div>
+
+    <!-- Footer de modal-->
+    <div class="px-4 py-3 sm:px-6 sm:py-4 border-t border-[#D7E2DB] bg-[#F6FBF8]
+                flex gap-2 sm:gap-3 justify-end sticky bottom-0">
+      <button (click)="cerrarEdicion()"
+              class="px-4 py-2 sm:px-5 sm:py-2.5 text-sm rounded-md
+                     border border-[#D7E2DB] text-[#4A5C52] font-medium
+                     hover:bg-white transition-colors">
+        Cancelar
+      </button>
+
+      <button (click)="guardarCambios()"
+              class="px-4 py-2 sm:px-5 sm:py-2.5 text-sm rounded-md
+                     bg-[#4B7D63] text-white font-medium
+                     hover:bg-[#264B39] transition-colors shadow-sm">
+        Guardar cambios
+      </button>
+    </div>
+
   </div>
-  }
+</div>
+}
+
 
 
 
